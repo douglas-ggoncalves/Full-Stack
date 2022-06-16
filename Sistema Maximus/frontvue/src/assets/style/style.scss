@@ -1,0 +1,340 @@
+$blueLight: rgb(25, 136, 255);
+$blueDark: #0c63e4;
+$greenLight: rgb(61, 176, 87);
+$greenDark: rgb(25, 135, 84);
+$redLight: rgb(223, 73, 87);
+$redDark: rgb(220, 53, 69);
+
+a{
+    color: white !important;
+    text-decoration: none !important;
+}
+
+div.ql-editor{
+    ol, ul{
+        text-align: left !important;
+    }
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#sidebar {
+    background: linear-gradient(to bottom, #185992 0%, #31374F 100%);
+    color: #fff !important;
+    transition: all 0.3s;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color: #7386D5 !important;
+    background: #fff !important;
+}
+/*
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #fff;
+    background: #143450;
+}
+*/
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #225886 !important;
+}
+
+.input-group .form-control{
+    border: 0;
+}
+
+button.btn.btn-link.aa:not(.collapsed){
+    background-color: red !important;
+    color: #0c63e4 !important;
+}
+
+button {
+  margin: 0  .15rem !important;
+}
+
+#divMainReplic{
+    #modalStore, #modalStoreEdit {
+        .vm--modal {
+            height: auto !important;
+            bottom: 2rem !important;
+            top: 2rem !important;
+        }
+    }
+
+    td,tr {
+        width: 20% !important;
+    }
+
+    .table > :not(:first-child){
+        border-top: none !important;
+    }
+
+    .row {
+        height: 100%;
+      }
+      
+      .card {
+        border: none !important;
+      }
+      
+      div.card-body{
+        margin-bottom: auto;
+        margin-top: auto;
+        text-align: left !important;
+      }
+      
+      button {
+        margin-top: auto;
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+      
+      .dropdown-content a {
+        color: black !important;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      
+      .dropdown-content a:hover {
+          background-color: #f1f1f1
+        }
+      
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      
+      .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+      }
+
+      a.btn.btn-outline-light{
+        &:hover {
+            color: black !important;
+        }
+      }
+}
+
+.toast{
+    border: none !important;
+}
+  
+.toast-body{
+    font-size: 1.08rem;
+}
+
+.vm--modal{
+    background: none !important;
+    left: 0 !important;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100% !important;
+}
+
+.home{
+    .vm--modal{
+        background: white !important;
+        width: 80% !important;
+    }
+}
+
+button.close{
+    background: none;
+    border: none !important;
+    font-size: 1.5rem;
+    border-radius: 50% !important;
+}
+
+/* width */
+   ::-webkit-scrollbar {
+    width: 9px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: black;
+    border-radius: 20px;
+}
+
+#elements{
+    text-align: left;
+    box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12); 
+    border-radius: 0 0 5px 5px;
+    overflow-y: scroll;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    >div{
+        display: block;
+        background-color: rgb(52, 52, 61); 
+        min-width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    a{
+        padding: 0.375rem 0.75rem;
+        display: block;
+    }
+
+    div.blue{
+        background-color: $blueLight;
+        border-bottom: 1px solid $blueDark;
+        
+        a{
+            color: white;
+        }
+
+        &:hover{
+            background-color: $blueDark;
+        }
+    }
+
+    div.green{
+        background-color: $greenLight;
+        border-bottom: 1px solid $greenDark;
+
+        a{
+            color: white;
+        }
+
+        &:hover{
+            background-color: $greenDark;
+        }
+    }
+
+    div.red{
+        background-color: $redLight;
+        border-bottom: 1px solid $redDark;
+
+        a{
+            color: white;
+        }
+
+        &:hover{
+            background-color: $redLight;
+        }
+    }
+
+    div.black{
+        background-color: black !important;
+        border-bottom: 1px solid black !important;
+
+        a{
+            color: white;
+        }
+
+        &:hover{
+            background-color: black !important;
+        }
+    }
+}
+
+
+@media (min-width: 576px) { 
+    
+}
+
+@media (min-width: 768px) {
+
+}
+
+@media (min-width: 992px) {
+    .home{
+        .vm--modal{
+            background: white !important;
+            width: 50% !important;
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+
+}

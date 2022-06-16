@@ -1,0 +1,22 @@
+configurações ip:
+js/scrypt.js variável serverIP
+UserController.js: variável serverIP
+database.js
+
+create table REDE(id int IDENTITY(1,1) NOT NULL, NOME_REDE nvarchar(255) NOT NULL, primary key(id), unique(NOME_REDE))
+
+create table USUARIO(ID_USUARIO int IDENTITY(1,1) NOT NULL, LOGIN_USUARIO nvarchar(255) NOT NULL, EMAIL_USUARIO nvarchar(255) NOT NULL, CARGO_USUARIO nvarchar(10) NOT NULL, SENHA_USUARIO nvarchar(255) NOT NULL, REDEID_USUARIO int NULL, primary key(ID_USUARIO), foreign key (REDEID_USUARIO) references REDE (id) on delete set null, unique(EMAIL_USUARIO), unique (LOGIN_USUARIO))
+
+-- insert into USUARIO (LOGIN_USUARIO, EMAIL_USUARIO, CARGO_USUARIO, SENHA_USUARIO) values('MAXIMUS', 'douglasrnn62@gmail.com', 'M', '$2b$10$H1nWKQ.7R.CqQJ.u5uzmkeYLrH7RHO.2qnnyRF0a5tU1WofRaUR9e')
+
+create table PASSWORDTOKENSS(USERID_PASSWORDTOKENS int NULL, USED int NOT NULL, TOKEN varchar(255) NOT NULL foreign key (USERID_PASSWORDTOKENS) references USUARIO (ID_USUARIO) on delete set null)
+
+create table LOJA (ID_LOJA int IDENTITY(1,1) NOT NULL, NUMERO_LOJA int NOT NULL, NOME_LOJA nvarchar(255) NOT NULL, IP_LOJA nvarchar(255) NOT NULL, PORTA_LOJA int NOT NULL, LOGIN_LOJA nvarchar(255) NOT NULL, SENHA_LOJA nvarchar(255) NOT NULL, REDEID int NULL, primary key (ID_LOJA), foreign key (REDEID) references REDE (ID))
+
+create table MODULO (ID_MODULO int IDENTITY(1,1) NOT NULL, DESC_MODULO nvarchar(25), primary key (ID_MODULO))
+
+SET IDENTITY_INSERT MODULO ON
+
+insert into modulo (ID_MODULO, DESC_MODULO) values (1, 'Maximus Lite'), (2, 'Maximus Administrativo'), (3, 'Maximus Balcão'), (4, 'Maximus Caixa')
+
+create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255), SLUG nvarchar(370), DESCRICAO nvarchar(MAX), ATIVO int NOT NULL, CODMODULO int NOT NULL, primary key (ID_POST), foreign key (CODMODULO) references MODULO (ID_MODULO))
