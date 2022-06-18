@@ -1,3 +1,3 @@
 create table users (id int not null auto_increment, name varchar(45), email varchar(45) unique, password varchar(200), role int, primary key(id));
 
-create table passwordtokens (id int not null auto_increment, token varchar(200), user_id int not null, primary key(id), foreign key(user_id) references users(id));
+create table passwordTokens (id int not null auto_increment, token varchar(200), user_id int not null, used int, primary key(id), foreign key(user_id) references users(id));

@@ -2,8 +2,23 @@ var knex = require("../database/connection");
 var User = require("./User")
 
 class PasswordTokens{
+    async findByEmail(email) {
+        try {
+            var result = await knex.select("id", "name", "password", "email", "role").where({email: email}).table("users");
+
+            if(result.length > 0) {
+                return result[0];
+            } else {
+                return undefined;
+            }
+        } catch(err) {
+            console.log(err);
+            return undefined;
+        }
+    }
+
     async create(email) {
-        var user = await User.findByEmail(email);
+        var user = await this.findByEmail(email);
 
         if(user != undefined) {
             try {

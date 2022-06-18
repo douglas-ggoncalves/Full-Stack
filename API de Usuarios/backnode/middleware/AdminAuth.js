@@ -16,17 +16,17 @@ module.exports = function(req, res, next) {
             } else{
                 res.status(403);
                 console.log(decoded.role)
-                res.send("Você não tem permissão para isso");
+                res.send({err: "Você não tem permissão para isso"});
                 return;
             }
         } catch(err) {
             res.status(403);
-            res.send("Você não está autenticado");
+            res.send({err: "Você não está autenticado"});
             return;
         }
     } else{
         res.status(403);
-        res.send("Você não está autenticado");
+        res.send({err: "Você não está autenticado"});
         return;
     }
 }

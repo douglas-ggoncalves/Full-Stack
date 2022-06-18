@@ -7,6 +7,7 @@ var bcrypt = require("bcrypt");
 class UserController{
     async index(req, res) {
         var users = await User.findAll();
+        res.status(200);
         res.json({users})
     }
 
@@ -32,6 +33,29 @@ class UserController{
             return;
         } 
 
+        if(name == undefined || name == '') {
+            res.status(400);
+            res.json({err: "Nome inválido"})
+            return;
+        }
+        if(name == undefined || name == '') {
+            res.status(400);
+            res.json({err: "Nome inválido"})
+            return;
+        }
+
+        if(password == undefined || password == '') {
+            res.status(400);
+            res.json({err: "Senha inválida"})
+            return;
+        }
+        
+        if(role != 0 && role != 1) {
+            res.status(400);
+            res.json({err: "Cargo inválido"})
+            return;
+        }
+
         var emailExists = await User.findEmail(email);
 
         if(emailExists){
@@ -40,9 +64,14 @@ class UserController{
             return;
         }
 
-        await User.new(name, email, password, role)
-        res.status(200);
-        res.json({success: "E-mail recebido"})
+        var userCad = await User.new(name, email, password, role)
+        if(userCad){
+            res.status(200);
+            res.json({success: "Usuário cadastrado com sucesso!"})
+        } else{
+            res.status(406);
+            res.json({err: "Não foi possível cadastrar o usuário"})
+        }
     }
 
     async edit(req, res) {
@@ -52,14 +81,14 @@ class UserController{
         if(result != undefined) {
             if(result.status) {
                 res.status(200);
-                res.send("Tudo ok");
+                res.send({success: "Usuário editado"});
             } else {
                 res.status(406);
-                res.send(result.err);
+                res.send({err: result.err});
             }
         } else {
             res.status(406);
-            res.send("Ocorreu um erro no servidor");
+            res.send({err: "Ocorreu ao tentar excluir o usuário"});
         }
     }
 
@@ -69,10 +98,10 @@ class UserController{
 
         if(result.status){
             res.status(200);
-            res.send("Usuário deletado");
+            res.send({success: "Usuário deletado"});
         } else{
             res.status(406);
-            res.send(result.err);
+            res.send(result);
         }
     }
 
@@ -82,25 +111,33 @@ class UserController{
 
         if(result.status){
             res.status(200);
-            res.send("" + result.token);
+            res.send({token: result.token});
         } else{
             res.status(406);
-            res.send(result.err);
+            res.send(result);
         }
     }
 
     async changePassword(req, res) {
         var token = req.body.token;
         var password = req.body.password;
+
+        if(password == undefined){
+            res.status(401);
+            res.send({err: "Senha não informada"});
+            return;
+        }
+
         var tokenIsValid = await PasswordTokens.validate(token);
 
         if(tokenIsValid.status) {
             await User.changePassword(password, tokenIsValid.token.user_id, tokenIsValid.token.token)
             res.status(200);
-            res.send("Senha alterada")
+            res.send({success: "Senha alterada"})
         } else{
             res.status(406);
-            res.send("Token inválido");
+            res.send({err: "Token inválido"});
+            return;
         }
     }
 

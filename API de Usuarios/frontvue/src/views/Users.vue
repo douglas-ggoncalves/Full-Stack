@@ -150,7 +150,7 @@ export default {
       
       axios.delete("http://localhost:8686/user/"+this.userId, req).then(res => {
         this.showModal = false;
-        this.success = res.data
+        this.success = res.data.success
         this.users = this.users.filter(user => user.id != this.userId);
       }).catch(err => {
         this.showModal = false
