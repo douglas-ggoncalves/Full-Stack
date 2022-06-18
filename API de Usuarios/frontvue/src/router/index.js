@@ -1,51 +1,25 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import Register from '../views/Register'
 import Login from '../views/Login'
 import Users from '../views/Users'
+import Edit from '../views/Edit'
+
+async function AdminAuth(to, from, next) {
+  if(localStorage.getItem('token') != undefined) next();
+  else next("/login")
+}
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: Register
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login
-  },
-  {
-    path: '/admin/users',
-    name: 'Users',
-    component: Users,
-    beforeEnter: (to, from, next) => {
-      if(localStorage.getItem('token') != undefined) {
-        next();
-      } else{
-        next("/login");
-      }
-    }
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+  { path: '*', name: 'DefaultRouter', component: Login },
+  { path: '/register', name: 'register', component: Register },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/admin/users', name: 'Users', component: Users, beforeEnter: AdminAuth },
+  { path: '/admin/users/edit/:id', name: 'UserEdit', component: Edit, beforeEnter: AdminAuth }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  //base: process.env.BASE_URL,
-  routes
-})
+const router = new VueRouter({ mode: 'history', routes });
 
-export default router
+export default router;

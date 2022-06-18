@@ -1,5 +1,6 @@
 <template>
   <div>
+    <hr>
     <h2>Login</h2>
     <hr>
     <div class="columns is-centered">
@@ -20,6 +21,14 @@
         <button class="button is-success" @click="login()">
           Entrar
         </button>
+
+        <div>
+          <router-link :to="{name: 'register'}">
+            <button class="button is-info mt-3">
+              Registrar-se
+            </button>
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -42,7 +51,7 @@ export default {
         email: this.email
       }).then(res => {
         localStorage.setItem("token", res.data.token);
-        this.$router.push({name: "Home"})
+        this.$router.push({name: "Users"})
       }).catch(err => {
         this.error = err.response.data.err;
       })
@@ -50,8 +59,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
 

@@ -1,6 +1,5 @@
 var User = require("../models/User");
 var PasswordTokens = require("../models/PasswordTokens");
-
 var jwt = require("jsonwebtoken");
 var secret = "151515f15b1sf5vada5s1v5ad1vaf";
 var bcrypt = require("bcrypt");
@@ -25,12 +24,12 @@ class UserController{
     }
 
     async create(req, res) {
-        var {name, email, password} = req.body;
+        var {name, email, password, role} = req.body;
         
         if(email == undefined || email == '') {
             res.status(400);
             res.json({err: "E-mail inválido"})
-            return; // assim que o método encontrar o return o método é encerrado
+            return;
         } 
 
         var emailExists = await User.findEmail(email);
@@ -41,7 +40,7 @@ class UserController{
             return;
         }
 
-        await User.new(name, email, password)
+        await User.new(name, email, password, role)
         res.status(200);
         res.json({success: "E-mail recebido"})
     }
@@ -49,6 +48,7 @@ class UserController{
     async edit(req, res) {
         var {id, name, role, email} = req.body;
         var result = await User.update(id, email, name, role);
+
         if(result != undefined) {
             if(result.status) {
                 res.status(200);
@@ -65,12 +65,11 @@ class UserController{
 
     async remove(req, res) {
         var id = req.params.id;
-
         var result = await User.delete(id);
 
         if(result.status){
             res.status(200);
-            res.send("Tudo ok");
+            res.send("Usuário deletado");
         } else{
             res.status(406);
             res.send(result.err);
@@ -79,7 +78,6 @@ class UserController{
 
     async recoveryPassword(req, res) {
         var email = req.body.email;
-
         var result = await PasswordTokens.create(email);
 
         if(result.status){
@@ -94,7 +92,6 @@ class UserController{
     async changePassword(req, res) {
         var token = req.body.token;
         var password = req.body.password;
-
         var tokenIsValid = await PasswordTokens.validate(token);
 
         if(tokenIsValid.status) {

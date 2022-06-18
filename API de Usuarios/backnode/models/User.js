@@ -43,10 +43,10 @@ class User{
         }
     }
 
-    async new(name, email, password){
+    async new(name, email, password, role){
         try {
             var hash = await bcrypt.hash(password, 10);
-            await knex.insert({name, email, password: hash, role: 0}).table("users");
+            await knex.insert({name, email, password: hash, role: role}).table("users");
         } catch(err) {
             console.log(err)
         }
