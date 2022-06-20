@@ -1,5 +1,5 @@
 # API Maximus Gestão
-Esta API Rest é utilizada para controle de login, usuários, lojas e redes da empresa Maximus Gestão.
+Esta API Rest é utilizada para controle de login, usuários, lojas, redes e postagens de tutoriais para a empresa Maximus Gestão.
 
 ## Endpoints
 ### POST /login
@@ -168,9 +168,9 @@ Exemplo de resposta:
 ### PATCH /user
 Esse endpoint é responsável por editar os dados de um usuário.
 #### Parâmetros
-login: Login que o usuário vai receber em seu cadastro, parâmetro obrigatório, caso o usuário não altere o login envie o login antigo na requisição.
+editLoginUser: Login que o usuário vai receber em seu cadastro, parâmetro obrigatório, caso o usuário não altere o login envie o login antigo na requisição.
 
-role: Cargo que o usuário vai receber em seu cadastro, cargos disponíveis: Master que é representado pela letra M e Administrativo representado
+editRoleUser: Cargo que o usuário vai receber em seu cadastro, cargos disponíveis: Master que é representado pela letra M e Administrativo representado
 pela letra A.
 
 editRoleNetwork: Id da rede que o usuário vai receber em seu cadastro.
@@ -238,7 +238,7 @@ Exemplo de resposta:
 ```
 
 ### PATCH /token
-Esse endpoint é responsável fazer a validação do token e caso o token seja válido o usuário conseguirá alterar a senha dele.
+Esse endpoint é responsável por fazer a validação do token e caso o token seja válido o usuário conseguirá alterar a senha dele.
 #### Parâmetros
 token: Token gerado anteriormente no end point POST /password.
 
@@ -261,7 +261,7 @@ Exemplo de resposta:
     "success": "Usuário editado com sucesso"
 }
 ```
-##### Falha na criação do cadastro do usuário! 406
+##### Falha na requisição! 406
 Caso essa resposta aconteça significa que o token não é válido. Motivos: 
 Token inválido, Token já utilizado.
 
