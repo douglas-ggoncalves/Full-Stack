@@ -208,7 +208,7 @@ Exemplo de resposta:
 ```
 
 ### POST /password
-Esse endpoint é responsável por fazer a criação de um token para que o usuário altere sua senha.
+Esse endpoint é responsável por fazer a criação de um token necessário para que o usuário altere sua senha.
 #### Parâmetros
 email: E-mail do usuário.
 
@@ -240,7 +240,7 @@ Exemplo de resposta:
 ### PATCH /token
 Esse endpoint é responsável por fazer a validação do token e caso o token seja válido o usuário conseguirá alterar a senha dele.
 #### Parâmetros
-token: Token gerado anteriormente no end point POST /password.
+token: Token gerado anteriormente no endpoint POST /password.
 
 password: Nova senha do usuário.
 
@@ -273,7 +273,7 @@ Token inválido
 ### POST /token
 Esse endpoint é responsável fazer a validação do token, apenas para saber o token é válido ou não.
 #### Parâmetros
-token: Token gerado anteriormente no end point POST /password.
+token: Token gerado anteriormente no endpoint POST /password.
 
 Exemplo:
 ```
@@ -291,7 +291,7 @@ Exemplo de resposta:
     "success": "Token válido"
 }
 ```
-##### Falha na criação do cadastro do usuário! 406
+##### Falha na requisição! 406
 Caso essa resposta aconteça significa que o token não é válido e não pode mais ser utilizado. Motivos: 
 Token inválido, Token já utilizado.
 
@@ -609,7 +609,7 @@ Exemplos de respostas:
 ```
 
 ### POST /replic
-Esse endpoint é responsável fazer a validação do token e caso o token seja válido será possível alterar a senha do usuário.
+Esse endpoint é responsável por trazer os dados de replicação de determinada loja.
 #### Parâmetros
 array: Aqui você envia um JSON do array gerado anteriormente.
 
@@ -741,7 +741,19 @@ Exemplo de resposta:
 ### POST /store
 Esse endpoint é responsável por fazer a criação de uma loja.
 #### Parâmetros
-c
+numberStoreNewStore: Nesse parâmetro você informa o número da loja.
+
+nameStore: Nesse parâmetro você informa o nome da loja.
+
+ipStore: Nesse parâmetro você informa o ip da loja.
+
+selected: Nesse parâmetro você informa o id da rede que esta loja pertence.
+
+doorIP: Nesse parâmetro você informa a porta para acessar o banco de dados da loja.
+
+login: Nesse parâmetro você informa o login para acessar o banco de dados da loja.
+
+password: Nesse parâmetro você informa a senha para acessar o banco de dados da loja.
 
 Exemplo:
 ```
@@ -802,11 +814,6 @@ Exemplo de respostas:
 ```
 ```
 {
-    "err": "IP da loja precisa ser preenchido"
-}
-```
-```
-{
     "err": "Senha da loja precisa ser preenchido"
 }
 ```
@@ -842,7 +849,7 @@ Exemplo:
 ```
 #### Respostas
 ##### OK! 200
-Caso essa resposta aconteça você vai receber a listagem de todos as postagens.
+Caso essa resposta aconteça você vai receber a confirmação do cadastro da postagem.
 
 Exemplo de resposta:
 ```
@@ -906,7 +913,7 @@ Exemplos de respostas:
 ### GET /post
 Esse endpoint é responsável por retornar os dados de uma postagem cadastrada na base de dados.
 #### Parâmetros
-Obs: O parâmetro para este end point deve ser passado pelo params e não no corpo da requisição como estava sendo feito anteriormente.
+Obs: O parâmetro para este endpoint deve ser passado pelo params e não no corpo da requisição como estava sendo feito anteriormente.
 slug: Você pode encontrar o slug da postagem fazendo uma requisição GET para a rota /posts e pegando o valor do atributo SLUG no JSON retornado.
 
 Exemplo:
@@ -934,7 +941,7 @@ Exemplo de resposta:
 Caso essa resposta aconteça significa que a postagem não foi encontrada. Motivos: 
 A postagem não existe na base de dados, slug informado não pertence a nenhuma postagem.
 
-Exemplos de respostas:
+Exemplo de resposta:
 ``` 
 {
     "err": "Não foi possível carregar a postagem"
@@ -944,7 +951,7 @@ Exemplos de respostas:
 ### DELETE /post/:slug
 Esse endpoint é responsável por excluir o cadastro de uma postagem.
 #### Parâmetros
-slug: Slug do usuário que deseja remover, o slug deve ser informado na URL de conexão com o endpoint.
+slug: Slug da postagem que deseja remover, o slug deve ser informado na URL de conexão com o endpoint.
 
 Exemplos:
 ```
@@ -977,7 +984,7 @@ Exemplo de resposta:
 ### PATCH /post
 Esse endpoint é responsável por editar os dados de uma postagem.
 #### Parâmetros
-idPost: Neste parâmetro você informa o id da postagem que deseja alterar
+idPost: Neste parâmetro você informa o id da postagem que deseja alterar.
 
 title: Nesse parâmetro você informa o novo título da postagem.
 
@@ -1073,9 +1080,9 @@ editNameStore: Nesse parâmetro você informa o novo nome da loja.
 
 editIpStore: Nesse parâmetro você informa o novo ip da loja.
 
-editSelected: Nesse parâmetro você informa o novo id da rede para essa loja.
+editSelected: Nesse parâmetro você informa o novo id da rede que esta loja pertence.
 
-editDoorIP: Nesse parâmetro você informa a novo porta para acessar o banco de dados da loja.
+editDoorIP: Nesse parâmetro você informa a nova porta para acessar o banco de dados da loja.
 
 editLogin: Nesse parâmetro você informa o novo login para acessar o banco de dados da loja.
 
@@ -1089,7 +1096,6 @@ Exemplo:
     "editSelected": "5",
     "editDoorIP": "1715",
     "editLogin": "user"
-    
 }
 ```
 #### Respostas
@@ -1122,16 +1128,17 @@ Exemplos de respostas:
     "err": "Não foi informado o número da loja"
 }
 ```
+```
 {
     "err": "Não foi informado o nome da loja"
 }
+```
 ```
 {
     "err": "Não foi informado o ip da loja"
 }
 ```
 
------------------------------------------------------------------------------------------------
 ### POST /validate
 Esse endpoint é responsável por verificar se o usuário logado é válido.
 #### Parâmetros
