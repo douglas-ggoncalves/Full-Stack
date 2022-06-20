@@ -229,7 +229,7 @@ Esse endpoint é responsável por excluir o cadastro de um usuário.
 id: Id do usuário que deseja remover.
 #### Respostas
 ##### OK! 200
-Caso essa resposta aconteça significa que os dados do usuário foram alterados.
+Caso essa resposta aconteça significa que os dados do usuário foram excluídos.
 
 Exemplo de resposta:
 ```
@@ -252,7 +252,7 @@ Exemplos de respostas:
     "err": "Você não está autenticado"
 }
 ```
-##### Falha na autenticação! 406
+##### Falha na requisição! 406
 Caso essa resposta aconteça significa que o usuário não foi encontrado no banco de dados. Motivos: 
 Id informado não pertence a nenhum usuário.
 

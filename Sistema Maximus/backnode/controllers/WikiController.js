@@ -54,6 +54,19 @@ class WikiController{
     async editPost(req, res){
         var idPost = req.body.idPost
         var title = req.body.title
+
+        if(idPost == undefined) {
+            res.status(406); 
+            res.send({err: `ID da postagem precisa ser preenchido`}); 
+            return;
+        }
+
+        if(title == undefined) {
+            res.status(406); 
+            res.send({err: `Título da postagem precisa ser preenchido`}); 
+            return;
+        }
+
         var slug = slugify(title.toLowerCase())
         var desc = req.body.desc
         var status = req.body.status

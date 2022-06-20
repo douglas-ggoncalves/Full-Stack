@@ -55,7 +55,7 @@ class UserController{
                 var loginExists = await User.findLogin(login);
                 var loginEmail = await User.findEmail(email);
                 
-                if(loginExists != undefined){ // login existe
+                if(loginExists != undefined){
                     res.status(404)
                     res.send({err: "Já existe um usuário com este login"})
                     return
@@ -71,7 +71,7 @@ class UserController{
                             return;
                         } else {
                             res.status(406);
-                            res.send({err: 'Ocorreu um erro ao tentar cadastrar o usuário '});
+                            res.send({err: 'Ocorreu um erro ao tentar cadastrar o usuário, verifique os dados informados e tente novamente'});
                             return;
                         }
                     }
@@ -195,7 +195,6 @@ class UserController{
             res.status(406);
             res.send({err: result.err});
         }
-        
     }
 
     async delete(req, res) {
@@ -213,11 +212,11 @@ class UserController{
                 }
                 else{
                     res.status(404)
-                    res.send({else: `Ocorreu um erro ao tentar excluir ${login}`})
+                    res.send({err: `Ocorreu um erro ao tentar excluir ${login}`})
                 }
             } else{
                 res.status(404)
-                res.send({else: `Ocorreu um erro ao tentar excluir ${login}`})
+                res.send({err: `Ocorreu um erro ao tentar excluir ${login}`})
             }
         }
     }
@@ -238,10 +237,9 @@ class UserController{
             } else {
                 if(login != undefined && idUser != undefined){
                     var idExist = await User.findUserById(idUser);
-        
+                    
                     if(idExist != undefined){ // login existe
                         var editUser = await User.editUser(login, role, network, idUser);
-                        
                         if(editUser != undefined) {
                             res.status(200);
                             res.send({success: "Usuário editado com sucesso"})
@@ -265,7 +263,6 @@ class UserController{
 
     async validateToken(req, res) {
         var token = req.body.token;
-
         var tokenIsValid = await PasswordTokens.validate(token);
 
         if(tokenIsValid.status) {
@@ -273,7 +270,7 @@ class UserController{
             res.send({success: 'Token válido'})
         } else{
             res.status(406);
-            res.send("Token inválido");
+            res.send({err: "Token inválido"});
         }
     }
     
@@ -307,10 +304,22 @@ class UserController{
     }
 
     async validate(req, res) {
-
         var redeUser = req.body.redeUser
         var roleUser = req.body.roleUser
         var loginUser = req.body.loginUser
+
+        if(roleUser == undefined){
+            res.status(400);
+            res.send({err:"O cargo do usuário não foi enviado, não foi possível fazer a verificação"});
+            return;
+        }
+        
+        if(loginUser == undefined){
+            res.status(400);
+            res.send({err:"O login do usuário não foi enviado, não foi possível fazer a verificação"});
+            return;
+        }
+
         if(redeUser == 'null'){
             redeUser = null;
         }
@@ -324,7 +333,6 @@ class UserController{
             res.status(406);
             res.send({err:"Usuário inválido"});
         }
-        
     }
 }
 

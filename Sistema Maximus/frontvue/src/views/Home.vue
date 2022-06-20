@@ -209,7 +209,6 @@ export default {
           password: this.password
         })
         .then(res => {
-          console.log('erooou 1')
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("roleUser", res.data.user.CARGO_USUARIO);
           localStorage.setItem("redeIdUser", res.data.user.REDEID_USUARIO);
@@ -217,7 +216,6 @@ export default {
 
           this.$router.push({name: "Index"})
         }).catch(err => {
-          console.log('erooou 2 ' + err)
           this.errLogin = err.response.data.err
           this.err = `${err.response.data.err}`
           document.getElementById('inputLogin').classList.add("is-invalid")
@@ -312,7 +310,6 @@ export default {
       }).then(() => {
         this.divForRecoveryPassword = this.$route.params.token
       }).catch(err => {
-        console.log("deu erro aqui")
         console.log(err)
         console.log(err.response.data.err)
       })

@@ -87,20 +87,55 @@ class ReplicController{
     }
 
     async postStores(req, res) {
-        var numberStoreNewStore =  req.body.numberStoreNewStore;
-        var nameStore =  req.body.nameStore;
-        var ipStore =  req.body.ipStore;
-        var selected =  req.body.selected;
-        var doorIP =  req.body.doorIP;
-        var login =  req.body.login;
-        var password =  req.body.password;
+        var numberStoreNewStore = req.body.numberStoreNewStore;
+        var nameStore = req.body.nameStore;
+        var ipStore = req.body.ipStore;
+        var selected = req.body.selected;
+        var doorIP = req.body.doorIP;
+        var login = req.body.login;
+        var password = req.body.password;
+
+        if(numberStoreNewStore == undefined) {
+            res.status(406); 
+            res.send({err: `Número da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(nameStore == undefined) {
+            res.status(406); 
+            res.send({err: `Nome da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(ipStore == undefined) {
+            res.status(406); 
+            res.send({err: `IP da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(selected == undefined) {
+            res.status(406); 
+            res.send({err: `Rede da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(doorIP == undefined) {
+            res.status(406); 
+            res.send({err: `Porta da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(login == undefined) {
+            res.status(406); 
+            res.send({err: `Login da loja precisa ser preenchido`}); 
+            return;
+        }
+        if(password == undefined) {
+            res.status(406); 
+            res.send({err: `Senha da loja precisa ser preenchido`}); 
+            return;
+        }
 
         try{
             await database.raw(`
                 insert into loja (NUMERO_LOJA, NOME_LOJA, IP_LOJA, PORTA_LOJA, LOGIN_LOJA, SENHA_LOJA, REDEID)
                 values('${numberStoreNewStore}', '${nameStore}', '${ipStore}', ${doorIP}, '${login}', '${password}', '${selected}')
             `); 
-            
         } catch(error) {
             res.status(406);
             res.send({err: `Ocorreu um erro na inserção da ${nameStore}, segue a mensagem de erro: ${error}`});
@@ -110,24 +145,67 @@ class ReplicController{
     }
 
     async patchStores(req, res) {
-        var idStore = req.body.idStore + 1; 
+        var idStore = req.body.idStore; 
         var editNumberStoreNewStore = req.body.editNumberStoreNewStore;
         var editNameStore = req.body.editNameStore;
         var editIpStore = req.body.editIpStore;
         var editSelected = req.body.editSelected;
         var editDoorIP = req.body.editDoorIP;
         var editLogin =  req.body.editLogin; 
-
-        try{
-            await database.raw(`
-                update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
-				IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', REDEID = '${editSelected}'
-				where ID_LOJA = '${idStore}'
-            `); 
-        } catch(error) {
+        
+        if(idStore == undefined){
             res.status(406);
-            res.send({err: `Ocorreu um erro na inserção da ${nameStore}, segue a mensagem de erro: ${error}`});
+            res.send({err: `Não foi informado o id da loja`});
             return;
+        }
+        if(editNumberStoreNewStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o número da loja`});
+            return;
+        }
+        if(editNameStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o nome da loja`});
+            return;
+        }
+        if(editIpStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o ip da loja`});
+            return;
+        }
+        if(editSelected == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o id da rede para esta loja`});
+            return;
+        }
+        if(editDoorIP == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado a porta da loja`});
+            return;
+        }
+        if(editLogin == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o login da lojar`});
+            return;
+        }
+
+        var result = await database.select().where({ID_LOJA: idStore}).from("LOJA");
+        if(result == ''){
+            res.status(406);
+            res.send({err: `Não foi encontrada nenhuma loja com o id informado`});
+            return;
+        } else{
+            try{
+                await database.raw(`
+                    update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
+                    IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', REDEID = '${editSelected}'
+                    where ID_LOJA = '${idStore}'
+                `); 
+            } catch(error) {
+                res.status(406);
+                res.send({err: `Ocorreu um erro na edição da ${nameStore}, segue a mensagem de erro: ${error}`});
+                return;
+            }
         }
         res.send({success: `Loja alterada com sucesso`})
     }
@@ -136,14 +214,21 @@ class ReplicController{
         var id = req.params.id;
         
         try {
-            await database.select().where({ID_LOJA: id}).from("LOJA").del();
+            var result = await database.select().where({ID_LOJA: id}).from("LOJA").del();
+            if(result == 0){
+                res.status(406);
+                res.send({err: 'Nenhuma loja foi encontrada com os parâmetros informados'})
+                return;
+            } else if(result == 1){
+                res.status(200);
+                res.send({success: `Loja excluida com sucesso`})
+                return;
+            } 
         } catch(err) {
             res.status(406);
             res.send({err: 'Ocorreu um erro ' +err})
             return;
         }
-
-        res.send({success: `Loja excluida com sucesso`})
     }
 }
 
