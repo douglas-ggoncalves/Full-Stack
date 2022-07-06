@@ -24,7 +24,6 @@
           <li>
             <a href="javascript:;" @click="logout()">Sair</a>
           </li>
-
         </ul>
       </nav>
 
@@ -79,28 +78,15 @@
                   </div>
                 </div>
               </div>
-              
             </b-col>
           </b-row>
-
-          <!--
-          <b-row class="d-flex justify-content-center mt-5">
-            <b-col cols="12">
-              <b-button-group>
-                <b-button v-b-tooltip.hover.v-primary.top="'Tutoriais do módulo Balcão'" variant="outline-primary">Balcão</b-button>
-                <b-button v-b-tooltip.hover.v-success.top="'Tutoriais do módulo Administrativo'" variant="outline-success">Administrativo</b-button>
-                <b-button v-b-tooltip.hover.v-danger.top="'Tutoriais do módulo Caixa'" variant="outline-danger">Caixa</b-button>
-              </b-button-group>
-            </b-col>
-          </b-row>
-           -->
         </b-container>
       </div>
     </div>
   </div>
 </template>
-<script>
 
+<script>
 import '../../assets/style/style.css'
 import scrypt from "../../assets/js/scrypt";
 
@@ -128,13 +114,9 @@ export default {
     async myFunction(){
       await axios.get(`http://${this.serverIP}/posts`,)
       .then(res => {
-        console.log('teste')
-        console.log(res.data)
         this.allPosts = res.data.arrayPosts
       })
       .catch(err => {
-        console.log('teste ' + err)
-
         this.err = err.response.data.err
       })
     },

@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="wrapper">
-            <!-- Sidebar -->
             <nav id="sidebar">
                 <ul class="list-unstyled components">
                     <div class="sidebar-header">

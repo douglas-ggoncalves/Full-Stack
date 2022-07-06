@@ -4,7 +4,7 @@ Esse projeto foi criado com o intuito de consumir uma API Rest que eu criei.
 **[ACESSE A DOCUMENTAÇÃO DA API](https://github.com/douglas-ggoncalves/Full-Stack/tree/main/Sistema%20Maximus/backnode)**
 
 ## Fotos do projeto
-A baixo demonstro algumas fotos de determinadas telas do sistema.
+Abaixo demonstro algumas fotos de determinadas telas do sistema.
 
 ![Screenshot_1](https://user-images.githubusercontent.com/60992128/174517752-9212f50d-214a-4840-adad-1b154e88b5e4.png)
 
@@ -17,4 +17,3 @@ A baixo demonstro algumas fotos de determinadas telas do sistema.
 ![Screenshot_5](https://user-images.githubusercontent.com/60992128/174517761-08072647-9853-4803-9d24-1a4882c228e5.png)
 
 ![Screenshot_6](https://user-images.githubusercontent.com/60992128/174517763-28db8377-a888-42d4-b5b3-d41bed37997e.png)
-

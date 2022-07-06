@@ -8,7 +8,7 @@ Esse endpoint é responsável por retornar a listagem de todos os usuários cada
 Nenhum
 #### Respostas
 ##### OK! 200
-Caso essa resposta aconteça você vai receber a listagem de todos os usuários
+Caso essa resposta aconteça você vai receber a listagem de todos os usuários.
 
 Exemplo de resposta:
 ```
@@ -116,7 +116,7 @@ Exemplo de resposta:
 ### POST /user
 Esse endpoint é responsável por criar um usuário.
 #### Parâmetros
-Obs: Todos os parâmetros listados a baixo são obrigatórios.
+Obs: Todos os parâmetros listados abaixo são obrigatórios.
 
 name: Nome que o usuário vai receber em seu cadastro.
 
@@ -379,7 +379,7 @@ Exemplos de respostas:
 ### POST /validate
 Esse endpoint é responsável por fazer o processo de validação do usuário.
 #### Parâmetros
-token: Token gerado no momento de login do usuário, este token precisa ser enviado no cabeçalho da requisição, segue a baixo
+token: Token gerado no momento de login do usuário, este token precisa ser enviado no cabeçalho da requisição, segue abaixo
 um exemplo da requisição sendo feita pelo Vue.js pegando o token do local storage.
 
 Exemplo:

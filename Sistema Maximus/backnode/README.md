@@ -114,7 +114,7 @@ Exemplos de respostas:
 ### POST /user
 Esse endpoint é responsável por criar um usuário.
 #### Parâmetros
-Obs: Todos os parâmetros listados a baixo são obrigatórios.
+Obs: Todos os parâmetros listados abaixo são obrigatórios.
 
 login: Login que o usuário vai receber em seu cadastro, esse login será utilizado para acessar o sistema.
 
