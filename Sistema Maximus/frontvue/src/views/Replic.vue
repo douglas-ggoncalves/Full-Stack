@@ -466,8 +466,6 @@ export default {
                 });
               } catch(err) {
                 Vue.set(this.data, y, err.response.data.newArray)
-                console.log("aqui vai o console")
-                console.log(err.response.data.newArray)
               }
             }
           }
