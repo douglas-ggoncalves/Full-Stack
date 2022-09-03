@@ -9,7 +9,7 @@ exports.clique = () => {
     }
 };
 
-exports.serverIP = '67.207.84.123'
+exports.serverIP = 'localhost:4000'
 
 export default exports
 
