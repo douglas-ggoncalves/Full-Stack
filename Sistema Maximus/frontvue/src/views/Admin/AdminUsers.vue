@@ -116,13 +116,13 @@
                         </tr>
                     </thead>
 
-                    <tbody v-for="(client, index) in searchClient" :key="client.ID_USUARIO">
+                    <tbody v-for="client in searchClient" :key="client.ID_USUARIO">
                         <tr>
                             <td style="font-weight: bold">{{ client.LOGIN_USUARIO }}</td>
                             <td v-if="roleUsers">{{ client.CARGO_USUARIO }}</td>
                             <td v-if="networkUsers">{{ client.NOME_REDE }}</td>
                             <td v-if="actionUsers">
-                                <button type="button" class="btn btn-outline-dark" @click="editClient(index)" v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+                                <button type="button" class="btn btn-outline-dark" @click="editClient(client.ID_USUARIO)" v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
 
@@ -395,10 +395,12 @@ export default {
             }
         },
         editClient(indexClient){
-            this.editLoginUser = this.clients[indexClient].LOGIN_USUARIO
-            this.editRoleUser = this.clients[indexClient].CARGO_USUARIO
-            this.editRoleNetwork = this.clients[indexClient].REDEID_USUARIO
-            this.idUser = this.clients[indexClient].ID_USUARIO
+            var clientSelected = this.clients.filter(element => element.ID_USUARIO == indexClient)[0];
+
+            this.editLoginUser = clientSelected.LOGIN_USUARIO
+            this.editRoleUser = clientSelected.CARGO_USUARIO
+            this.editRoleNetwork = clientSelected.REDEID_USUARIO
+            this.idUser = clientSelected.ID_USUARIO
             this.$modal.show('modalEditUser');
         },
         async editStore() {

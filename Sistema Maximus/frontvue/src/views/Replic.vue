@@ -561,15 +561,16 @@ export default {
       this.err = ''
       this.$modal.show('modalStore');
     },
-    example(message){
-      this.buttonIdClicked = message - 1
+    example(idElement){
+      var myElement = this.data.filter(element => element.ID_LOJA == idElement)[0];
+      this.buttonIdClicked = myElement.ID_LOJA
 
-      this.editNumberStoreNewStore = this.data[this.buttonIdClicked].NUMERO_LOJA.toString()
-      this.editNameStore = this.data[this.buttonIdClicked].NOME_LOJA
-      this.editIpStore = this.data[this.buttonIdClicked].IP_LOJA
-      this.editSelected = this.data[this.buttonIdClicked].REDEID
-      this.editDoorIP = this.data[this.buttonIdClicked].PORTA_LOJA
-      this.editLogin = this.data[this.buttonIdClicked].LOGIN_LOJA
+      this.editNumberStoreNewStore = myElement.NUMERO_LOJA.toString()
+      this.editNameStore = myElement.NOME_LOJA
+      this.editIpStore = myElement.IP_LOJA
+      this.editSelected = myElement.REDEID
+      this.editDoorIP = myElement.PORTA_LOJA
+      this.editLogin = myElement.LOGIN_LOJA
       this.$modal.show('MyComponent');
     },
     updateStoreName(){
@@ -638,20 +639,22 @@ export default {
             this.err = err.response.data.err
           }
         }
+        
       }
     },
     async deleteStore(id){
-      var confirmation = await confirm("Deseja excluir " + this.data[id-1].NOME_LOJA +' da rede ' + this.data[id-1].NOME_REDE + ' ?');
+    var myElement = this.data.filter(element => element.ID_LOJA == id)[0];
+      var confirmation = await confirm("Deseja excluir " + myElement.NOME_LOJA +' da rede ' + myElement.NOME_REDE + ' ?');
       if(confirmation) {
         try {
           await axios.delete(`http://${this.serverIP}/store/${id}`)
           .then(res => {
-            this.data[id-1] = []
+            this.data = this.data.filter(element => element.ID_LOJA != id)
             this.success = res.data.success
           });
-          } catch(err) {
-            this.err = err.response.data.err
-          }
+        } catch(err) {
+          this.err = err.response.data.err
+        }
       }
     }, 
     clear(){
