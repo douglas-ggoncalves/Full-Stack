@@ -274,7 +274,7 @@ export default {
       } else if(this.moduleSelect.ID_MODULE == undefined){
         this.err = 'Selecione um módulo'
       } else {
-        axios.patch(`http://${this.serverIP}/post`,{
+        axios.patch(`${this.serverIP}/post`,{
           idPost: this.idPost,
           title: this.title,
           desc: this.desc, 
@@ -289,7 +289,7 @@ export default {
       }
     },
     async verifySlug(slug){
-      await axios.get(`http://${this.serverIP}/post`,{
+      await axios.get(`${this.serverIP}/post`,{
         params:{
           slug: slug
         }
@@ -320,7 +320,7 @@ export default {
       var confirmation = await confirm("Deseja excluir este post?");
         if(confirmation) {
           try {
-            await axios.delete(`http://${this.serverIP}/post/${this.$route.params.slug}`)
+            await axios.delete(`${this.serverIP}/post/${this.$route.params.slug}`)
             .then(res => {
               this.success = res.data.success;
             });

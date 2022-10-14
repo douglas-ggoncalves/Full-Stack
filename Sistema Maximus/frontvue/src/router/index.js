@@ -7,6 +7,9 @@ import AdminUsers from '../views/Admin/AdminUsers.vue'
 import Wiki from '../views/Wiki/Wiki.vue'
 import RegisterPost from '../views/Wiki/RegisterPost.vue'
 import Post from '../views/Wiki/Post.vue'
+import Implantation from '../views/Implantation/Implantation.vue'
+import Teste from '../views/Implantation/Teste.vue'
+
 
 import axios from 'axios';
 import scrypt from "../assets/js/scrypt";
@@ -25,7 +28,7 @@ async function AdminAuth(to, from, next) {
     var roleUser = localStorage.getItem("roleUser")
     var loginUser = localStorage.getItem("loginUser")
    
-    await axios.post(`http://${serverIP}/validate`, {redeUser, roleUser, loginUser}, req).then(() => {
+    await axios.post(`${serverIP}/validate`, {redeUser, roleUser, loginUser}, req).then(() => {
       next();
     }).catch(err => {
       alert(err.response.data.err)
@@ -59,6 +62,16 @@ const routes = [
     name: 'Index',
     component: Index,
     beforeEnter: AdminAuth
+  },
+  {
+    path: '/implantacoes',
+    name: 'Implantation',
+    component: Implantation,
+  },
+  {
+    path: '/teste',
+    name: 'Teste',
+    component: Teste,
   },
   {
     path: '/replicacoes',

@@ -301,7 +301,7 @@ export default {
     },
     methods: {
         myFunction(){
-            axios.get(`http://${this.serverIP}/user`, {
+            axios.get(`${this.serverIP}/user`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }   
@@ -321,7 +321,7 @@ export default {
             })
         },
         myFunction2(){
-            axios.get(`http://${this.serverIP}/replic`, {
+            axios.get(`${this.serverIP}/replic`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
@@ -355,7 +355,7 @@ export default {
                         this.err = 'O campo cargo é obrigatório'
                     } else{
                         try {
-                            await axios.post(`http://${this.serverIP}/user`, {
+                            await axios.post(`${this.serverIP}/user`, {
                                 login: this.loginUser,
                                 password: this.passwordUser,
                                 email: this.emailUser,
@@ -384,7 +384,7 @@ export default {
             var confirmation = await confirm("Deseja excluir " + login + ' ?');
             if(confirmation) {
                 try {
-                    await axios.delete(`http://${this.serverIP}/user/${login}`)
+                    await axios.delete(`${this.serverIP}/user/${login}`)
                     .then(res => {
                         this.clients = this.clients.filter(client => client.LOGIN_USUARIO != login)
                         this.success = res.data.success
@@ -412,7 +412,7 @@ export default {
                 var confirmation = await confirm("Confirma a alteração de dados ?");
                 if(confirmation){
                     try {
-                        await axios.patch(`http://${this.serverIP}/user`, {
+                        await axios.patch(`${this.serverIP}/user`, {
                             editLoginUser: this.editLoginUser,
                             editRoleUser: this.editRoleUser,
                             editRoleNetwork: this.editRoleNetwork,

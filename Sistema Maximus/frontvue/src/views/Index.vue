@@ -13,6 +13,10 @@
                     </li>
 
                     <li>
+                        <a href="implantacoes">Implantações</a>
+                    </li>
+
+                    <li>
                         <a href="replicacoes">Replicação</a>
                     </li>
 

@@ -252,7 +252,7 @@ export default {
       } else if(this.moduleSelect.ID_MODULE == undefined){
         this.err = 'Selecione um módulo'
       } else {
-        axios.post(`http://${this.serverIP}/post`,{
+        axios.post(`${this.serverIP}/post`,{
           title: this.title,
           desc: this.desc, 
           status: this.optionSelect.ID,

@@ -414,7 +414,7 @@ export default {
   },
   methods: {
     myFunction(){
-      axios.get(`http://${this.serverIP}/replic`, {
+      axios.get(`${this.serverIP}/replic`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token")
         }
@@ -460,7 +460,7 @@ export default {
             if(this.data[y].REDEID == this.value[x].id){
               this.showData = true;
               try {
-                await axios.post(`http://${this.serverIP}/replic`, {array: this.data[y]})
+                await axios.post(`${this.serverIP}/replic`, {array: this.data[y]})
                 .then(res => {
                   Vue.set(this.data, y, res.data.newArray)
                 });
@@ -480,7 +480,7 @@ export default {
         var confirmation = await confirm("Deseja cadastrar a rede com o nome " + this.network +' ?');
         if(confirmation) {
           try {
-            await axios.post(`http://${this.serverIP}/network`, {
+            await axios.post(`${this.serverIP}/network`, {
               network: this.network
             })
             .then(res => {
@@ -512,7 +512,7 @@ export default {
         var confirmation = await confirm("Confirma a criação desta loja ?");
         if(confirmation){
           try {
-            await axios.post(`http://${this.serverIP}/store`, {
+            await axios.post(`${this.serverIP}/store`, {
               numberStoreNewStore: this.numberStoreNewStore,
               nameStore: this.nameStore,
               ipStore: this.ipStore,
@@ -612,7 +612,7 @@ export default {
         var confirmation = await confirm("Confirma a alteração de dados ?");
         if(confirmation){
           try {
-            await axios.patch(`http://${this.serverIP}/store`, {
+            await axios.patch(`${this.serverIP}/store`, {
               editNumberStoreNewStore: this.editNumberStoreNewStore,
               editNameStore: this.editNameStore,
               editIpStore: this.editIpStore,
@@ -647,7 +647,7 @@ export default {
       var confirmation = await confirm("Deseja excluir " + myElement.NOME_LOJA +' da rede ' + myElement.NOME_REDE + ' ?');
       if(confirmation) {
         try {
-          await axios.delete(`http://${this.serverIP}/store/${id}`)
+          await axios.delete(`${this.serverIP}/store/${id}`)
           .then(res => {
             this.data = this.data.filter(element => element.ID_LOJA != id)
             this.success = res.data.success

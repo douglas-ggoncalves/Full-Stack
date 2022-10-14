@@ -15,6 +15,7 @@ div.ql-editor ol, div.ql-editor ul {
   -webkit-box-align: stretch;
       -ms-flex-align: stretch;
           align-items: stretch;
+  text-align: center;
 }
 
 #sidebar {
@@ -38,6 +39,18 @@ a[data-toggle="collapse"] {
   right: 20px;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
+}
+
+#dataImplant {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: left !important;
+  background-color: #f2f7ec;
+  padding: .5rem;
 }
 
 @media (max-width: 768px) {

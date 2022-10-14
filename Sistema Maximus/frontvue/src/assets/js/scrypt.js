@@ -9,7 +9,7 @@ exports.clique = () => {
     }
 };
 
-exports.serverIP = 'localhost:4000'
+exports.serverIP = 'http://localhost:4000'
 //exports.serverIP = 'http://replic.maximusgestao.com:4000'
 
 

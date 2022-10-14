@@ -204,7 +204,7 @@ export default {
         document.getElementById('inputLogin').classList.add("is-invalid")
         document.getElementById('inputPassword').classList.add("is-invalid")
       } else {
-        await axios.post(`http://${this.serverIP}/login`, {
+        await axios.post(`${this.serverIP}/login`, {
           login: this.login,
           password: this.password
         })
@@ -232,7 +232,7 @@ export default {
       if(this.emailForRecovery.trim() == ''){
         this.err = 'Email precisa ser preenchido'
       } else{
-        await axios.post(`http://${this.serverIP}/password`, {
+        await axios.post(`${this.serverIP}/password`, {
           email: this.emailForRecovery
         })
         .then(() =>{
@@ -289,7 +289,7 @@ export default {
         document.getElementById('inputNewPassword').classList.add("is-invalid");
         document.getElementById('inputNewPassword2').classList.add("is-invalid");
       } else{
-        await axios.patch(`http://${this.serverIP}/token`, {
+        await axios.patch(`${this.serverIP}/token`, {
           token: this.divForRecoveryPassword,
           password: this.newPassword
         }).then(res => {
@@ -305,7 +305,7 @@ export default {
     this.serverIP = scrypt.serverIP
 
     if(this.$route.params.token != undefined){
-      await axios.post(`http://${this.serverIP}/token`, {
+      await axios.post(`${this.serverIP}/token`, {
         token: this.$route.params.token
       }).then(() => {
         this.divForRecoveryPassword = this.$route.params.token

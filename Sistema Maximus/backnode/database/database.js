@@ -2,9 +2,9 @@ const knex = require('knex')({
   client: 'mssql',
   connection: {
     host : 'localhost',
-    port : 5759,
+    port : 3739,
     user : 'sa',
-    password : 'password',
+    password : 'd120588$788455',
     database : 'MAXIMUS'
   }
 });
