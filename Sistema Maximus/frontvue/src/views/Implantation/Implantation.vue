@@ -157,25 +157,38 @@
                     </v-col>
 
                 </v-row>
+                
 
                 <v-row class="d-flex justify-start align-center text-left">
-                    <v-col :cols="4">
-                        <h5>Implantação Etapa 1</h5>
+                    <v-col :cols="3">
+                        <div style="display: inline-block">
+                            <h5>Implantação Etapa 1</h5>
+                        </div>
+                        <div class="ml-5" style="display: inline-block">
+                            <v-progress-circular :value="progress" :size="55"  :color="color">
+                                {{ progress }}%
+                            </v-progress-circular>
+                        </div>
+
                     </v-col>
-                    <v-col :cols="4">
+                    <v-col :cols="3"/>
+
+                    
+
+                    <v-col :cols="3">
                         <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Início *" 
+                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
                                 hint="informe a data desejada" v-bind="attrs" @blur="editedItemdate = parseDate(dateFormatted)" v-on="on" ></v-text-field>
                             </template>
                             
                             <v-date-picker v-model="editedItemdate" no-title @input="menu1 = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
-                    <v-col :cols="4">
+                    <v-col :cols="3">
                         <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Conclusão *" 
+                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
                                 hint="informe a data desejada" v-bind="attrs" @blur="editedItemdate = parseDate(dateFormatted)" v-on="on" ></v-text-field>
                             </template>
                             
@@ -187,7 +200,7 @@
                 <v-row>
                     <v-col :cols="6">
                         <v-card class="mx-auto">
-                            <v-list>
+                            <v-list class="p-0">
                                 <v-list-item-group v-model="model" multiple>
                                     <template v-for="(item, i) in items">
                                         <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
@@ -215,16 +228,18 @@
                     </v-col>
 
                     <v-col :cols="5">
+                        <div style="height: 20%;">
+                            <v-radio-group class="mt-0" v-model="switch1" row>Todos os itens foram instalados?
+                                <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
+                                <v-radio label="Não" :value="false" ></v-radio> 
+                            </v-radio-group>
+                        </div>
 
-    
-                        <v-switch v-model="switch1" :label="`Todos os itens foram instalados? ${switch1==false? 'Não' :'Sim'}`"></v-switch>
-                        <v-textarea label="Motivo" value="" outlined v-if="!switch1"></v-textarea>
-                        <v-textarea label="Motivo" :value="value" v-if="switch1" filled disabled style="width: 100%"></v-textarea>
-
+                        <div class="form-group" style="height: 80%">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!switch1" style="height: 100%"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea2" v-if="switch1" disabled style="height: 100%"></textarea>
+                        </div>
                     </v-col>
-
-                        
-                    
 
                 </v-row>
 
@@ -244,16 +259,16 @@ import scrypt from "../../assets/js/scrypt";
 export default {
     data(){
         return {
-            items: [
-        'Verificar servidor',
-        'Instalação terminais',
-        'Instalação certificado digital',
-        'Instalação impressora',
-        'Verificar conexão com matriz',
-      ],
+        items: [
+            'Verificar servidor',
+            'Instalação terminais',
+            'Instalação certificado digital',
+            'Instalação impressora',
+            'Verificar conexão com matriz',
+        ],
         model: ['Instalação impressora'],
-switch1: true,
-
+        switch1: true,
+        color: 'cyan',
         sistema: ['Maximus Gestão', 'Maximus Lite'],
         teste: false,
         direction: 'bottom',
@@ -267,9 +282,8 @@ switch1: true,
         left: false,
         openOnHover: true,
         transition: 'scale',
-      dateFormatted: this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
-      menu1: false,
-      
+        dateFormatted: this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
+        menu1: false,
         editedItemdate: '',
             roleUserLogged: '',
             search2: '',
@@ -342,9 +356,22 @@ switch1: true,
             return value.substr(0, 10)
         }
     },
+    computed: {
+      progress () {
+        return this.model.length / this.items.length * 100
+      },
+    },
     watch: {
         'editedItemdate'(){
             this.dateFormatted = this.formatDate(this.editedItemdate);
+        },
+
+        progress () {
+            if(this.model.length / this.items.length * 100 == 100){
+                this.color = 'success'
+            } else{
+                this.color = 'cyan'
+            }
         }
     },
     

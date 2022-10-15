@@ -362,6 +362,7 @@
   </div>
 </template>
 
+
 <script>
 import VModal from 'vue-js-modal'
 import axios from 'axios';
@@ -369,6 +370,7 @@ import Vue from 'vue'
 import '../assets/style/style.css'
 import scrypt from "../assets/js/scrypt";
 import Multiselect from 'vue-multiselect'
+
 
 Vue.component('multiselect', Multiselect)
 
