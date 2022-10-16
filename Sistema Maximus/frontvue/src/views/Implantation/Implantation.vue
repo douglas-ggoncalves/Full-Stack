@@ -37,9 +37,9 @@
                     </button>
                 </div>
             </nav>
-            <v-container fluid v-show="teste">
+            <v-container fluid v-show="!checkImplantation">
                 <v-row justify="center">
-                    <v-menu v-for="user in users" :key="user.ID_USUARIO" bottom min-width="200px" rounded offset-y>
+                    <v-menu v-for="user in USUARIO" :key="user.ID_USUARIO" bottom min-width="200px" rounded offset-y>
                         <template v-slot:activator="{ on }">
                             <v-btn icon x-large v-on="on">
                                 <v-avatar color="brown" size="48" v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
@@ -82,27 +82,27 @@
                     <v-col class="col" :cols="12">
                         <v-card>
                             <v-card-title>
-                                <v-text-field v-model="search2" append-icon="mdi-magnify" label="Pesquisar" single-line hide-details></v-text-field>
+                                <v-text-field v-model="dataTable.search" append-icon="mdi-magnify" label="Pesquisar" single-line hide-details></v-text-field>
                             </v-card-title>
                             <v-data-table :no-data-text="'Não há dados'" :no-results-text="'Nenhum resultado encontrado'" 
                             :header-props="{'sortByText': 'Ordenar por'}" :footer-props="{'items-per-page-text':'Itens por página', 
-                            pageText: '{0}-{1} de {2}', 'items-per-page-all-text':'Todos'}" :headers="headers2" :items="desserts2" 
-                            :search="search2">
-                                <template v-slot:[`item.desc`]="{ item }">
+                            pageText: '{0}-{1} de {2}', 'items-per-page-all-text':'Todos'}" :headers="dataTable.headers" :items="dataTable.items" 
+                            :search="dataTable.search">
+                                <template v-slot:[`item.RAZAO_LOJA`]="{ item }">
                                     <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <span v-bind="attrs" v-on="on" style="">{{ item.desc }}</span>
+                                            <span v-bind="attrs" v-on="on" style="">{{ item.RAZAO_LOJA }}</span>
                                         </template> 
-                                        <span>{{ item.desc }}</span>
+                                        <span>{{ item.RAZAO_LOJA }}</span>
                                     </v-tooltip>
                                 </template>
 
                                 <template v-slot:[`item.value`]="{ item }">
-                                    <span>{{ item.value | toBrl }}</span>
+                                    <span>{{ item.value }}</span>
                                 </template>
 
-                                <template v-slot:[`item.date`]="{ item }">
-                                    <span>{{ new Date(item.date.replace("-",',')).toLocaleString() | toDate }}</span>
+                                <template v-slot:[`item.DATAINI_LOJA`]="{ item }">
+                                    <span>{{ new Date(item.DATAINI_LOJA.replace("-",',')).toLocaleString() | toDate }}</span>
                                 </template>
 
                                 <template v-slot:[`item.action`]="{ item }" class="text-end"> 
@@ -115,7 +115,7 @@
                 </v-row>
             </v-container>
 
-            <v-container fluid v-show="!teste">
+            <v-container fluid v-show="checkImplantation">
                 <v-row>
                     <v-col class="text-left">
                         <v-tooltip right>
@@ -142,20 +142,19 @@
                         <h5>Dados do cliente</h5>
                     </v-col>
                     <v-col :cols="5">
-                        <v-text-field label="Razão Social" :rules="rules" hide-details="auto"></v-text-field>
+                        <v-text-field label="Razão Social" v-model="dataClient.razaoSocial" hide-details="auto"></v-text-field>
                     </v-col>
                     <v-col :cols="5">
-                        <v-text-field label="CNPJ"></v-text-field> 
+                        <v-text-field label="CNPJ" v-model="dataClient.CNPJ"></v-text-field> 
                     </v-col>
 
                     <v-col :cols="5">
-                        <v-text-field label="Endereço"></v-text-field> 
+                        <v-text-field label="Endereço" v-model="dataClient.endereco"></v-text-field> 
                     </v-col>
                     
                     <v-col :cols="5">
-                        <v-select :items="sistema" label="Sistema" required></v-select>
+                        <v-select v-model="dataClient.sistema" :items="stage1.optionsSystem"  label="Sistema" required></v-select>
                     </v-col>
-
                 </v-row>
                 
 
@@ -165,34 +164,31 @@
                             <h5>Implantação Etapa 1</h5>
                         </div>
                         <div class="ml-5" style="display: inline-block">
-                            <v-progress-circular :value="progress" :size="55"  :color="color">
+                            <v-progress-circular :value="progress" :size="55"  :color="stage1.color">
                                 {{ progress }}%
                             </v-progress-circular>
                         </div>
-
                     </v-col>
                     <v-col :cols="3"/>
 
-                    
-
                     <v-col :cols="3">
-                        <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                        <v-menu ref="stage1.menu1" v-model="stage1.menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="editedItemdate = parseDate(dateFormatted)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage1.dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate = parseDate(stage1.dateFormatted)" v-on="on" ></v-text-field>
                             </template>
                             
-                            <v-date-picker v-model="editedItemdate" no-title @input="menu1 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage1.editedItemdate" no-title @input="stage1.menu1 = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
                     <v-col :cols="3">
-                        <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                        <v-menu ref="stage1.menu2" v-model="stage1.menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="editedItemdate = parseDate(dateFormatted)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage1.dateFormatted2" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate2 = parseDate(stage1.dateFormatted2)" v-on="on" ></v-text-field>
                             </template>
                             
-                            <v-date-picker v-model="editedItemdate" no-title @input="menu1 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage1.editedItemdate2" no-title @input="stage1.menu2 = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
                 </v-row>
@@ -201,10 +197,9 @@
                     <v-col :cols="6">
                         <v-card class="mx-auto">
                             <v-list class="p-0">
-                                <v-list-item-group v-model="model" multiple>
-                                    <template v-for="(item, i) in items">
+                                <v-list-item-group v-model="stage1.model" multiple>
+                                    <template v-for="(item, i) in stage1.items">
                                         <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
-
                                         <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
                                             <template v-slot:default="{ active }">
                                                 <v-list-item-action>
@@ -217,10 +212,7 @@
                                                     
                                                 </v-list-item-content>
                                             </template>
-
-                                            
                                         </v-list-item>
-                                        
                                     </template>
                                 </v-list-item-group>
                             </v-list>
@@ -229,15 +221,15 @@
 
                     <v-col :cols="5">
                         <div style="height: 20%;">
-                            <v-radio-group class="mt-0" v-model="switch1" row>Todos os itens foram instalados?
+                            <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
                                 <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
                                 <v-radio label="Não" :value="false" ></v-radio> 
                             </v-radio-group>
                         </div>
 
                         <div class="form-group" style="height: 80%">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!switch1" style="height: 100%"></textarea>
-                            <textarea class="form-control" id="exampleFormControlTextarea2" v-if="switch1" disabled style="height: 100%"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
                         </div>
                     </v-col>
 
@@ -255,52 +247,67 @@
 <script>
 import '../../assets/style/style.css'
 import scrypt from "../../assets/js/scrypt";
+import axios from 'axios';
 
 export default {
     data(){
         return {
-        items: [
-            'Verificar servidor',
-            'Instalação terminais',
-            'Instalação certificado digital',
-            'Instalação impressora',
-            'Verificar conexão com matriz',
-        ],
-        model: ['Instalação impressora'],
-        switch1: true,
-        color: 'cyan',
-        sistema: ['Maximus Gestão', 'Maximus Lite'],
-        teste: false,
-        direction: 'bottom',
-        fab: false,
-        fling: false,
-        hover: false,
-        tabs: null,
-        top: false,
-        right: true,
-        bottom: true,
-        left: false,
-        openOnHover: true,
-        transition: 'scale',
-        dateFormatted: this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
-        menu1: false,
-        editedItemdate: '',
+            dataClient:{
+                razaoSocial: 'A M LEITE',
+                CNPJ: '07.897.182/0001-94',
+                endereco: 'Rua 5',
+                sistema: 'Maximus Gestão',
+            },
+            stage1:{
+                items: [
+                    'Verificar servidor',
+                    'Instalação terminais',
+                    'Instalação certificado digital',
+                    'Instalação impressora',
+                    'Verificar conexão com matriz',
+                ],
+                model: ['Instalação impressora'],
+                switch: true,
+                optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
+                color: 'cyan',
+                menu1: false,
+                menu2: false,
+                dateFormatted: this.formatDate('2022-10-01'),
+                dateFormatted2: this.formatDate('2022-10-15'),
+                editedItemdate: '',
+                editedItemdate2: '',
+            },
+            checkImplantation: false,
+            direction: 'bottom',
+            fab: false,
+            fling: false,
+            hover: false,
+            tabs: null,
+            top: false,
+            right: true,
+            bottom: true,
+            left: false,
+            openOnHover: true,
+            transition: 'scale',
+            serverIP: '',
             roleUserLogged: '',
-            search2: '',
-            desserts2: [
-                { ID_LOJA: 0, desc: 'A M LEITE', idCategory: '07.897.182/0001-94', date: '01-10-2022', value: 'Big Farma'},
-                { ID_LOJA: 1, desc: 'A. C. S. GONTIJO OLIVEIRA - EIRELI', idCategory: '21.918.236/0001-81', date: '05-10-2022', value: 'Preço Popular'},
-                { ID_LOJA: 2, desc: 'DAVIFARMA MEDICAMENTOS E PERFUMARIAS E COSMETICOS LTDA', idCategory: '40.930.296/0001-64', date: '01-10-2022', value: 'Davi Farma'},
-                { ID_LOJA: 3, desc: 'STAR FARMA LTDA', idCategory: '34.088.313/0001-65', date: '01-11-2022', value: 'STAR FARMA'},
-            ],
-            headers2: [
-                { text: 'Razão Social', align: 'center', value: 'desc',},
-                { text: 'CNPJ', align: 'center', value: 'idCategory'},
-                { text: 'Rede', align: 'center', value: 'value' , searchable: false},
-                { text: 'Data Inicial', align: 'center', value: 'date' },
-                { text: 'Ações', align: 'center', value: 'action', sortable: false }
-            ],
-            users: [
+            dataTable: {
+                search: '',
+                headers: [
+                    { text: 'Razão Social', align: 'center', value: 'RAZAO_LOJA',},
+                    { text: 'CNPJ', align: 'center', value: 'CNPJ'},
+                    { text: 'Rede', align: 'center', value: 'value' , searchable: false},
+                    { text: 'Data Inicial', align: 'center', value: 'DATAINI_LOJA' },
+                    { text: 'Ações', align: 'center', value: 'action', sortable: false }
+                ],
+                items: [
+                    { ID_LOJA: 0, RAZAO_LOJA: 'A M LEITE', CNPJ: '07.897.182/0001-94', DATAINI_LOJA: '01-10-2022', value: 'Big Farma'},
+                    { ID_LOJA: 1, RAZAO_LOJA: 'A. C. S. GONTIJO OLIVEIRA - EIRELI', CNPJ: '21.918.236/0001-81', DATAINI_LOJA: '05-10-2022', value: 'Preço Popular'},
+                    { ID_LOJA: 2, RAZAO_LOJA: 'DAVIFARMA MEDICAMENTOS E PERFUMARIAS E COSMETICOS LTDA', CNPJ: '40.930.296/0001-64', DATAINI_LOJA: '01-10-2022', value: 'Davi Farma'},
+                    { ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
+                ],
+            },
+            USUARIO: [
                 { ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
                 { ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
                 { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' },
@@ -312,6 +319,7 @@ export default {
         }
     },
     created(){
+        this.serverIP = scrypt.serverIP
         this.myFunction();
     },
     methods: {
@@ -320,6 +328,28 @@ export default {
         }, 
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
+            
+        
+            axios.get(`${this.serverIP}/stores`, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+                }).then(res => {
+                    console.log(res.data)
+                }).catch(err => {
+                    console.log("Erro: " + err)
+                }
+            )
+        
+            this.stage1.editedItemdate = this.parseDate(this.stage1.dateFormatted)
+            this.stage1.editedItemdate2 = this.parseDate(this.stage1.dateFormatted2)
+            
+        },
+        parseDate (date) {
+            if (!date) return null
+
+            const [day, month, year] = date.split('/')
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
         },
         logout(){
            if(confirm("Deseja sair?")){
@@ -332,7 +362,7 @@ export default {
         },
         viewItem(item){
             console.log(item);
-            this.teste = !this.teste;
+            this.checkImplantation = !this.checkImplantation;
         },
         formatDate (date) {
             if (!date) return null
@@ -358,19 +388,22 @@ export default {
     },
     computed: {
       progress () {
-        return this.model.length / this.items.length * 100
+        return this.stage1.model.length / this.stage1.items.length * 100
       },
     },
     watch: {
-        'editedItemdate'(){
-            this.dateFormatted = this.formatDate(this.editedItemdate);
+        'stage1.editedItemdate'(){
+            this.stage1.dateFormatted = this.formatDate(this.stage1.editedItemdate);
+        },
+        'stage1.editedItemdate2'(){
+            this.stage1.dateFormatted2 = this.formatDate(this.stage1.editedItemdate2);
         },
 
         progress () {
-            if(this.model.length / this.items.length * 100 == 100){
-                this.color = 'success'
+            if(this.stage1.model.length / this.stage1.items.length * 100 == 100){
+                this.stage1.color = 'success'
             } else{
-                this.color = 'cyan'
+                this.stage1.color = 'cyan'
             }
         }
     },

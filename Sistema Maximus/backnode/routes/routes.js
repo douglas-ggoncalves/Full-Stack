@@ -4,6 +4,7 @@ var router = express.Router();
 var UserController = require("../controllers/UserController");
 var ReplicController = require("../controllers/ReplicController");
 var WikiController = require("../controllers/WikiController");
+var StoreController = require("../controllers/StoreController");
 var AdminAuth = require("../middleware/AdminAuth")
 
 router.post('/login', UserController.login);
@@ -26,5 +27,10 @@ router.patch('/post', WikiController.editPost);
 router.delete('/store/:id', ReplicController.delete);
 router.patch('/store', ReplicController.patchStores);
 router.post('/validate', AdminAuth, UserController.validate);
+
+//router.get('/post', WikiController.getPost);
+router.get('/stores', AdminAuth, StoreController.getStores);
+
+
 
 module.exports = router;
