@@ -141,19 +141,21 @@
                     <v-col :cols="10">
                         <h5>Dados do cliente</h5>
                     </v-col>
-                    <v-col :cols="5">
-                        <v-text-field label="Razão Social" v-model="dataClient.razaoSocial" hide-details="auto"></v-text-field>
-                    </v-col>
-                    <v-col :cols="5">
-                        <v-text-field label="CNPJ" v-model="dataClient.CNPJ"></v-text-field> 
-                    </v-col>
 
                     <v-col :cols="5">
-                        <v-text-field label="Endereço" v-model="dataClient.endereco"></v-text-field> 
+                        <v-text-field label="Razão Social" v-model="dataClient.RAZAO_LOJA" hide-details="auto"></v-text-field>
                     </v-col>
                     
                     <v-col :cols="5">
-                        <v-select v-model="dataClient.sistema" :items="stage1.optionsSystem"  label="Sistema" required></v-select>
+                        <v-text-field label="CNPJ" v-model="dataClient.CNPJ_LOJA" counter="18" maxlength="18"></v-text-field> 
+                    </v-col>
+
+                    <v-col :cols="5">
+                        <v-text-field label="Endereço" v-model="dataClient.ENDERECO_LOJA"></v-text-field> 
+                    </v-col>
+                    
+                    <v-col :cols="5">
+                        <v-select v-model="dataClient.SISTEMA_LOJA" :items="stage1.optionsSystem"  label="Sistema" required></v-select>
                     </v-col>
                 </v-row>
                 
@@ -245,6 +247,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import '../../assets/style/style.css'
 import scrypt from "../../assets/js/scrypt";
 import axios from 'axios';
@@ -253,10 +256,10 @@ export default {
     data(){
         return {
             dataClient:{
-                razaoSocial: 'A M LEITE',
-                CNPJ: '07.897.182/0001-94',
-                endereco: 'Rua 5',
-                sistema: 'Maximus Gestão',
+                RAZAO_LOJA: '',
+                CNPJ_LOJA: '',
+                ENDERECO_LOJA: '',
+                SISTEMA_LOJA: '',
             },
             stage1:{
                 items: [
@@ -294,17 +297,18 @@ export default {
             dataTable: {
                 search: '',
                 headers: [
+                    { text: 'Loja', align: 'center', value: 'NOME_LOJA',},
                     { text: 'Razão Social', align: 'center', value: 'RAZAO_LOJA',},
-                    { text: 'CNPJ', align: 'center', value: 'CNPJ'},
+                    { text: 'CNPJ', align: 'center', value: 'CNPJ_LOJA'},
                     { text: 'Rede', align: 'center', value: 'value' , searchable: false},
                     { text: 'Data Inicial', align: 'center', value: 'DATAINI_LOJA' },
                     { text: 'Ações', align: 'center', value: 'action', sortable: false }
                 ],
                 items: [
-                    { ID_LOJA: 0, RAZAO_LOJA: 'A M LEITE', CNPJ: '07.897.182/0001-94', DATAINI_LOJA: '01-10-2022', value: 'Big Farma'},
-                    { ID_LOJA: 1, RAZAO_LOJA: 'A. C. S. GONTIJO OLIVEIRA - EIRELI', CNPJ: '21.918.236/0001-81', DATAINI_LOJA: '05-10-2022', value: 'Preço Popular'},
-                    { ID_LOJA: 2, RAZAO_LOJA: 'DAVIFARMA MEDICAMENTOS E PERFUMARIAS E COSMETICOS LTDA', CNPJ: '40.930.296/0001-64', DATAINI_LOJA: '01-10-2022', value: 'Davi Farma'},
-                    { ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
+                    //{ ID_LOJA: 0, RAZAO_LOJA: 'A M LEITE', CNPJ: '07.897.182/0001-94', DATAINI_LOJA: '01-10-2022', value: 'Big Farma'},
+                    //{ ID_LOJA: 1, RAZAO_LOJA: 'A. C. S. GONTIJO OLIVEIRA - EIRELI', CNPJ: '21.918.236/0001-81', DATAINI_LOJA: '05-10-2022', value: 'Preço Popular'},
+                    //{ ID_LOJA: 2, RAZAO_LOJA: 'DAVIFARMA MEDICAMENTOS E PERFUMARIAS E COSMETICOS LTDA', CNPJ: '40.930.296/0001-64', DATAINI_LOJA: '01-10-2022', value: 'Davi Farma'},
+                    //{ ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
                 ],
             },
             USUARIO: [
@@ -328,14 +332,15 @@ export default {
         }, 
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
-            
         
             axios.get(`${this.serverIP}/stores`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
                 }).then(res => {
-                    console.log(res.data)
+                    for(var y=0; y < res.data.stores.length; y++) {
+                        Vue.set(this.dataTable.items, y, {"NOME_LOJA" : res.data.stores[y].NUMERO_LOJA == "0" ? res.data.stores[y].NOME_REDE + " " + "Integração" : res.data.stores[y].NOME_REDE + ' ' + res.data.stores[y].NUMERO_LOJA, "ID_LOJA" : res.data.stores[y].ID_LOJA, RAZAO_LOJA: res.data.stores[y].RAZAO_LOJA, CNPJ_LOJA: this.transformCNPJ(res.data.stores[y].CNPJ_LOJA), ENDERECO_LOJA: res.data.stores[y].ENDERECO_LOJA, SISTEMA_LOJA: res.data.stores[y].SISTEMA_LOJA == 1 ? "Maximus Gestão" : "Maximus Lite" , DATAINI_LOJA: '01-10-2022', value: res.data.stores[y].NOME_REDE})
+                    }
                 }).catch(err => {
                     console.log("Erro: " + err)
                 }
@@ -362,6 +367,10 @@ export default {
         },
         viewItem(item){
             console.log(item);
+            this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
+            this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
+            this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
+            this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
             this.checkImplantation = !this.checkImplantation;
         },
         formatDate (date) {
@@ -369,6 +378,13 @@ export default {
 
             const [year, month, day] = date.split('-')
             return `${day}/${month}/${year}`
+        },
+        transformCNPJ(value){
+            if(value){
+                return value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5")
+            } else{
+                return value
+            }
         }
     },
     filters: {
@@ -384,7 +400,8 @@ export default {
         },
         toDate(value){
             return value.substr(0, 10)
-        }
+        },
+        
     },
     computed: {
       progress () {
@@ -397,6 +414,30 @@ export default {
         },
         'stage1.editedItemdate2'(){
             this.stage1.dateFormatted2 = this.formatDate(this.stage1.editedItemdate2);
+        },
+        'dataClient.CNPJ_LOJA'(){
+            
+            if(this.dataClient.CNPJ_LOJA.length == 3) {
+                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})/, "$1.")
+            }
+            else if(this.dataClient.CNPJ_LOJA.length == 7){
+                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})/, "$1.$2.")
+            }
+            else if(this.dataClient.CNPJ_LOJA.length == 10){
+                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})/, "$1.$2.$3/")
+            }
+            else if(this.dataClient.CNPJ_LOJA.length == 16){
+                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})(\d{4})/, "$1.$2.$3/$4-")
+            }
+            else if(this.dataClient.CNPJ_LOJA.length > 18){
+                console.log(this.dataClient.CNPJ_LOJA.substr(0, 18 ))
+                //this.dataClient.CNPJ_LOJA.substr(0, 18 )
+                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.substr(0, 18 ).replace(/\D/g, '').replace(/^(\d{2})(\d{3})?(\d{3})?(\d{4})?(\d{2})?/, "$1.$2.$3/$4-$5")
+                console.log(this.dataClient.CNPJ_LOJA)
+
+            }
+            //this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})?(\d{3})?(\d{4})?(\d{2})?/, "$1.$2.$3/$4-$5")
+            
         },
 
         progress () {
