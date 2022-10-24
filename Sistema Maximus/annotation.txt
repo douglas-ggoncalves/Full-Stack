@@ -20,3 +20,48 @@ SET IDENTITY_INSERT MODULO ON
 insert into modulo (ID_MODULO, DESC_MODULO) values (1, 'Maximus Lite'), (2, 'Maximus Administrativo'), (3, 'Maximus Balcão'), (4, 'Maximus Caixa')
 
 create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255), SLUG nvarchar(370), DESCRICAO nvarchar(MAX), ATIVO int NOT NULL, CODMODULO int NOT NULL, primary key (ID_POST), foreign key (CODMODULO) references MODULO (ID_MODULO))
+
+	IF OBJECT_ID('ETAPAS_IMPLANTACAO', 'U') IS NULL
+		BEGIN
+			create table ETAPAS_IMPLANTACAO (
+				COD_ETAPA int not null IDENTITY(1,1) primary key,
+				DESC_ETAPA varchar(80) not null
+			)
+		END
+
+		IF OBJECT_ID('ITENS_IMPLANTACAO', 'U') IS NULL
+		BEGIN
+			create table ITENS_IMPLANTACAO (
+				COD_ITEM int not null IDENTITY(1,1) primary key,
+				DESC_ITEM varchar(80) not null,
+				ITEM_CODETAPA int not null,
+				foreign key (ITEM_CODETAPA) references ETAPAS_IMPLANTACAO(COD_ETAPA)
+			)
+		END
+
+	IF OBJECT_ID('IMPLANTACAO', 'U') IS NULL
+		BEGIN
+			create table IMPLANTACAO (
+				IMP_CODIMP int not null,
+				IMP_CODLOJA int not null,
+				IMP_STATUSOK int not null default(0),
+				IMP_CODITEM int not null,
+				ETAPA_CODETAPA int not null,
+				ITEM_CODETAPA int not null,
+				foreign key (ETAPA_CODETAPA) references ETAPAS_IMPLANTACAO(COD_ETAPA),
+				foreign key (IMP_CODITEM) references ITENS_IMPLANTACAO(COD_ITEM)
+			)
+		END
+
+		
+	IF OBJECT_ID('DATAS_IMPLANTACAO', 'U') IS NULL
+		BEGIN
+			create table DATAS_IMPLANTACAO (
+				CODIMP_IMP int not null,
+				DATASIMP_CODLOJA int not null,
+				DATASIMP_CODETAPA int not null,
+				DATASIMP_DATAINICIAL datetime,
+				DATASIMP_DATAFINAL datetime,
+				DATAIMP_CODIGO varchar(50) not null
+			)
+		END

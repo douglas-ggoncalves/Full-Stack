@@ -1,11 +1,13 @@
 var express = require("express")
-var app = express();
 var router = express.Router();
 var UserController = require("../controllers/UserController");
 var ReplicController = require("../controllers/ReplicController");
 var WikiController = require("../controllers/WikiController");
 var StoreController = require("../controllers/StoreController");
+var ItemController = require("../controllers/ItemController");
+var StageController = require("../controllers/StageController");
 var AdminAuth = require("../middleware/AdminAuth")
+var Implantation = require("../controllers/ImplantationController")
 
 router.post('/login', UserController.login);
 router.get('/user', AdminAuth, UserController.getUsers);
@@ -27,9 +29,13 @@ router.patch('/post', WikiController.editPost);
 router.delete('/store/:id', ReplicController.delete);
 router.patch('/store', ReplicController.patchStores);
 router.post('/validate', AdminAuth, UserController.validate);
-
 //router.get('/post', WikiController.getPost);
 router.get('/stores', AdminAuth, StoreController.getStores);
+
+router.post('/stage', StageController.create);
+router.get('/stages', StageController.getStages);
+router.post('/items', ItemController.create);
+router.post('/implantation', Implantation.create);
 
 
 

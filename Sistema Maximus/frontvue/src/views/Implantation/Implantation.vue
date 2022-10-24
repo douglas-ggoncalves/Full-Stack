@@ -101,6 +101,8 @@
                                     <span>{{ item.value }}</span>
                                 </template>
 
+                                
+
                                 <template v-slot:[`item.DATAINI_LOJA`]="{ item }">
                                     <span>{{ new Date(item.DATAINI_LOJA.replace("-",',')).toLocaleString() | toDate }}</span>
                                 </template>
@@ -234,16 +236,10 @@
                             <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
                         </div>
                     </v-col>
-
                 </v-row>
-
             </v-container>
-
         </div>
-         
     </div>
-
-    
 </template>
 
 <script>
@@ -300,7 +296,7 @@ export default {
                     { text: 'Loja', align: 'center', value: 'NOME_LOJA',},
                     { text: 'Razão Social', align: 'center', value: 'RAZAO_LOJA',},
                     { text: 'CNPJ', align: 'center', value: 'CNPJ_LOJA'},
-                    { text: 'Rede', align: 'center', value: 'value' , searchable: false},
+                    { text: 'Sistema', align: 'center', value: 'SISTEMA_LOJA' , searchable: false},
                     { text: 'Data Inicial', align: 'center', value: 'DATAINI_LOJA' },
                     { text: 'Ações', align: 'center', value: 'action', sortable: false }
                 ],
