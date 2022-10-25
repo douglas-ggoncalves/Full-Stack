@@ -27,6 +27,21 @@ class ImplantationController{
             return;
         }
     }
+    async getImplants(req, res){
+        var implants = await Implantation.findImplants();
+        
+        if(implants != undefined) 
+        {
+            res.status(200);
+            res.send({implants: implants})
+            return;
+        } else{
+            res.status(406);
+            res.send({err: 'Não foi possível consultar as informações de implementação'});
+            return;
+        }
+
+    }
 }
 
 module.exports = new ImplantationController();

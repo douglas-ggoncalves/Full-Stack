@@ -101,8 +101,6 @@
                                     <span>{{ item.value }}</span>
                                 </template>
 
-                                
-
                                 <template v-slot:[`item.DATAINI_LOJA`]="{ item }">
                                     <span>{{ new Date(item.DATAINI_LOJA.replace("-",',')).toLocaleString() | toDate }}</span>
                                 </template>
@@ -110,7 +108,6 @@
                                 <template v-slot:[`item.action`]="{ item }" class="text-end"> 
                                     <v-btn class="ml-auto" color="success" @click="viewItem(item)">Selecionar</v-btn>
                                 </template>
-
                             </v-data-table>
                         </v-card>
                     </v-col>
@@ -122,14 +119,14 @@
                     <v-col class="text-left">
                         <v-tooltip right>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn @click="viewItem('item')" outlined v-bind="attrs" v-on="on" tile color="grey darken-3 text-white">
+                                <v-btn @click="checkImplantation = false" outlined v-bind="attrs" v-on="on" tile color="grey darken-3 text-white">
                                     <v-icon left>
                                         mdi-arrow-left-thick
                                     </v-icon>
                                     Voltar
                                 </v-btn>
                             </template>
-                                <span>Voltar para implantações</span>
+                            <span>Voltar para implantações</span>
                         </v-tooltip>
                     </v-col>
                 </v-row>
@@ -161,12 +158,82 @@
                     </v-col>
                 </v-row>
                 
+                <v-row class="d-flex justify-start align-center text-left" v-for="item in etapas" :key="item.COD_ETAPA">
+                    <v-col :cols="3">
+                        <h5>Implantação {{ item.DESC_ETAPA }}</h5>
+                        <div class="ml-5" style="display: inline-block">
+                            <v-progress-circular :value="progress" :size="55" :color="stage1.color">
+                                {{ progress }}%
+                            </v-progress-circular>
+                        </div>
+                    </v-col>
+                    <v-col :cols="3"/>
 
+                    <v-col :cols="3">
+                        <v-menu ref="stage1.menu1" v-model="stage1.menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage1.dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate = parseDate(stage1.dateFormatted)" v-on="on" ></v-text-field>
+                            </template>
+                            
+                            <v-date-picker v-model="stage1.editedItemdate" no-title @input="stage1.menu1 = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col :cols="3">
+                        <v-menu ref="stage1.menu2" v-model="stage1.menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage1.dateFormatted2" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate2 = parseDate(stage1.dateFormatted2)" v-on="on" ></v-text-field>
+                            </template>
+                            
+                            <v-date-picker v-model="stage1.editedItemdate2" no-title @input="stage1.menu2 = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+
+                    <v-row>
+                    <v-col :cols="6">
+                        <v-card class="mx-auto">
+                            <v-list class="p-0">
+                                <v-list-item-group v-model="stage1.model" multiple>
+                                    <template v-for="(item, i) in stage1.items">
+                                        <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
+                                        <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                            <template v-slot:default="{ active }">
+                                                <v-list-item-action>
+                                                    <v-checkbox :input-value="active" color="white"></v-checkbox>
+                                                </v-list-item-action>
+
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-text="item"></v-list-item-title>
+                                                </v-list-item-content>
+                                            </template>
+                                        </v-list-item>
+                                    </template>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-card>
+                    </v-col>
+
+                    <v-col :cols="5">
+                        <div style="height: 20%;">
+                            <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
+                                <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
+                                <v-radio label="Não" :value="false" ></v-radio> 
+                            </v-radio-group>
+                        </div>
+
+                        <div class="form-group" style="height: 80%">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
+                        </div>
+                    </v-col>
+                </v-row>
+                </v-row>
+                
+                
                 <v-row class="d-flex justify-start align-center text-left">
                     <v-col :cols="3">
-                        <div style="display: inline-block">
-                            <h5>Implantação Etapa 1</h5>
-                        </div>
+                        <h5>Implantação Etapa 1</h5>
                         <div class="ml-5" style="display: inline-block">
                             <v-progress-circular :value="progress" :size="55"  :color="stage1.color">
                                 {{ progress }}%
@@ -208,12 +275,10 @@
                                             <template v-slot:default="{ active }">
                                                 <v-list-item-action>
                                                     <v-checkbox :input-value="active" color="white"></v-checkbox>
-                                                    
                                                 </v-list-item-action>
 
                                                 <v-list-item-content>
                                                     <v-list-item-title v-text="item"></v-list-item-title>
-                                                    
                                                 </v-list-item-content>
                                             </template>
                                         </v-list-item>
@@ -251,6 +316,8 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            implants: [],
+            etapas:[{COD_ETAPA: 1, DESC_ETAPA: "Etapa 1"}, {COD_ETAPA: 2, DESC_ETAPA: "Etapa 2"}, {COD_ETAPA: 3, DESC_ETAPA: "Etapa 3"}, {COD_ETAPA: 4, DESC_ETAPA: "Etapa 4"}],
             dataClient:{
                 RAZAO_LOJA: '',
                 CNPJ_LOJA: '',
@@ -276,7 +343,7 @@ export default {
                 editedItemdate: '',
                 editedItemdate2: '',
             },
-            checkImplantation: false,
+            checkImplantation: true,
             direction: 'bottom',
             fab: false,
             fling: false,
@@ -323,9 +390,6 @@ export default {
         this.myFunction();
     },
     methods: {
-        clique() {
-            scrypt.clique(this);
-        }, 
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
         
@@ -341,10 +405,17 @@ export default {
                     console.log("Erro: " + err)
                 }
             )
+
+            axios.get(`${this.serverIP}/implants`, {
+                }).then(res => {
+                    this.implants = res.data.implants
+                }).catch(err => {
+                    console.log("Erro: " + err.response.data.err)
+                }
+            )
         
             this.stage1.editedItemdate = this.parseDate(this.stage1.dateFormatted)
             this.stage1.editedItemdate2 = this.parseDate(this.stage1.dateFormatted2)
-            
         },
         parseDate (date) {
             if (!date) return null
@@ -362,12 +433,18 @@ export default {
            }
         },
         viewItem(item){
-            console.log(item);
-            this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
-            this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
-            this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
-            this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
-            this.checkImplantation = !this.checkImplantation;
+            console.log('item ' + item);
+            var aux = this.implants.find(element => element.ID_LOJA == item.ID_LOJA)
+            if(aux != undefined){
+                this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
+                this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
+                this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
+                this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
+                this.checkImplantation = !this.checkImplantation;
+            } else{
+                alert("Elemento inválido, deseja criar uma implantação para esta loja?")
+            }
+            
         },
         formatDate (date) {
             if (!date) return null
@@ -381,7 +458,10 @@ export default {
             } else{
                 return value
             }
-        }
+        },
+        clique() {
+            scrypt.clique(this);
+        }, 
     },
     filters: {
         reversedMessage(value) {

@@ -36,6 +36,7 @@ router.post('/stage', StageController.create);
 router.get('/stages', StageController.getStages);
 router.post('/items', ItemController.create);
 router.post('/implantation', Implantation.create);
+router.get('/implants', Implantation.getImplants);
 
 
 

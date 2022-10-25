@@ -1,4 +1,3 @@
-const { json } = require("body-parser");
 var knex = require("../database/database")
 
 class Implantation{
@@ -41,6 +40,24 @@ class Implantation{
         } catch(err) {
             return undefined;
         }
+    }
+
+    async findImplants(){
+        try {
+            var result = await knex.raw(`
+                select IMP_CODIMP, loja.RAZAO_LOJA, loja.CNPJ_LOJA, loja.ID_LOJA, loja.ENDERECO_LOJA, loja.SISTEMA_LOJA, etapas.COD_ETAPA, etapas.DESC_ETAPA, itens.COD_ITEM, itens.DESC_ITEM, implantacao.IMP_STATUSOK , datas.DATASIMP_DATAINICIAL, datas.DATASIMP_DATAFINAL from IMPLANTACAO implantacao
+                inner join loja loja on loja.ID_LOJA = implantacao.IMP_CODLOJA
+                inner join ETAPAS_IMPLANTACAO etapas on etapas.COD_ETAPA = implantacao.ETAPA_CODETAPA
+                inner join ITENS_IMPLANTACAO itens on implantacao.IMP_CODITEM = itens.COD_ITEM
+                inner join DATAS_IMPLANTACAO datas on datas.DATAIMP_CODIGO = cast(implantacao.IMP_CODIMP as varchar) + cast(loja.ID_LOJA as varchar) + cast(etapas.COD_ETAPA as varchar)
+            `)
+            console.log("result " + JSON.stringify(result))
+            return result;
+        } catch(err) {
+            return undefined;
+        }
+        
+
     }
 }
 
