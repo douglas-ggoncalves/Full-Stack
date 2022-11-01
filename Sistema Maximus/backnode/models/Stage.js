@@ -26,7 +26,10 @@ class Stage{
 
     async findAll() {
         try {
-            var result = await knex.select().from("ETAPAS_IMPLANTACAO");
+            var result = await knex.raw(`
+                select distinct etapas.COD_ETAPA, etapas.DESC_ETAPA from ETAPAS_IMPLANTACAO etapas
+                inner join ITENS_IMPLANTACAO itens on etapas.COD_ETAPA = itens.ITEM_CODETAPA
+            `)
             return result;
         } catch(err) {
             return undefined;

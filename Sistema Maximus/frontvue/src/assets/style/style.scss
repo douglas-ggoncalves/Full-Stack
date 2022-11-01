@@ -4,6 +4,8 @@ $greenLight: rgb(61, 176, 87);
 $greenDark: rgb(25, 135, 84);
 $redLight: rgb(223, 73, 87);
 $redDark: rgb(220, 53, 69);
+$black: rgba(0,0,0,0.75);
+$boxShadow: 1px 2px 7px 0px rgba(0,0,0,0.75);
 
 a{
     color: white !important;
@@ -21,6 +23,44 @@ div.ql-editor{
     width: 100%;
     align-items: stretch;
     text-align: center;
+
+    #content{
+        #implantation{
+            .stages{
+                padding: 0 .5rem 1.5rem 0.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: left;
+                margin-top: 60px;
+                -webkit-box-shadow: $boxShadow;
+                -moz-box-shadow: $boxShadow;
+                box-shadow: $boxShadow;
+                
+                >div.myColumn{
+                    display: flex; 
+                    align-items:center;
+
+                    h5{
+                        display: inline; 
+                        margin-right: .7rem; 
+                        margin-bottom: 0;
+                    }
+
+                    >div{
+                        display: inline-block;
+                    }
+
+                }
+
+                div.separate{
+                    border: 1px solid rgba(0,0,0,0.25); 
+                    height: 1px;
+                    margin: 0 auto 2.5rem auto;
+                }
+            }
+        }
+    }
 }
 
 #sidebar {
@@ -209,6 +249,15 @@ button {
             color: black !important;
         }
       }
+}
+
+#testeeee{
+    
+
+    ::-webkit-scrollbar-thumb{
+        background: red;
+        border-radius: 20px;
+    }
 }
 
 .toast{

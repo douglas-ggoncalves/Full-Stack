@@ -18,6 +18,48 @@ div.ql-editor ol, div.ql-editor ul {
   text-align: center;
 }
 
+.wrapper #content #implantation .stages {
+  padding: 0 .5rem 1.5rem 0.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  text-align: left;
+  margin-top: 60px;
+  -webkit-box-shadow: 1px 2px 7px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 2px 7px 0px rgba(0, 0, 0, 0.75);
+}
+
+.wrapper #content #implantation .stages > div.myColumn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.wrapper #content #implantation .stages > div.myColumn h5 {
+  display: inline;
+  margin-right: .7rem;
+  margin-bottom: 0;
+}
+
+.wrapper #content #implantation .stages > div.myColumn > div {
+  display: inline-block;
+}
+
+.wrapper #content #implantation .stages div.separate {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  height: 1px;
+  margin: 0 auto 2.5rem auto;
+}
+
 #sidebar {
   min-width: 250px;
   max-width: 250px;
@@ -208,6 +250,11 @@ button {
 
 #divMainReplic a.btn.btn-outline-light:hover {
   color: black !important;
+}
+
+#testeeee ::-webkit-scrollbar-thumb {
+  background: red;
+  border-radius: 20px;
 }
 
 .toast {

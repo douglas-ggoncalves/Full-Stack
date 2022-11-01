@@ -114,7 +114,7 @@
                 </v-row>
             </v-container>
 
-            <v-container fluid v-show="checkImplantation">
+            <v-container id="implantation" fluid v-show="checkImplantation">
                 <v-row>
                     <v-col class="text-left">
                         <v-tooltip right>
@@ -154,83 +154,294 @@
                     </v-col>
                     
                     <v-col :cols="5">
-                        <v-select v-model="dataClient.SISTEMA_LOJA" :items="stage1.optionsSystem"  label="Sistema" required></v-select>
+                        <v-select v-model="dataClient.SISTEMA_LOJA" :items="optionsSystem"  label="Sistema" required></v-select>
                     </v-col>
                 </v-row>
                 
-                <v-row class="d-flex justify-start align-center text-left" v-for="item in etapas" :key="item.COD_ETAPA">
-                    <v-col :cols="3">
-                        <h5>Implantação {{ item.DESC_ETAPA }}</h5>
-                        <div class="ml-5" style="display: inline-block">
-                            <v-progress-circular :value="progress" :size="55" :color="stage1.color">
-                                {{ progress }}%
+                <v-row class="stages">
+                    <v-col class="myColumn" :cols="3">
+                        <h5>Implantação Etapa 1</h5>
+                        <div>
+                            <v-progress-circular :value="progressStage1" :size="55" :color="stage1.color">
+                                {{ progressStage1 }}%
                             </v-progress-circular>
                         </div>
                     </v-col>
-                    <v-col :cols="3"/>
 
-                    <v-col :cols="3">
-                        <v-menu ref="stage1.menu1" v-model="stage1.menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                    <v-col :cols="5">
+                        <v-combobox v-model="USUARIO_SELECT" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                            <template v-slot:selection="data">
+                                <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
+                                    <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
+                                        <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
+                                    </v-avatar>
+                                    <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                    {{ data.item.LOGIN_USUARIO | getFirstName }}
+                                </v-chip>
+                            </template>
+                        </v-combobox>
+                    </v-col>
+                  
+
+                    <v-col :cols="2">
+                        <v-menu ref="stage1.dateInit" v-model="stage1.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="stage1.dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate = parseDate(stage1.dateFormatted)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage1.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemDateIni = parseDate(stage1.iniDateFormatted)" v-on="on" ></v-text-field>
                             </template>
                             
-                            <v-date-picker v-model="stage1.editedItemdate" no-title @input="stage1.menu1 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage1.editedItemDateIni" no-title @input="stage1.dateInit = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col :cols="2">
+                        <v-menu ref="stage1.dateFinal" v-model="stage1.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage1.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedDateFinal = parseDate(stage1.dateFormattedFinal)" v-on="on" ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="stage1.editedDateFinal" no-title @input="stage1.dateFinal = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <div class="separate"/>
+
+                    <v-row>
+                        <v-col :cols="6">
+                            <v-card class="mx-auto">
+                                <v-list class="p-0">
+                                    <v-list-item-group v-model="stage1.model" multiple>
+                                        <template v-for="(item, i) in stage1.items">
+                                            <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
+                                            <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                                <template v-slot:default="{ active }">
+                                                    <v-list-item-action>
+                                                        <v-checkbox :input-value="active" color="white"></v-checkbox>
+                                                    </v-list-item-action>
+
+                                                    <v-list-item-content>
+                                                        <v-list-item-title v-text="item"></v-list-item-title>
+                                                        <!--<v-list-item-subtitle>{{ USUARIO_SELECT }} </v-list-item-subtitle>-->
+                                                        <v-list-item-subtitle>
+                                                            <v-menu bottom origin="center center" transition="scale-transition">
+                                                                <template v-slot:activator="{ on, attrs }">
+                                                                    <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                                                                    Scale Transition
+                                                                    </v-btn>
+                                                                </template>
+
+                                                                <v-list>
+                                                                    <v-list-item v-for="(item, i) in items" :key="i">
+                                                                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                                                                    </v-list-item>
+                                                                </v-list>
+                                                            </v-menu>
+                                                        </v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </template>
+                                            </v-list-item>
+                                        </template>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+
+                        <v-col :cols="6">
+                            <div class="mb-1" style="height: 20%;">
+                                <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
+                                    <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
+                                    <v-radio label="Não" :value="false" ></v-radio> 
+                                </v-radio-group>
+                            </div>
+
+                            <div class="form-group" style="height: 80%">
+                                <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
+                                <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-row>
+
+                <v-row class="stages" v-if="stage2.items.length > 0">
+                    <v-col class="myColumn" :cols="6">
+                        <h5>Implantação Etapa 2</h5>
+                        <div>
+                            <v-progress-circular :value="progressStage2" :size="55" :color="stage2.color">
+                                {{ progressStage2 }}%
+                            </v-progress-circular>
+                        </div>
+                    </v-col>
+
+                    <v-col :cols="3">
+                        <v-menu ref="stage2.dateInit" v-model="stage2.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage2.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage2.editedItemDateIni = parseDate(stage2.iniDateFormatted)" v-on="on" ></v-text-field>
+                            </template>
+                            
+                            <v-date-picker v-model="stage2.editedItemDateIni" no-title @input="stage2.dateInit = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
                     <v-col :cols="3">
-                        <v-menu ref="stage1.menu2" v-model="stage1.menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                        <v-menu ref="stage2.dateFinal" v-model="stage2.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="stage1.dateFormatted2" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate2 = parseDate(stage1.dateFormatted2)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage2.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage2.editedDateFinal = parseDate(stage2.dateFormattedFinal)" v-on="on" ></v-text-field>
                             </template>
-                            
-                            <v-date-picker v-model="stage1.editedItemdate2" no-title @input="stage1.menu2 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage2.editedDateFinal" no-title @input="stage2.dateFinal = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
 
                     <v-row>
-                    <v-col :cols="6">
-                        <v-card class="mx-auto">
-                            <v-list class="p-0">
-                                <v-list-item-group v-model="stage1.model" multiple>
-                                    <template v-for="(item, i) in stage1.items">
-                                        <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
-                                        <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
-                                            <template v-slot:default="{ active }">
-                                                <v-list-item-action>
-                                                    <v-checkbox :input-value="active" color="white"></v-checkbox>
-                                                </v-list-item-action>
+                        <v-col :cols="6">
+                            <v-card class="mx-auto">
+                                <v-list class="p-0">
+                                    <v-list-item-group v-model="stage2.model" multiple>
+                                        <template v-for="(item, i) in stage2.items">
+                                            <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
+                                            <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                                <template v-slot:default="{ active }">
+                                                    <v-list-item-action>
+                                                        <v-checkbox :input-value="active" color="white"></v-checkbox>
+                                                    </v-list-item-action>
 
-                                                <v-list-item-content>
-                                                    <v-list-item-title v-text="item"></v-list-item-title>
-                                                </v-list-item-content>
-                                            </template>
-                                        </v-list-item>
-                                    </template>
-                                </v-list-item-group>
-                            </v-list>
-                        </v-card>
+                                                    <v-list-item-content>
+                                                        <v-list-item-title v-text="item"></v-list-item-title>
+                                                    </v-list-item-content>
+                                                </template>
+                                            </v-list-item>
+                                        </template>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+
+                        <v-col :cols="5">
+                            <div style="height: 20%;">
+                                <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
+                                    <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
+                                    <v-radio label="Não" :value="false" ></v-radio> 
+                                </v-radio-group>
+                            </div>
+
+                            <div class="form-group" style="height: 80%">
+                                <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
+                                <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-row>
+
+                <v-row class="stages">
+                    <v-col class="myColumn" :cols="6">
+                        <h5>Implantação Etapa 3</h5>
+                        <div>
+                            <v-progress-circular :value="progressStage3" :size="55" :color="stage3.color">
+                                {{ progressStage3 }}%
+                            </v-progress-circular>
+                        </div>
                     </v-col>
 
-                    <v-col :cols="5">
-                        <div style="height: 20%;">
-                            <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
-                                <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
-                                <v-radio label="Não" :value="false" ></v-radio> 
-                            </v-radio-group>
-                        </div>
+                    <v-col :cols="3">
+                        <v-menu ref="stage3.dateInit" v-model="stage3.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage3.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage3.editedItemDateIni = parseDate(stage3.iniDateFormatted)" v-on="on" ></v-text-field>
+                            </template>
+                            
+                            <v-date-picker v-model="stage3.editedItemDateIni" no-title @input="stage3.dateInit = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col :cols="3">
+                        <v-menu ref="stage3.dateFinal" v-model="stage3.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage3.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage3.editedDateFinal = parseDate(stage3.dateFormattedFinal)" v-on="on" ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="stage3.editedDateFinal" no-title @input="stage3.dateFinal = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
 
-                        <div class="form-group" style="height: 80%">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
-                            <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
+                    <v-row>
+                        <v-col :cols="6">
+                            <v-card class="mx-auto">
+                                <v-list class="p-0">
+                                    <v-list-item-group v-model="stage3.model" multiple>
+                                        <template v-for="(item, i) in stage3.items">
+                                            <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
+                                            <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                                <template v-slot:default="{ active }">
+                                                    <v-list-item-action>
+                                                        <v-checkbox :input-value="active" color="white"></v-checkbox>
+                                                    </v-list-item-action>
+
+                                                    <v-list-item-content>
+                                                        <v-list-item-title v-text="item"></v-list-item-title>
+                                                    </v-list-item-content>
+                                                </template>
+                                            </v-list-item>
+                                        </template>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-row>
+
+                <v-row class="stages">
+                    <v-col class="myColumn" :cols="6">
+                        <h5>Implantação Etapa 4</h5>
+                        <div>
+                            <v-progress-circular :value="progressStage4" :size="55" :color="stage4.color">
+                                {{ progressStage4 }}%
+                            </v-progress-circular>
                         </div>
                     </v-col>
-                </v-row>
+
+                    <v-col :cols="3">
+                        <v-menu ref="stage4.dateInit" v-model="stage4.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage4.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage4.editedItemDateIni = parseDate(stage4.iniDateFormatted)" v-on="on" ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="stage4.editedItemDateIni" no-title @input="stage4.dateInit = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col :cols="3">
+                        <v-menu ref="stage4.dateFinal" v-model="stage4.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-text-field v-model="stage4.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage4.editedDateFinal = parseDate(stage4.dateFormattedFinal)" v-on="on" ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="stage4.editedDateFinal" no-title @input="stage4.dateFinal = false" locale="pt"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+
+                    <v-row>
+                        <v-col :cols="6">
+                            <v-card class="mx-auto">
+                                <v-list class="p-0">
+                                    <v-list-item-group v-model="stage4.model" multiple>
+                                        <template v-for="(item, i) in stage4.items">
+                                            <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
+                                            <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                                <template v-slot:default="{ active }">
+                                                    <v-list-item-action>
+                                                        <v-checkbox :input-value="active" color="white"></v-checkbox>
+                                                    </v-list-item-action>
+
+                                                    <v-list-item-content>
+                                                        <v-list-item-title v-text="item"></v-list-item-title>
+                                                    </v-list-item-content>
+                                                </template>
+                                            </v-list-item>
+                                        </template>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card>
+                        </v-col>
+                    </v-row>
                 </v-row>
                 
-                
+                <!-- 
                 <v-row class="d-flex justify-start align-center text-left">
                     <v-col :cols="3">
                         <h5>Implantação Etapa 1</h5>
@@ -243,23 +454,22 @@
                     <v-col :cols="3"/>
 
                     <v-col :cols="3">
-                        <v-menu ref="stage1.menu1" v-model="stage1.menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                        <v-menu ref="stage1.dateInit" v-model="stage1.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="stage1.dateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate = parseDate(stage1.dateFormatted)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage1.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemDateIni = parseDate(stage1.iniDateFormatted)" v-on="on" ></v-text-field>
                             </template>
                             
-                            <v-date-picker v-model="stage1.editedItemdate" no-title @input="stage1.menu1 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage1.editedItemDateIni" no-title @input="stage1.dateInit = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
                     <v-col :cols="3">
-                        <v-menu ref="stage1.menu2" v-model="stage1.menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                        <v-menu ref="stage1.dateFinal" v-model="stage1.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="stage1.dateFormatted2" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
-                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemdate2 = parseDate(stage1.dateFormatted2)" v-on="on" ></v-text-field>
+                                <v-text-field v-model="stage1.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
+                                hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedDateFinal = parseDate(stage1.dateFormattedFinal)" v-on="on" ></v-text-field>
                             </template>
-                            
-                            <v-date-picker v-model="stage1.editedItemdate2" no-title @input="stage1.menu2 = false" locale="pt"></v-date-picker>
+                            <v-date-picker v-model="stage1.editedDateFinal" no-title @input="stage1.dateFinal = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
                 </v-row>
@@ -302,6 +512,8 @@
                         </div>
                     </v-col>
                 </v-row>
+
+                -->
             </v-container>
         </div>
     </div>
@@ -316,32 +528,67 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            implants: [],
-            etapas:[{COD_ETAPA: 1, DESC_ETAPA: "Etapa 1"}, {COD_ETAPA: 2, DESC_ETAPA: "Etapa 2"}, {COD_ETAPA: 3, DESC_ETAPA: "Etapa 3"}, {COD_ETAPA: 4, DESC_ETAPA: "Etapa 4"}],
-            dataClient:{
+            items: [{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me 2'}],
+            implantsAll: [],
+            optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
+            id_Store: 1,
+            stages: [/* {COD_ETAPA: 1, DESC_ETAPA: "Etapa 1"}, {COD_ETAPA: 2, DESC_ETAPA: "Etapa 2"}, {COD_ETAPA: 3, DESC_ETAPA: "Etapa 3"}, {COD_ETAPA: 4, DESC_ETAPA: "Etapa 4"} */],
+            dataClient: {
                 RAZAO_LOJA: '',
                 CNPJ_LOJA: '',
                 ENDERECO_LOJA: '',
                 SISTEMA_LOJA: '',
             },
-            stage1:{
+            stage1: {
                 items: [
-                    'Verificar servidor',
+                    /*'Verificar servidor',
                     'Instalação terminais',
                     'Instalação certificado digital',
                     'Instalação impressora',
-                    'Verificar conexão com matriz',
+                    'Verificar conexão com matriz',*/
                 ],
-                model: ['Instalação impressora'],
+                model: [/*'Instalação impressora'*/],
                 switch: true,
-                optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
                 color: 'cyan',
-                menu1: false,
-                menu2: false,
-                dateFormatted: this.formatDate('2022-10-01'),
-                dateFormatted2: this.formatDate('2022-10-15'),
-                editedItemdate: '',
-                editedItemdate2: '',
+                dateInit: false,
+                dateFinal: false,
+                iniDateFormatted: '',
+                dateFormattedFinal: '',
+                editedItemDateIni: '',
+                editedDateFinal: '',
+            },
+            stage2: {
+                items: [],
+                model: [],
+                color: 'cyan',
+                dateInit: false,
+                dateFinal: false,
+                iniDateFormatted: '',
+                dateFormattedFinal: '',
+                editedItemDateIni: '',
+                editedDateFinal: '',
+            },
+            stage3: {
+                items: [],
+                model: [],
+                color: 'cyan',
+                dateInit: false,
+                dateFinal: false,
+                iniDateFormatted: '',
+                dateFormattedFinal: '',
+                editedItemDateIni: '',
+                editedDateFinal: '',
+            },
+            stage4: {
+                items: [],
+                model: [],
+                color: 'cyan',
+                dateInit: false,
+                dateFinal: false,
+                iniDateFormatted: '',
+                dateFormattedFinal: '',
+                editedItemDateIni: '',
+                editedDateFinal: '',
             },
             checkImplantation: true,
             direction: 'bottom',
@@ -374,6 +621,7 @@ export default {
                     //{ ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
                 ],
             },
+            USUARIO_SELECT:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }],
             USUARIO: [
                 { ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
                 { ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
@@ -406,16 +654,89 @@ export default {
                 }
             )
 
+            axios.get(`${this.serverIP}/stages`, {
+            }).then(res => {
+                this.stages = res.data
+
+            }).catch(err => {
+                console.log(err);
+            })
+
             axios.get(`${this.serverIP}/implants`, {
-                }).then(res => {
-                    this.implants = res.data.implants
+            }).then(res => {
+                this.implantsAll = res.data.implants
+                this.stages.forEach(stage => {
+                    console.log("stage " + JSON.stringify(stage.COD_ETAPA))
+                })
+                this.implantsAll.filter(store => store.ID_LOJA == 1).forEach(element => {
+                    if(element.COD_ETAPA == 1){
+                        this.stage1.items.push(element.DESC_ITEM)
+                        if(element.IMP_STATUSOK == 1){
+                            this.stage1.model.push(element.DESC_ITEM)
+                        }
+                    }
+                    else if(element.COD_ETAPA == 2){
+                        this.stage2.items.push(element.DESC_ITEM)
+                        if(element.IMP_STATUSOK == 1){
+                            this.stage2.model.push(element.DESC_ITEM)
+                        }
+                    }
+                    
+                    else if(element.COD_ETAPA == 3){
+                        this.stage3.items.push(element.DESC_ITEM)
+                        if(element.IMP_STATUSOK == 1){
+                            this.stage3.model.push(element.DESC_ITEM)
+                        }
+                    }
+                    
+                    else if(element.COD_ETAPA == 4){
+                        this.stage4.items.push(element.DESC_ITEM)
+                        if(element.IMP_STATUSOK == 1){
+                            this.stage4.model.push(element.DESC_ITEM)
+                        }
+                    }
+                });
+                    this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
+                    this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
+                    if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
+                        this.stage1.dateFormattedFinal = '';
+                        this.stage1.editedDateFinal = '';
+                    }
+
+                    if(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2)){
+                        this.stage2.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAINICIAL.substr(0,10));
+                        this.stage2.editedItemDateIni = this.parseDate(this.stage2.iniDateFormatted)
+                        this.stage2.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAFINAL.substr(0,10));
+                        this.stage2.editedDateFinal = this.parseDate(this.stage2.dateFormattedFinal)
+                        if(this.stage2.iniDateFormatted > this.stage2.dateFormattedFinal ){
+                            this.stage2.dateFormattedFinal = '';
+                            this.stage2.editedDateFinal = '';
+                        }
+                    }
+
+                    this.stage3.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
+                    this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
+                    if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
+                        this.stage3.dateFormattedFinal = '';
+                        this.stage3.editedDateFinal = '';
+                    }
+
+                    this.stage4.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
+                    this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
+                    if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
+                        this.stage4.dateFormattedFinal = '';
+                        this.stage4.editedDateFinal = '';
+                    }
                 }).catch(err => {
-                    console.log("Erro: " + err.response.data.err)
+                    console.log("Erro: " + err)
                 }
             )
-        
-            this.stage1.editedItemdate = this.parseDate(this.stage1.dateFormatted)
-            this.stage1.editedItemdate2 = this.parseDate(this.stage1.dateFormatted2)
         },
         parseDate (date) {
             if (!date) return null
@@ -434,7 +755,7 @@ export default {
         },
         viewItem(item){
             console.log('item ' + item);
-            var aux = this.implants.find(element => element.ID_LOJA == item.ID_LOJA)
+            var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
             if(aux != undefined){
                 this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
                 this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
@@ -474,55 +795,83 @@ export default {
                 return value.substr(0, 2)
             }
         },
+        getFirstName(value){
+            return value.split(' ')[0];
+        },
         toDate(value){
             return value.substr(0, 10)
         },
         
     },
     computed: {
-      progress () {
-        return this.stage1.model.length / this.stage1.items.length * 100
+      progressStage1 () {
+        return Math.trunc(this.stage1.model.length / this.stage1.items.length * 100);
+      },
+      progressStage2 () {
+        return Math.trunc(this.stage2.model.length / this.stage2.items.length * 100);
+      },
+      progressStage3 () {
+        return Math.trunc(this.stage3.model.length / this.stage3.items.length * 100);
+      },
+      progressStage4 () {
+        return Math.trunc(this.stage4.model.length / this.stage4.items.length * 100);
       },
     },
     watch: {
-        'stage1.editedItemdate'(){
-            this.stage1.dateFormatted = this.formatDate(this.stage1.editedItemdate);
+        'stage1.editedItemDateIni'(){
+            this.stage1.iniDateFormatted = this.formatDate(this.stage1.editedItemDateIni);
         },
-        'stage1.editedItemdate2'(){
-            this.stage1.dateFormatted2 = this.formatDate(this.stage1.editedItemdate2);
+        'stage1.editedDateFinal'(){
+            this.stage1.dateFormattedFinal = this.formatDate(this.stage1.editedDateFinal);
         },
         'dataClient.CNPJ_LOJA'(){
-            
-            if(this.dataClient.CNPJ_LOJA.length == 3) {
-                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})/, "$1.")
+            if(this.dataClient.CNPJ_LOJA != "" && this.dataClient.CNPJ_LOJA != null) {
+                if(this.dataClient.CNPJ_LOJA.length == 3) {
+                    this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})/, "$1.")
+                }
+                else if(this.dataClient.CNPJ_LOJA.length == 7){
+                    this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})/, "$1.$2.")
+                }
+                else if(this.dataClient.CNPJ_LOJA.length == 10){
+                    this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})/, "$1.$2.$3/")
+                }
+                else if(this.dataClient.CNPJ_LOJA.length == 16){
+                    this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})(\d{4})/, "$1.$2.$3/$4-")
+                }
+                else if(this.dataClient.CNPJ_LOJA.length > 18){
+                    this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.substr(0, 18).replace(/\D/g, '').replace(/^(\d{2})(\d{3})?(\d{3})?(\d{4})?(\d{2})?/, "$1.$2.$3/$4-$5")
+                }
             }
-            else if(this.dataClient.CNPJ_LOJA.length == 7){
-                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})/, "$1.$2.")
-            }
-            else if(this.dataClient.CNPJ_LOJA.length == 10){
-                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})/, "$1.$2.$3/")
-            }
-            else if(this.dataClient.CNPJ_LOJA.length == 16){
-                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})(\d{3})(\d{4})/, "$1.$2.$3/$4-")
-            }
-            else if(this.dataClient.CNPJ_LOJA.length > 18){
-                console.log(this.dataClient.CNPJ_LOJA.substr(0, 18 ))
-                //this.dataClient.CNPJ_LOJA.substr(0, 18 )
-                this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.substr(0, 18 ).replace(/\D/g, '').replace(/^(\d{2})(\d{3})?(\d{3})?(\d{4})?(\d{2})?/, "$1.$2.$3/$4-$5")
-                console.log(this.dataClient.CNPJ_LOJA)
-
-            }
-            //this.dataClient.CNPJ_LOJA = this.dataClient.CNPJ_LOJA.replace(/\D/g, '').replace(/^(\d{2})(\d{3})?(\d{3})?(\d{4})?(\d{2})?/, "$1.$2.$3/$4-$5")
-            
         },
 
-        progress () {
+        progressStage1 () {
             if(this.stage1.model.length / this.stage1.items.length * 100 == 100){
                 this.stage1.color = 'success'
             } else{
                 this.stage1.color = 'cyan'
             }
-        }
+        },
+        progressStage2 () {
+            if(this.stage2.model.length / this.stage2.items.length * 100 == 100){
+                this.stage2.color = 'success'
+            } else{
+                this.stage2.color = 'cyan'
+            }
+        },
+        progressStage3 () {
+            if(this.stage3.model.length / this.stage3.items.length * 100 == 100){
+                this.stage3.color = 'success'
+            } else{
+                this.stage3.color = 'cyan'
+            }
+        },
+        progressStage4 () {
+            if(this.stage4.model.length / this.stage4.items.length * 100 == 100){
+                this.stage4.color = 'success'
+            } else{
+                this.stage4.color = 'cyan'
+            }
+        },
     },
     
 }
