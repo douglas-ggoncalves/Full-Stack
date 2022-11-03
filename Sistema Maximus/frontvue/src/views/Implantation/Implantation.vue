@@ -115,6 +115,27 @@
             </v-container>
 
             <v-container id="implantation" fluid v-show="checkImplantation">
+                <v-dialog v-model="dialog" max-width="600">
+                    <v-card>
+                        <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected }}</v-toolbar>
+                        <v-card-text class="text-center">
+                            <div class="text-h5 pa-12">
+                                <v-combobox   hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                                    <template  @click="testeeeeee()"  v-slot:selection="data"> 
+                                        <v-chip  :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
+                                            <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
+                                                <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
+                                            </v-avatar>
+                                            <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                            {{ data.item.LOGIN_USUARIO | getFirstName }}
+                                        </v-chip>
+                                    </template>
+                                </v-combobox>
+                            </div>
+                            <v-btn class="success" @click="dialog = false">Fechar</v-btn>
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
                 <v-row>
                     <v-col class="text-left">
                         <v-tooltip right>
@@ -159,6 +180,7 @@
                 </v-row>
                 
                 <v-row class="stages">
+                    
                     <v-col class="myColumn" :cols="3">
                         <h5>Implantação Etapa 1</h5>
                         <div>
@@ -181,7 +203,6 @@
                             </template>
                         </v-combobox>
                     </v-col>
-                  
 
                     <v-col :cols="2">
                         <v-menu ref="stage1.dateInit" v-model="stage1.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
@@ -193,6 +214,7 @@
                             <v-date-picker v-model="stage1.editedItemDateIni" no-title @input="stage1.dateInit = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
+
                     <v-col :cols="2">
                         <v-menu ref="stage1.dateFinal" v-model="stage1.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
@@ -202,8 +224,9 @@
                             <v-date-picker v-model="stage1.editedDateFinal" no-title @input="stage1.dateFinal = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
+                    
                     <div class="separate"/>
-
+                    
                     <v-row>
                         <v-col :cols="6">
                             <v-card class="mx-auto">
@@ -211,7 +234,7 @@
                                     <v-list-item-group v-model="stage1.model" multiple>
                                         <template v-for="(item, i) in stage1.items">
                                             <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
-                                            <v-list-item v-else :key="`item-${i}`" :value="item" active-class="success text-white">
+                                            <v-list-item v-else :active="false" :key="`item-${i}`" :value="item" active-class="success text-white">
                                                 <template v-slot:default="{ active }">
                                                     <v-list-item-action>
                                                         <v-checkbox :input-value="active" color="white"></v-checkbox>
@@ -219,23 +242,29 @@
 
                                                     <v-list-item-content>
                                                         <v-list-item-title v-text="item"></v-list-item-title>
-                                                        <!--<v-list-item-subtitle>{{ USUARIO_SELECT }} </v-list-item-subtitle>-->
-                                                        <v-list-item-subtitle>
-                                                            <v-menu bottom origin="center center" transition="scale-transition">
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                    <v-btn color="primary" dark v-bind="attrs" v-on="on">
-                                                                    Scale Transition
-                                                                    </v-btn>
-                                                                </template>
-
-                                                                <v-list>
-                                                                    <v-list-item v-for="(item, i) in items" :key="i">
-                                                                        <v-list-item-title>{{ item.title }}</v-list-item-title>
-                                                                    </v-list-item>
-                                                                </v-list>
-                                                            </v-menu>
-                                                        </v-list-item-subtitle>
                                                     </v-list-item-content>
+
+                                                    <v-list-item-icon class="display: flex; align-items-center"> 
+                                                        <span v-for="user in USUARIO_SELECT" :key="user.ID_USUARIO"> <!-- 555 -->
+                                                            <v-avatar color="brown" size="36" v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
+                                                                <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO +  ".jpg"' :alt="user.LOGIN_USUARIO">
+                                                            </v-avatar>
+
+                                                            <v-avatar size="36" v-else color="red">
+                                                                <span class="white--text">{{ user.LOGIN_USUARIO | reversedMessage(user.LOGIN_USUARIO) }}</span>
+                                                            </v-avatar>
+                                                        </span>
+                                                    </v-list-item-icon>
+
+                                                    <v-list-item-action>
+                                                        <v-menu offset-y>
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                                <v-btn v-bind="attrs" v-on="on" :color="active ? 'white': 'purple darken-4'" @click="addMembers(item)" icon>
+                                                                    <v-icon>mdi-dots-vertical</v-icon>
+                                                                </v-btn>
+                                                            </template>
+                                                        </v-menu>
+                                                    </v-list-item-action>
                                                 </template>
                                             </v-list-item>
                                         </template>
@@ -245,14 +274,14 @@
                         </v-col>
 
                         <v-col :cols="6">
-                            <div class="mb-1" style="height: 20%;">
+                            <div class="mb-1" style="max-height: 20%;">
                                 <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
                                     <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
                                     <v-radio label="Não" :value="false" ></v-radio> 
                                 </v-radio-group>
                             </div>
 
-                            <div class="form-group" style="height: 80%">
+                            <div class="form-group" style="max-height: 80%">
                                 <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
                                 <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
                             </div>
@@ -322,7 +351,7 @@
                                 </v-radio-group>
                             </div>
 
-                            <div class="form-group" style="height: 80%">
+                            <div class="form-group" style="max-height: 80%">
                                 <textarea class="form-control" id="exampleFormControlTextarea1" v-if="!stage1.switch" style="height: 100%"></textarea>
                                 <textarea class="form-control" id="exampleFormControlTextarea2" v-if="stage1.switch" disabled style="height: 100%"></textarea>
                             </div>
@@ -528,6 +557,8 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            dialog: false,
+            itemSelected: '',
             items: [{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me 2'}],
             implantsAll: [],
             optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
@@ -540,13 +571,7 @@ export default {
                 SISTEMA_LOJA: '',
             },
             stage1: {
-                items: [
-                    /*'Verificar servidor',
-                    'Instalação terminais',
-                    'Instalação certificado digital',
-                    'Instalação impressora',
-                    'Verificar conexão com matriz',*/
-                ],
+                items: [/*'Verificar servidor', 'Instalação impressora', 'Instalação certificado digital'*/],
                 model: [/*'Instalação impressora'*/],
                 switch: true,
                 color: 'cyan',
@@ -591,17 +616,6 @@ export default {
                 editedDateFinal: '',
             },
             checkImplantation: true,
-            direction: 'bottom',
-            fab: false,
-            fling: false,
-            hover: false,
-            tabs: null,
-            top: false,
-            right: true,
-            bottom: true,
-            left: false,
-            openOnHover: true,
-            transition: 'scale',
             serverIP: '',
             roleUserLogged: '',
             dataTable: {
@@ -621,7 +635,11 @@ export default {
                     //{ ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
                 ],
             },
-            USUARIO_SELECT:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }],
+            USUARIO_SELECT:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }, { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' },],
+            USUARIO_SELECT2:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }, { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' }],
+            USUARIO2: [
+                'Rafael', 'Gabriel', 'Jonas', 'Gyselle', 'Eduardo', 'Maurício Xavier', 'Raynaldo Macedo'
+            ],
             USUARIO: [
                 { ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
                 { ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
@@ -638,6 +656,24 @@ export default {
         this.myFunction();
     },
     methods: {
+        teste(loginUser){
+            var element = this.USUARIO.find(element => element.LOGIN_USUARIO == loginUser)
+            if(element != undefined && element != null){
+                if(this.USUARIO_SELECT.find(element => element.LOGIN_USUARIO == loginUser) != undefined){
+                    this.USUARIO_SELECT = this.USUARIO_SELECT.filter(teste => teste.LOGIN_USUARIO != loginUser)
+                }
+                else{
+                    this.USUARIO_SELECT.push(element)
+                }
+            }
+        },
+        testeeeeee(){
+            alert('asdsa ')
+        },
+        addMembers(element){
+            this.itemSelected = element;
+            this.dialog = true;
+        },
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
         
@@ -668,7 +704,7 @@ export default {
                 this.stages.forEach(stage => {
                     console.log("stage " + JSON.stringify(stage.COD_ETAPA))
                 })
-                this.implantsAll.filter(store => store.ID_LOJA == 1).forEach(element => {
+                this.implantsAll.filter(store => store.ID_LOJA == 2).forEach(element => {
                     if(element.COD_ETAPA == 1){
                         this.stage1.items.push(element.DESC_ITEM)
                         if(element.IMP_STATUSOK == 1){
@@ -782,7 +818,7 @@ export default {
         },
         clique() {
             scrypt.clique(this);
-        }, 
+        }
     },
     filters: {
         reversedMessage(value) {

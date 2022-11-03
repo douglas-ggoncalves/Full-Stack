@@ -1,77 +1,206 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-row>
-      <v-col cols="12">
-        <v-combobox v-model="select" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
-          <template v-slot:selection="data">
-            <v-chip :key="JSON.stringify(data.item)" v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
-              <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
-                <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
-              </v-avatar>
-              <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
-              {{ data.item.LOGIN_USUARIO }}
-            </v-chip>
-          </template>
-        </v-combobox>
+      <v-dialog v-model="dialog" max-width="600">
+        <v-card>
+          <v-toolbar class="text-center" color="dark" dark>Maximus Farma</v-toolbar>
+            <v-card-text class="text-center">
+              <div class="text-h5 pa-12">{{ msgSuccess }}</div>
+              <v-btn class="success" @click="dialog = false">CONFIRMAR</v-btn>
+            </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="dialogErr" max-width="600">
+        <v-card>
+          <v-toolbar class="text-center" color="primary" dark>Maximus Farma</v-toolbar>
+            <v-card-text class="text-center">
+              <div class="text-h5 pa-12">{{ msgErr }}</div> 
+              <v-btn class="primary" @click="dialogErr = false">CONFIRMAR</v-btn>
+            </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-col :cols="10">
+        <h5>Etapa</h5>
+      </v-col>
+
+      <v-col :cols="5">
+        <v-text-field label="Descrição da Etapa" v-model="newEtapa.DESC_ETAPA" hide-details="auto"></v-text-field>
+        
+        <v-btn color="success" class="mt-3" @click="registerStage()">
+          Cadastrar Etapa
+        </v-btn>
       </v-col>
     </v-row>
-
-
+    
     <v-row>
-      <v-col cols="12" sm="6" offset-sm="3">
-        <v-card>
-          <v-btn fab color="cyan accent-2" bottom left absolute @click="dialog = !dialog">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-          
-          <v-dialog v-model="dialog" max-width="500px" id="testeeee">
-            <v-combobox v-model="select" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips style="background-color: white;">
-              <template v-slot:selection="data">
-                <v-chip :key="JSON.stringify(data.item)" v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
-                  <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
-                    <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
-                  </v-avatar>
-                  <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
-                  {{ data.item.LOGIN_USUARIO }}
-                </v-chip>
-              </template>
-            </v-combobox>
-          </v-dialog>
-        </v-card>
+      <v-col :cols="10">
+        <h5>Item</h5>
+      </v-col>
+
+      <v-col :cols="5">
+        <v-text-field label="Descrição" v-model="newItens_Implantacao.DESC_ITEM" hide-details="auto"></v-text-field>
+        <v-btn color="success" class="mt-3" @click="registerItem()">
+          Cadastrar Item
+        </v-btn>
+      </v-col>
+
+      <v-col :cols="5">
+        <v-select v-model="newItens_Implantacao.ITEM_DESCETAPA" :items="newItens_Implantacao.ITEM_ETAPAOPTIONS" label="Etapa" required></v-select>
+      </v-col>
+    </v-row>
+    
+    <v-row>
+      <v-col :cols="10">
+        <h5>Implantação</h5>
+      </v-col>
+
+      <v-col :cols="5">
+        <v-select v-model="stores.STORES_SELECTED" :items="stores.DESC_STORES" label="Selecionar a loja" multiple chips hint="Selecione a loja que deseja associar o processo de implantação"></v-select>
+        <v-btn class="mt-2" color="success" @click="associationImp()">
+          Associar implantação
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import axios from 'axios';
+import scrypt from "../../assets/js/scrypt";
 
   export default {
     data (){
       return{
+        aux: [],
+        stores: {
+          DESC_STORES: [],
+          ALL_STORES: [],
+          STORES_SELECTED: []
+        },
         dialog: false,
-        select: [{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }],
-        USUARIO: [
-          { ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
-          { ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
-          { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' },
-          { ID_USUARIO: 4, LOGIN_USUARIO: 'Gyselle', IMG_USUARIO: 'Gyselle' },
-          { ID_USUARIO: 5, LOGIN_USUARIO: 'Eduardo', IMG_USUARIO: 'Eduardo' },
-          { ID_USUARIO: 6, LOGIN_USUARIO: 'Maurício Xavier', IMG_USUARIO: '' },
-          { ID_USUARIO: 7, LOGIN_USUARIO: 'Raynaldo Macedo', IMG_USUARIO: '' },
-        ]
+        dialogErr: false,
+        msgErr: '',
+        msgSuccess: '',
+        serverIP: '',
+        etapaItens: {
+          data: [ 
+            // {COD_ETAPA: 1, DESC_ETAPA: 'Etapa 1'}
+          ]          
+        },
+        newEtapa:{
+          DESC_ETAPA: '',
+        },
+        newItens_Implantacao:{
+          DESC_ITEM: '',
+          ITEM_DESCETAPA: '',
+          ITEM_ETAPAOPTIONS: [
+            //'Opção 1', 'Opção 2'
+          ]
+        },
       } 
     },
-    methods:{
-      reversedMessage(value) {
-        if(/\s/g.test(value)){ // se ter espaços
-          var name = value.split(' ')[0].toUpperCase();
-          var name2 = value.split(' ')[1].toUpperCase();
-          return name.substr(0, 1) + name2.substr(0, 1)
-        } 
-        else{
-          return value.substr(0, 2)
+
+    methods: {
+      registerStage(){
+        axios.post(`${this.serverIP}/stage`, {
+          DESC_ETAPA: this.newEtapa.DESC_ETAPA
+        }).then(() => {
+          this.msgSuccess = "Cadastro efetuado com sucesso"
+          this.dialog = true;
+          this.newEtapa.DESC_ETAPA = '';
+        }).catch(err => {
+          this.msgErr = err.response.data.err
+          this.dialogErr = true
+        })
+      },
+      registerItem(){
+        if(this.newItens_Implantacao.DESC_ITEM.length == 0){
+          this.msgErr = "Informe uma descrição para o item"
+          this.dialogErr = true
+        } else if(this.newItens_Implantacao.ITEM_DESCETAPA.length == 0){
+          this.msgErr = "Informe uma etapa para cadastrar o item"
+          this.dialogErr = true
+        } else{
+          var codSelected = this.etapaItens.data.find(o => o.DESC_ETAPA == this.newItens_Implantacao.ITEM_DESCETAPA)
+          axios.post(`${this.serverIP}/items`, {
+            ITEM_CODETAPA: codSelected.COD_ETAPA,
+            DESC_ITEM: this.newItens_Implantacao.DESC_ITEM
+          }).then(() => {
+            this.msgSuccess = "Cadastro efetuado com sucesso"
+            this.dialog = true;
+          }).catch(err => {
+            this.msgErr = err.response.data.err
+            this.dialogErr = true
+          })
+        }
+      },
+      
+      getStages(){
+        axios.get(`${this.serverIP}/stages`, {
+        }).then(res => {
+          this.etapaItens.data = res.data;
+          if(this.etapaItens.data.length > 0) {
+            this.etapaItens.data.forEach(element => {
+              this.newItens_Implantacao.ITEM_ETAPAOPTIONS.push(element.DESC_ETAPA)
+            });
+          }
+        }).catch(err => {
+          console.log(err)
+        })    
+      },
+      
+      getStores(){
+        axios.get(`${this.serverIP}/stores`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+          }
+        }).then(res => {
+          this.stores.ALL_STORES = res.data.stores;
+          if(this.stores.ALL_STORES.length > 0) {
+            this.stores.ALL_STORES.forEach(element => {
+              this.stores.DESC_STORES.push(element.NUMERO_LOJA == "0" ? element.NOME_REDE + " " + "Integração" : element.NOME_REDE + ' ' + element.NUMERO_LOJA)
+            });
+          }
+        }).catch(err => {
+          console.log(err)
+        })    
+      },
+      associationImp(){
+        if(this.stores.STORES_SELECTED.length == 0){
+          this.msgErr = "Informe ao menos uma loja"
+          this.dialogErr = true
+        } else{
+          this.stores.STORES_SELECTED.forEach(element => {
+            if(element.match(/Integração/)){
+              this.aux.push(this.stores.ALL_STORES.find(o => o.NOME_REDE + " " + "Integração" == element).ID_LOJA)
+            } else{
+              this.aux.push(this.stores.ALL_STORES.find(o => o.NOME_REDE + " " + o.NUMERO_LOJA == element).ID_LOJA)
+            }
+          })
+          
+          axios.post(`${this.serverIP}/implantation`, {
+            IMP_IDSTORES: this.aux
+          }).then(res => {
+              console.log("resposta: " + res)
+            if(res.data.itensSuccess.length > 0 && res.data.itensErr.length == 0){
+              this.msgSuccess = "Todos os cadastros foram efetuados com sucesso"
+              this.dialog = true;
+            } 
+          }).catch(err => {
+            this.msgErr = err.response.data.err
+            this.dialogErr = true
+          })
+          
         }
       }
-    }
+    },
+    
+    async created(){
+      this.serverIP = await scrypt.serverIP
+      this.getStages();
+      this.getStores();
+    },
   }
 </script>
