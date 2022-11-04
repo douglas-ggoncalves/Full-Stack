@@ -65,3 +65,32 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 				DATAIMP_CODIGO varchar(50) not null
 			)
 		END
+
+	declare @countRADMIN_NOMEREDE as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%RADMIN_NOMEREDE%')
+	if @countRADMIN_NOMEREDE = 0
+	begin
+		alter table rede
+		add RADMIN_NOMEREDE varchar(50)
+	end
+
+	declare @countRADMIN_SENHAREDE as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%RADMIN_SENHAREDE%')
+	if @countRADMIN_SENHAREDE = 0
+	begin
+		alter table rede
+		add RADMIN_SENHAREDE varchar(50)
+	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%USADESC_ETAPA%')
+	if @count = 0
+	begin
+		alter table ETAPAS_IMPLANTACAO
+		add USADESC_ETAPA int default(0)
+	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%DESCTEXT_ETAPA%')
+	if @count = 0
+	begin
+		alter table ETAPAS_IMPLANTACAO
+		add DESCTEXT_ETAPA varchar(100)
+	end
+
