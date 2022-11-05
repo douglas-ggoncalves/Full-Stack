@@ -3,6 +3,9 @@ const Stage = require("../models/Stage");
 class StageController{
     async create(req, res) {
         var DESC_ETAPA = await req.body.DESC_ETAPA;
+        var USADESC_ETAPA = await req.body.USADESC_ETAPA;
+        var DESCTEXT_ETAPA = await req.body.DESCTEXT_ETAPA;
+        
         try{
             if(DESC_ETAPA != undefined ){
                 var descExists = await Stage.findDesc(DESC_ETAPA);
@@ -12,7 +15,7 @@ class StageController{
                     res.send({err: "Já existe uma etapa com essa descrição"})
                     return;
                 } else{
-                    var create = await Stage.newStage(DESC_ETAPA);
+                    var create = await Stage.newStage(DESC_ETAPA, USADESC_ETAPA, DESCTEXT_ETAPA);
                     if(create != undefined){
                         res.status(200);
                         res.send({success: "Etapa criada com sucesso"})

@@ -20,7 +20,7 @@ class Implantation{
             var result = knex.raw(`
                 declare @IMP_CODIMP as int = (select isNull(max(IMP_CODIMP), 0) from IMPLANTACAO) + 1
 
-                insert into IMPLANTACAO (IMP_CODIMP, IMP_CODLOJA, IMP_CODITEM, IMP_STATUSOK, ETAPA_CODETAPA , ITEM_CODETAPA) 
+                insert into IMPLANTACAO (IMP_CODIMP, IMP_CODLOJA, IMP_CODITEM, IMP_STATUSOK, ETAPA_CODETAPA, ITEM_CODETAPA) 
                 (   
                     select @IMP_CODIMP, ${ID_STORE}, itens.COD_ITEM, 0, etapas.COD_ETAPA, itens.ITEM_CODETAPA from ITENS_IMPLANTACAO itens 
                     inner join ETAPAS_IMPLANTACAO etapas on itens.ITEM_CODETAPA = etapas.COD_ETAPA 

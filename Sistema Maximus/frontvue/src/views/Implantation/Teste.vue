@@ -27,6 +27,15 @@
 
       <v-col :cols="5">
         <v-text-field label="Descrição da Etapa" v-model="newEtapa.DESC_ETAPA" hide-details="auto"></v-text-field>
+
+        <v-radio-group class="" v-model="newEtapa.switch" row>Adicionar descrição?
+          <v-radio label="Sim" :value="true" class="mx-3"></v-radio> 
+          <v-radio label="Não" :value="false"></v-radio> 
+        </v-radio-group>
+
+        <div class="form-group" v-if="newEtapa.switch">
+          <textarea class="form-control" v-model="newEtapa.DESCTEXT_ETAPA" placeholder="Ex: Todos os itens foram instalados?" v-if="newEtapa.switch" style="height: 100%"></textarea>
+        </div>
         
         <v-btn color="success" class="mt-3" @click="registerStage()">
           Cadastrar Etapa
@@ -85,19 +94,17 @@ import scrypt from "../../assets/js/scrypt";
         msgSuccess: '',
         serverIP: '',
         etapaItens: {
-          data: [ 
-            // {COD_ETAPA: 1, DESC_ETAPA: 'Etapa 1'}
-          ]          
+          data: [ /* {COD_ETAPA: 1, DESC_ETAPA: 'Etapa 1'} */ ]          
         },
         newEtapa:{
           DESC_ETAPA: '',
+          switch: false,
+          DESCTEXT_ETAPA: ''
         },
         newItens_Implantacao:{
           DESC_ITEM: '',
           ITEM_DESCETAPA: '',
-          ITEM_ETAPAOPTIONS: [
-            //'Opção 1', 'Opção 2'
-          ]
+          ITEM_ETAPAOPTIONS: [ /* 'Opção 1', 'Opção 2' */]
         },
       } 
     },
@@ -105,7 +112,9 @@ import scrypt from "../../assets/js/scrypt";
     methods: {
       registerStage(){
         axios.post(`${this.serverIP}/stage`, {
-          DESC_ETAPA: this.newEtapa.DESC_ETAPA
+          DESC_ETAPA: this.newEtapa.DESC_ETAPA,
+          USADESC_ETAPA: this.newEtapa.switch ? 1 : 0,
+          DESCTEXT_ETAPA: this.newEtapa.switch ? this.newEtapa.DESCTEXT_ETAPA : ''
         }).then(() => {
           this.msgSuccess = "Cadastro efetuado com sucesso"
           this.dialog = true;
