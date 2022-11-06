@@ -62,7 +62,7 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 				DATASIMP_CODETAPA int not null,
 				DATASIMP_DATAINICIAL datetime,
 				DATASIMP_DATAFINAL datetime,
-				DATAIMP_CODIGO varchar(50) not null
+				DATASIMP_CODIGO varchar(50) not null
 			)
 		END
 
@@ -94,3 +94,30 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 		add DESCTEXT_ETAPA varchar(100)
 	end
 
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%DATASIMP_USUARIOS%')
+	if @count = 0
+	begin
+		alter table DATAS_IMPLANTACAO
+		add DATASIMP_USUARIOS varchar(50)
+	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%DATASIMP_OBSMARCADA%')
+	if @count = 0
+	begin
+		alter table DATAS_IMPLANTACAO
+		add DATASIMP_OBSMARCADA int 
+	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%DATASIMP_OBSETAPA%')
+	if @count = 0
+	begin
+		alter table DATAS_IMPLANTACAO
+		add DATASIMP_OBSETAPA varchar(max)
+	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%IMP_USUARIOSITEM%')
+	if @count = 0
+	begin
+		alter table IMPLANTACAO
+		add IMP_USUARIOSITEM varchar(50)
+	end

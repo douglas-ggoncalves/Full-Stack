@@ -26,11 +26,10 @@ class Implantation{
                     inner join ETAPAS_IMPLANTACAO etapas on itens.ITEM_CODETAPA = etapas.COD_ETAPA 
                 )
 
-                insert into DATAS_IMPLANTACAO (DATASIMP_CODETAPA, CODIMP_IMP, DATASIMP_CODLOJA, DATASIMP_DATAINICIAL, DATASIMP_DATAFINAL, DATAIMP_CODIGO)
+                insert into DATAS_IMPLANTACAO (DATASIMP_CODETAPA, CODIMP_IMP, DATASIMP_CODLOJA, DATASIMP_DATAINICIAL, DATASIMP_DATAFINAL, DATASIMP_CODIGO, DATASIMP_USUARIOS, DATASIMP_OBSMARCADA, DATASIMP_OBSETAPA)
                 (
-            	    select distinct ITEM_CODETAPA, IMP_CODIMP, IMP_CODLOJA, convert(date,GETDATE()), '', cast(IMP_CODIMP as varchar) + '' + cast(IMP_CODLOJA as varchar) + '' + cast(ETAPA_CODETAPA as varchar) from IMPLANTACAO where IMP_CODIMP = @IMP_CODIMP
+            	    select distinct ITEM_CODETAPA, IMP_CODIMP, IMP_CODLOJA, convert(date,GETDATE()), '', cast(IMP_CODIMP as varchar) + '' + cast(IMP_CODLOJA as varchar) + '' + cast(ETAPA_CODETAPA as varchar), (select USADESC_ETAPA from ETAPAS_IMPLANTACAO where COD_ETAPA = ETAPA_CODETAPA), 0, (select DESCTEXT_ETAPA from ETAPAS_IMPLANTACAO where COD_ETAPA = ETAPA_CODETAPA) from IMPLANTACAO where IMP_CODIMP = @IMP_CODIMP
                 )
-
             `).then(res => {
                 console.log('res ' + res)
             }).catch(err => {

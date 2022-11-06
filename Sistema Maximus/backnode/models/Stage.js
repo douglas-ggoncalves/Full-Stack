@@ -16,9 +16,7 @@ class Stage{
 
     async newStage(DESC_ETAPA, USADESC_ETAPA, DESCTEXT_ETAPA) {
         try {
-            console.log(DESC_ETAPA + ' ' + USADESC_ETAPA + ' ' + DESCTEXT_ETAPA)
             var result = await knex.insert({DESC_ETAPA: DESC_ETAPA, USADESC_ETAPA: USADESC_ETAPA, DESCTEXT_ETAPA: DESCTEXT_ETAPA}).table("ETAPAS_IMPLANTACAO");
-
             return result;
         } catch(err) {
             console.log("ocorreu um erro " + err)
