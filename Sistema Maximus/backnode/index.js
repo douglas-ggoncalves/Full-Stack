@@ -71,6 +71,8 @@ const dir = __dirname + '/.dadosChrome';
 
     timer(2000)
     await page.keyboard.press("Enter");
+    
+    console.log(getRandomInt(3));
     */
 })();
 
