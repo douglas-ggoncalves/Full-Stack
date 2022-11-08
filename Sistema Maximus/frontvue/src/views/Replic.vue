@@ -77,7 +77,10 @@
               <div class="col-12">
                 <h3>Replicações</h3>
               </div>
+{{ value }}
 
+<br>
+{{ this.value.length}} <br><br> {{ this.networks.length }}
               <div class="col-12">
                 <button type="button" class="btn btn-outline-dark" @click="showNewNetwork()" v-if="roleUserLogged == 'M'">
                   Nova Rede
@@ -95,9 +98,9 @@
                   <i class="fa-solid fa-repeat"></i>
                 </button>
               </div>
-
+              
               <div class="col-md-6 mt-2" v-if="roleUserLogged == 'M'">
-                <multiselect v-model="value" :options="networks" :multiple="true" :selectLabel="'Selecionar esta rede'" :selectedLabel="'Rede selecionada'" :deselectLabel="'Remover rede'" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Filtrar redes" label="NOME_REDE" track-by="NOME_REDE" :preselect-first="false">
+                <multiselect v-model="value" @select="testeeeeeE" @remove="testeeeeeE" :options="networks" :multiple="true" :selectLabel="'Selecionar esta rede'" :selectedLabel="'Rede selecionada'" :deselectLabel="'Remover rede'" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Filtrar redes" label="NOME_REDE" track-by="NOME_REDE" :preselect-first="false">
                   <template slot="selection" slot-scope="{ values, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} redes selecionadas</span>
                     
                   </template>
@@ -424,6 +427,7 @@ export default {
       .then(res => {
         this.networks = res.data.networks
         this.lojas = res.data.stores
+
         for (var x=0;  x < this.networks.length; x++) {
           for(var i=0; i < this.lojas.length; i++ ){
             if(x+1 == this.lojas[i].id){
@@ -431,7 +435,7 @@ export default {
             }
           }
         }
-
+        this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0}) /// 555
         this.redeIdUserLogged = localStorage.getItem("redeIdUser")
         this.roleUserLogged = localStorage.getItem("roleUser")
         if(this.redeIdUserLogged != 'null') {
@@ -446,6 +450,8 @@ export default {
       if(this.value.length == 0){
         this.err = 'Informe uma rede para iniciar a verificação'
       } else{
+        this.value = this.value.filter(element => element.id != 0)
+
         for(var e=0; e < this.data.length; e++) { // for para deixar array vazio antes de fazer novas consultas
           for(var i = 0; i< this.value.length; i++){
             if(this.data[e].result){
@@ -496,6 +502,19 @@ export default {
           } catch(err) {
             this.err = err.response.data.err
           }
+        }
+      }
+    },
+    testeeeeeE(event){
+      console.log("nome do evento " + event.NOME_REDE)
+      if(event.NOME_REDE == "Selecionar tudo"){
+        if(this.value.length == this.networks.length){
+          this.value.splice(0); // função para deixar o array vazio
+        } else{
+          for(var x = 1; x < this.networks.length; x++){
+            this.value.push({NOME_REDE: this.networks[x].NOME_REDE, id: this.networks[x].id})
+          }
+         this.value = this.value.filter(element => element.id != 0)
         }
       }
     },
@@ -677,7 +696,7 @@ export default {
         this.$router.push({name: "Home"})
       }
     } 
-  }
+  },
 }
 </script> 
 
