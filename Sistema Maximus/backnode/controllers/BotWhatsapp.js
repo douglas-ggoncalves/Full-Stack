@@ -6,7 +6,7 @@ class BotWhatsapp{
             
         if(today.getHours() >= 8 && today.getHours() <= 18){
 
-            //setInterval(function () {
+            setInterval(function () {
                 try{
                 
                 var USUARIO = [
@@ -28,7 +28,7 @@ class BotWhatsapp{
                     const browser = await puppeteer.launch(
                         {
                             headless: false, 
-                            //defaultViewport: null, 
+                            defaultViewport: null, 
                             userDataDir: dir
                         });
                     const page = await browser.newPage();
@@ -54,14 +54,14 @@ class BotWhatsapp{
                     await page.keyboard.press("Enter");
                     await page.type(".p3_M1", "*Bot: Tarefa Checar replicação das lojas*");
                 
-                
+                    console.log("escolhido " + arrFiltered[0].LOGIN_USUARIO)
                     if(today.getDay() >= 1 && today.getDay() <= 6){
                         await page.keyboard.down("ShiftLeft")
                         await page.keyboard.press("Enter")
                         timer(2000)
                         await page.keyboard.press("Enter")
                         timer(2000)
-                        await page.type(".p3_M1", `Destinado para a tarefa: ${arrFiltered[0].LOGIN_USUARIO} @+55 ${arrFiltered[0].NUMEROTELEFONE}`);
+                        await page.type(".p3_M1", `Destinado para a tarefa: ${arrFiltered[0].LOGIN_USUARIO}`);
                         await page.keyboard.up("ShiftLeft")
                     }
                 
@@ -105,7 +105,7 @@ class BotWhatsapp{
                     console.log("O arquivo foi criado")
                 })
             }
-//            }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
+            }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
         }
     }
 }

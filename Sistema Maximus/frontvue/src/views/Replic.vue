@@ -77,10 +77,7 @@
               <div class="col-12">
                 <h3>Replicações</h3>
               </div>
-{{ value }}
 
-<br>
-{{ this.value.length}} <br><br> {{ this.networks.length }}
               <div class="col-12">
                 <button type="button" class="btn btn-outline-dark" @click="showNewNetwork()" v-if="roleUserLogged == 'M'">
                   Nova Rede
@@ -100,7 +97,7 @@
               </div>
               
               <div class="col-md-6 mt-2" v-if="roleUserLogged == 'M'">
-                <multiselect v-model="value" @select="testeeeeeE" @remove="testeeeeeE" :options="networks" :multiple="true" :selectLabel="'Selecionar esta rede'" :selectedLabel="'Rede selecionada'" :deselectLabel="'Remover rede'" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Filtrar redes" label="NOME_REDE" track-by="NOME_REDE" :preselect-first="false">
+                <multiselect v-model="value" @select="eventSelect" @remove="eventSelect" :options="networks" :multiple="true" :selectLabel="'Selecionar esta rede'" :selectedLabel="'Rede selecionada'" :deselectLabel="'Remover rede'" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Filtrar redes" label="NOME_REDE" track-by="NOME_REDE" :preselect-first="false">
                   <template slot="selection" slot-scope="{ values, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} redes selecionadas</span>
                     
                   </template>
@@ -119,7 +116,7 @@
           <div class="card" style="width: 100%;" v-if="!err">
             <div v-show="showData" v-for="network in networks" :key="network.id">
               <div v-for="(peguei, index) in value" :key="index"> 
-                <table class="table table-bordered table-dark" v-if="network.id == value[index].id">
+                <table class="table table-bordered table-dark" v-if="network.id == value[index].id && network.id != 0">
                   <thead>
                     <tr>
                       <th scope="col"></th>
@@ -435,12 +432,17 @@ export default {
             }
           }
         }
-        this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0}) /// 555
+        
         this.redeIdUserLogged = localStorage.getItem("redeIdUser")
         this.roleUserLogged = localStorage.getItem("roleUser")
         if(this.redeIdUserLogged != 'null') {
           this.value.push({"id": this.redeIdUserLogged});
           this.initVerify();
+        } else{
+          this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0}) /// 555
+          this.value = res.data.networks;
+          this.value = this.value.filter(element => element.id != 0)
+          console.log("caiu aqui")
         }
       }).catch(err => {
         this.err = err.response.data.err
@@ -505,12 +507,23 @@ export default {
         }
       }
     },
-    testeeeeeE(event){
-      console.log("nome do evento " + event.NOME_REDE)
+    eventSelect(event){
       if(event.NOME_REDE == "Selecionar tudo"){
-        if(this.value.length == this.networks.length){
-          this.value.splice(0); // função para deixar o array vazio
-        } else{
+        // se tiver algum elemento não selecionado selecionar tudo, caso contrário deixar array vazio
+        if(this.value.length > 0){
+          if(this.value.length == this.networks.length){ 
+            this.value.splice(0); // função para deixar o array vazio
+          } 
+          else{
+            this.value.splice(0);
+            for(var y = 1; y < this.networks.length; y++){
+              this.value.push({NOME_REDE: this.networks[y].NOME_REDE, id: this.networks[y].id})
+            }
+            this.value = this.networks;
+            this.value = this.value.filter(element => element.id != 0)
+          }
+        }
+         else{
           for(var x = 1; x < this.networks.length; x++){
             this.value.push({NOME_REDE: this.networks[x].NOME_REDE, id: this.networks[x].id})
           }

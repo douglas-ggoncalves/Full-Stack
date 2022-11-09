@@ -121,3 +121,11 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 		alter table IMPLANTACAO
 		add IMP_USUARIOSITEM varchar(50)
 	end
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%REDE_REPLICA%')
+	if @count = 0
+	begin
+		alter table rede
+		add REDE_REPLICA varchar(1)
+	end
+	update maximus..rede set rede_replica = '1'

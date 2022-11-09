@@ -6,6 +6,7 @@ class ReplicController{
             var networks = await database.raw(`
                 select rede.NOME_REDE, rede.id from rede as rede
                 left join loja on rede.id = loja.redeid
+                where rede.rede_replica = '1'
                 group by rede.NOME_REDE, rede.id
             `);
 
