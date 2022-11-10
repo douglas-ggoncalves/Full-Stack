@@ -442,7 +442,6 @@ export default {
           this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0}) /// 555
           this.value = res.data.networks;
           this.value = this.value.filter(element => element.id != 0)
-          console.log("caiu aqui")
         }
       }).catch(err => {
         this.err = err.response.data.err

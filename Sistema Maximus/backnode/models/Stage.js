@@ -34,7 +34,7 @@ class Stage{
         } catch(err) {
             return undefined;
         }
-}
+    }
 }
 
 module.exports = new Stage();

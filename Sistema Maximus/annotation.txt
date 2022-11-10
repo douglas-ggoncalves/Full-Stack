@@ -129,3 +129,12 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 		add REDE_REPLICA varchar(1)
 	end
 	update maximus..rede set rede_replica = '1'
+
+	declare @count as int = (select count(c.name) from sys.tables as t INNER JOIN sys.columns c on t.OBJECT_ID = c.OBJECT_ID where c.name like '%ISATIVA%')
+	if @count = 0
+	begin
+		alter table rede
+		add ISATIVA varchar(1)
+	end
+	update rede set ISATIVA = 1  
+

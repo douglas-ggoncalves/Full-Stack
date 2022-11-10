@@ -37,20 +37,20 @@
           </nav>
 
           <div class="container">
-              <div class="vm--overlay" style="z-index: 9999" @click="closeToastErr()" v-if="err != ''">
-              <div class="position-fixed top-0 start-50 translate-middle-x p-3">
-                <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true" style="">
-                  <div class="toast-header">
-                    <img src="../../assets/img/icone_maximus_gestao.png" style="height: 30px" class="rounded img-fluid me-2" alt="...">
-                    
-                    <strong class="me-auto">Maximus Gestão</strong>
-                    <button type="button" class="btn-close" @click="closeToastErr()"></button>
-                  </div>
-                  <div class="toast-body text-white bg-primary">
-                    {{ err }}
-                  </div>
+            <div class="vm--overlay" style="z-index: 9999" @click="closeToastErr()" v-if="err != ''">
+                <div class="position-fixed top-0 start-50 translate-middle-x p-3">
+                    <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true" style="">
+                    <div class="toast-header">
+                        <img src="../../assets/img/icone_maximus_gestao.png" style="height: 30px" class="rounded img-fluid me-2" alt="...">
+                        
+                        <strong class="me-auto">Maximus Gestão</strong>
+                        <button type="button" class="btn-close" @click="closeToastErr()"></button>
+                    </div>
+                    <div class="toast-body text-white bg-primary">
+                        {{ err }}
+                    </div>
+                    </div>
                 </div>
-              </div>
             </div>
 
             <div class="vm--overlay" style="z-index: 9999" @click="closeToastSuccess()" v-if="success != ''">

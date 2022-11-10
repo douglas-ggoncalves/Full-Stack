@@ -8,6 +8,7 @@ var ItemController = require("../controllers/ItemController");
 var StageController = require("../controllers/StageController");
 var AdminAuth = require("../middleware/AdminAuth")
 var Implantation = require("../controllers/ImplantationController")
+var Network = require ("../controllers/NetworkController")
 
 router.post('/login', UserController.login);
 router.get('/user', AdminAuth, UserController.getUsers);
@@ -31,6 +32,7 @@ router.patch('/store', ReplicController.patchStores);
 router.post('/validate', AdminAuth, UserController.validate);
 //router.get('/post', WikiController.getPost);
 router.get('/stores', AdminAuth, StoreController.getStores);
+router.get("/networks", AdminAuth, Network.getNetworks)
 
 router.post('/stage', StageController.create);
 router.get('/stages', StageController.getStages);

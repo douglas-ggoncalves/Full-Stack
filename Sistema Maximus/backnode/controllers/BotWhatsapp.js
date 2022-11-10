@@ -6,13 +6,13 @@ class BotWhatsapp{
             
         if(today.getHours() >= 8 && today.getHours() <= 18){
 
-            setInterval(function () {
+           //setInterval(function () {
                 try{
                 
                 var USUARIO = [
                     { LOGIN_USUARIO: 'Raynaldo', DIA_TRAB:'2-6', HORARIO_TRAB: '8-13', INTERVALO: '13-15', NUMEROTELEFONE: '62 8641-7471'},
                     { LOGIN_USUARIO: 'Maurício Xavier', DIA_TRAB:'1-6', HORARIO_TRAB: '10-20', INTERVALO: '13-15', NUMEROTELEFONE: '64 9949-2801'},
-                    { LOGIN_USUARIO: 'Jonas Marcelo', DIA_TRAB:'1-6', HORARIO_TRAB: '08-17', INTERVALO: '13-14', NUMEROTELEFONE: '62 8421-9096'},
+                    //{ LOGIN_USUARIO: 'Jonas Marcelo', DIA_TRAB:'1-6', HORARIO_TRAB: '08-17', INTERVALO: '13-14', NUMEROTELEFONE: '62 8421-9096'},
                     { LOGIN_USUARIO: 'Gyselle Mairinck ', DIA_TRAB:'1-6', HORARIO_TRAB: '14-18', INTERVALO: '10-11', NUMEROTELEFONE: '62 9377-7353'},
                     { LOGIN_USUARIO: 'Eduardo Gabriel', DIA_TRAB:'1-6', HORARIO_TRAB: '07-16', INTERVALO: '13-15', NUMEROTELEFONE: '62 9478-0815'},
                     // { LOGIN_USUARIO: 'Rafael', DIA_TRAB:'1-6', HORARIO_TRAB: '07-16', INTERVALO: '13-15', NUMEROTELEFONE: '62 8219-0431'},
@@ -105,7 +105,7 @@ class BotWhatsapp{
                     console.log("O arquivo foi criado")
                 })
             }
-            }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
+          //  }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
         }
     }
 }

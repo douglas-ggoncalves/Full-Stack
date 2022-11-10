@@ -7,6 +7,7 @@ import AdminUsers from '../views/Admin/AdminUsers.vue'
 import Wiki from '../views/Wiki/Wiki.vue'
 import RegisterPost from '../views/Wiki/RegisterPost.vue'
 import Post from '../views/Wiki/Post.vue'
+import Access from '../views/Access/Access.vue'
 import Implantation from '../views/Implantation/Implantation.vue'
 import Teste from '../views/Implantation/Teste.vue'
 
@@ -62,6 +63,11 @@ const routes = [
     name: 'Index',
     component: Index,
     beforeEnter: AdminAuth
+  },
+  {
+    path: '/acessos',
+    name: 'Access',
+    component: Access,
   },
   {
     path: '/implantacoes',
