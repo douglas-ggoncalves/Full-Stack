@@ -1,3 +1,8 @@
-2022/11/09-14:21:13.957 38fc Reusing MANIFEST C:\Users\SSD\Documents\GitHub\Full-Stack\Sistema Maximus\backnode\controllers\.dadosChrome\Default\Local Storage\leveldb/MANIFEST-000001
-2022/11/09-14:21:14.016 38fc Recovering log #3
-2022/11/09-14:21:14.017 38fc Reusing old log C:\Users\SSD\Documents\GitHub\Full-Stack\Sistema Maximus\backnode\controllers\.dadosChrome\Default\Local Storage\leveldb/000003.log 
+2022/11/10-12:05:01.884 591c Reusing MANIFEST C:\Users\SSD\Documents\GitHub\Full-Stack\Sistema Maximus\backnode\controllers\.dadosChrome\Default\Local Storage\leveldb/MANIFEST-000001
+2022/11/10-12:05:01.912 591c Recovering log #3
+2022/11/10-12:05:01.913 591c Level-0 table #3: started
+2022/11/10-12:05:01.918 591c Level-0 table #3: 15156 bytes OK
+2022/11/10-12:05:01.919 591c Recovering log #4
+2022/11/10-12:05:01.921 591c Reusing old log C:\Users\SSD\Documents\GitHub\Full-Stack\Sistema Maximus\backnode\controllers\.dadosChrome\Default\Local Storage\leveldb/000004.log 
+2022/11/10-12:05:01.924 591c Delete type=0 #3
+2022/11/10-12:05:01.925 591c Delete type=2 #5

@@ -33,7 +33,7 @@ router.post('/validate', AdminAuth, UserController.validate);
 //router.get('/post', WikiController.getPost);
 router.get('/stores', AdminAuth, StoreController.getStores);
 router.get("/networks", AdminAuth, Network.getNetworks)
-
+router.patch('/network', ReplicController.postNetworks); //555
 router.post('/stage', StageController.create);
 router.get('/stages', StageController.getStages);
 router.post('/items', ItemController.create);

@@ -6,7 +6,7 @@ class BotWhatsapp{
             
         if(today.getHours() >= 8 && today.getHours() <= 18){
 
-           //setInterval(function () {
+           setInterval(function () {
                 try{
                 
                 var USUARIO = [
@@ -105,7 +105,7 @@ class BotWhatsapp{
                     console.log("O arquivo foi criado")
                 })
             }
-          //  }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
+            }, 3600000); // 60 minutos = 3600000 // set interval acaba aqui
         }
     }
 }

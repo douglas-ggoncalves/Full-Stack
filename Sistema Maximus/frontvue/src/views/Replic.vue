@@ -371,7 +371,6 @@ import '../assets/style/style.css'
 import scrypt from "../assets/js/scrypt";
 import Multiselect from 'vue-multiselect'
 
-
 Vue.component('multiselect', Multiselect)
 
 Vue.use(VModal, {

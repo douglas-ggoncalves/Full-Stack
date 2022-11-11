@@ -37,6 +37,7 @@
                     </button>
                 </div>
             </nav>
+           
             <v-container fluid>
                 <div class="vm--overlay" style="z-index: 9999" @click="closeToastErr()" v-if="err != ''">
                     <div class="position-fixed top-0 start-50 translate-middle-x p-3">
@@ -53,6 +54,79 @@
                         </div>
                     </div>
                 </div>
+                <v-dialog v-model="dialogNewNetwork" max-width="600px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                            Cadastrar Rede
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                            <span class="text-h5">User Profile</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <v-text-field label="Nome da rede*" required></v-text-field>
+                                    </v-col>
+                                    
+                                    <v-col cols="12" sm="6">
+                                        <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required ></v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="dialog = false">
+                                Fechar
+                            </v-btn>
+                            <v-btn color="blue darken-1" text @click="editStore()">
+                                Salvar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="dialog" max-width="600px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="text-h5">Editar Rede</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <v-text-field label="Nome da rede" v-model="networkSelected.RADMIN_NOMEREDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12">
+                                        <v-text-field label="Senha da rede" v-model="networkSelected.RADMIN_SENHAREDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.REDE_REPLICA" label="Rede replica" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.ISATIVA" label="Loja Ativa" required ></v-select>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="dialog = false">
+                                Fechar
+                            </v-btn>
+                            <v-btn color="blue darken-1" text @click="editNetwork()">
+                                Salvar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                
 
                 <v-row>
                     <v-col class="col" :cols="12">
@@ -79,13 +153,31 @@
                                 </template>
 
                                 <template v-slot:[`item.action`]="{ item }" class="text-end"> 
-                                    <v-icon small class="mr-2" @click="editItem(item)">
-                                        mdi-pencil
-                                    </v-icon>
+                                    <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <span v-bind="attrs" v-on="on" style="">
+                                                <v-icon class="mr-2" @click="modalEdit(item)">
+                                                    mdi-pencil
+                                                </v-icon>
+                                            </span>
+                                        </template> 
+                                        <span>Editar</span>
+                                    </v-tooltip>
+
+                                    <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <span v-bind="attrs" v-on="on" style="">
+                                                <v-icon class="mr-2" @click="editItem(item)">
+                                                    mdi-information
+                                                </v-icon>
+                                            </span>
+                                        </template> 
+                                        <span>Info</span>
+                                    </v-tooltip>
                                 </template>
 
                                 <template v-slot:[`item.COMPLETED`]="{ item }">
-                                    <v-simple-checkbox v-model="item.COMPLETED"></v-simple-checkbox>
+                                    <v-simple-checkbox :ripple="false" v-model="item.COMPLETED"></v-simple-checkbox>
                                 </template>
                             </v-data-table>
                         </v-card>
@@ -97,7 +189,7 @@
 </template>
 
 <script>
-//import Vue from 'vue'
+import Vue from 'vue'
 import '../../assets/style/style.css'
 import scrypt from "../../assets/js/scrypt";
 import axios from 'axios';
@@ -105,7 +197,9 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            err: '',
+            err: '', 
+            dialog: false,
+            dialogNewNetwork: false,
             dataTable: {
                 serverIP: '',
                 roleUserLogged: '',
@@ -113,16 +207,21 @@ export default {
                 headers: [
                     { text: 'Nome Rede Radmin', align: 'center', value: 'RADMIN_NOMEREDE',},
                     { text: 'Senha Rede Radmin', align: 'center', value: 'RADMIN_SENHAREDE'},
-                    { text: 'Anydesk', align: 'center', value: 'ANYDESK'},
                     { text: 'Ações', align: 'center', value: 'action', sortable: false },
                     { text: 'Concluído', align: 'center', value: 'COMPLETED'},
                 ],
                 items: [
-                    { ID_LOJA: 0, RADMIN_NOMEREDE: 'Big Farma', RADMIN_SENHAREDE: 'd120588', ANYDESK: '123456621', COMPLETED: true},
-                    { ID_LOJA: 1, RADMIN_NOMEREDE: 'Bom Preço', RADMIN_SENHAREDE: 'Maximus', ANYDESK: '123456622', COMPLETED: false},
-                    { ID_LOJA: 2, RADMIN_NOMEREDE: 'Drogaria Canaã', RADMIN_SENHAREDE: 'segredo!2019', ANYDESK: '123456623', COMPLETED: true},
-                    { ID_LOJA: 3, RADMIN_NOMEREDE: 'Drogaria Cidadã', RADMIN_SENHAREDE: '1234', ANYDESK: '123456624', COMPLETED: true},
+                    //{ id: 0, NOME_REDE: 'Big Farma', RADMIN_NOMEREDE: 'Big Farma', RADMIN_SENHAREDE: 'd120588', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
+                    //{ id: 1, NOME_REDE: 'Bom Preço', RADMIN_NOMEREDE: 'Bom Preço', RADMIN_SENHAREDE: 'Maximus', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO',COMPLETED: false},
+                    //{ id: 2, NOME_REDE: 'Drogaria Canaã', RADMIN_NOMEREDE: 'Drogaria Canaã', RADMIN_SENHAREDE: 'segredo!2019', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
                 ],
+            },
+            networkSelected: {
+                id: '',
+                RADMIN_NOMEREDE: '',
+                RADMIN_SENHAREDE: '',
+                REDE_REPLICA: '',
+                ISATIVA: '',
             },
         }
     },
@@ -140,9 +239,24 @@ export default {
                 }
             }).then(res => {
                 console.log(res.data.networks)
+                for(var y=0; y < res.data.networks.length; y++) {
+                    var element = res.data.networks[y];
+                    Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não"})
+                }
             }).catch(err => {
                 this.err = err.response.data.err
             })
+        },
+        modalEdit(item){
+            console.log("item " + JSON.stringify(item))
+            this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
+            this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
+            this.networkSelected.REDE_REPLICA = 'Sim'
+            this.networkSelected.ISATIVA = 'Sim'
+            this.dialog = true;
+        },
+        editNetwork(){
+            axios.put(`${this.serverIP}/network`)
         },
         closeToastErr(){
             this.err = ''
@@ -151,10 +265,6 @@ export default {
             scrypt.clique(this);
         }
     },
-    filters: {
-       
-    },
-   
     
 }
 </script>
