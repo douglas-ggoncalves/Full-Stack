@@ -79,7 +79,7 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="dialog = false">
+                            <v-btn color="blue darken-1" text @click="dialogNewNetwork = false">
                                 Fechar
                             </v-btn>
                             <v-btn color="blue darken-1" text @click="editStore()">
@@ -98,11 +98,15 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="Nome da rede" v-model="networkSelected.RADMIN_NOMEREDE" required></v-text-field>
+                                        <v-text-field label="Nome da rede" v-model="networkSelected.NOME_REDE" required></v-text-field>
                                     </v-col>
 
                                     <v-col cols="12">
-                                        <v-text-field label="Senha da rede" v-model="networkSelected.RADMIN_SENHAREDE" required></v-text-field>
+                                        <v-text-field label="Login do radmin" v-model="networkSelected.RADMIN_NOMEREDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12">
+                                        <v-text-field label="Senha do radmin" v-model="networkSelected.RADMIN_SENHAREDE" required></v-text-field>
                                     </v-col>
 
                                     <v-col cols="12" sm="6">
@@ -218,6 +222,7 @@ export default {
             },
             networkSelected: {
                 id: '',
+                NOME_REDE: '',
                 RADMIN_NOMEREDE: '',
                 RADMIN_SENHAREDE: '',
                 REDE_REPLICA: '',
@@ -238,7 +243,6 @@ export default {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
             }).then(res => {
-                console.log(res.data.networks)
                 for(var y=0; y < res.data.networks.length; y++) {
                     var element = res.data.networks[y];
                     Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não"})
@@ -248,7 +252,9 @@ export default {
             })
         },
         modalEdit(item){
-            console.log("item " + JSON.stringify(item))
+            this.networkSelected.id = item.id
+            console.log(item)
+            this.networkSelected.NOME_REDE = item.NOME_REDE
             this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
             this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
             this.networkSelected.REDE_REPLICA = 'Sim'
@@ -256,7 +262,33 @@ export default {
             this.dialog = true;
         },
         editNetwork(){
-            axios.put(`${this.serverIP}/network`)
+            /*networkSelected: {
+                id: '',
+                RADMIN_NOMEREDE: '',
+                RADMIN_SENHAREDE: '',
+                REDE_REPLICA: '',
+                ISATIVA: '',
+            },*/
+
+            if(this.networkSelected.id == null || this.networkSelected.id == ""){
+                this.err = "Ocorreu um erro, o identificador único da rede não foi selecionada."
+            } else if(this.networkSelected.NOME_REDE == null || this.networkSelected.NOME_REDE == ""){
+                this.err = "Nome da rede não pode estar vazio."
+            }
+            else {
+                axios.patch(`${this.serverIP}/network`, {
+                    id: this.networkSelected.id,
+                    NOME_REDE: this.networkSelected.NOME_REDE,
+                    RADMIN_NOMEREDE: this.networkSelected.RADMIN_NOMEREDE,
+                    RADMIN_SENHAREDE: this.networkSelected.RADMIN_SENHAREDE,
+                    REDE_REPLICA: this.networkSelected.REDE_REPLICA == "Sim" ? 1 : 0,
+                    ISATIVA: this.networkSelected.ISATIVA == "Sim" ? 1 : 0
+                }).then(res => {
+                    console.log(res.data)
+                }).catch(err => {
+                    this.err = err.response.data.err
+                })
+            }
         },
         closeToastErr(){
             this.err = ''

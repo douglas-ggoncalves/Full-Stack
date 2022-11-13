@@ -2,7 +2,6 @@ var Network = require("../models/Network")
 
 class NetworkController{
     async getNetworks(req, res){
-        
         var networks = await Network.findAll()
         if(networks != undefined){
             res.status(200);
@@ -10,6 +9,35 @@ class NetworkController{
         } else{
             res.status(406);
             res.send({err: "Não foi possível carregar as redes"})
+        }
+    }
+
+    async editNetwork(req, res){
+        var id = req.body.id
+        var NOME_REDE = req.body.NOME_REDE
+        var RADMIN_NOMEREDE = req.body.RADMIN_NOMEREDE
+        var RADMIN_SENHAREDE = req.body.RADMIN_SENHAREDE
+        var REDE_REPLICA = req.body.REDE_REPLICA
+        var ISATIVA = req.body.ISATIVA
+        
+        var existLogin = await Network.findByName(NOME_REDE);
+        if(existLogin != undefined){
+            console.log("existLogin.id " + existLogin.id)
+            console.log("id " + id)
+            if(existLogin.id != id){
+                res.status(406);
+                res.send({err: "Já existe uma rede com este nome"})
+                return;
+            } 
+        }
+
+        var update = await Network.editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA);
+        if(update != undefined){
+            res.status(200);
+            res.send({success: "Rede alterada com sucesso"})
+        } else{
+            res.status(406);
+            res.send({success: "Não foi possível fazer a alteração da rede"})
         }
     }
 }
