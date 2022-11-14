@@ -22,6 +22,15 @@ class Network{
         }
     }
 
+    async newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA){
+        try {
+            var result = await knex.insert({NOME_REDE: NOME_REDE, RADMIN_NOMEREDE: RADMIN_NOMEREDE, RADMIN_SENHAREDE: RADMIN_SENHAREDE, REDE_REPLICA: REDE_REPLICA, ISATIVA: ISATIVA,}).table("rede");
+            return result
+        } catch(err) {
+            return undefined;
+        }
+    }
+
     //var result = await knex.select().where({TITULO: title}).table("POSTAGEM")
 
     async editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA){

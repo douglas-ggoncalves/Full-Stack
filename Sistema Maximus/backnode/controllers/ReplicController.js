@@ -62,33 +62,6 @@ class ReplicController{
         } 
     }
 
-    async postNetworks(req, res) {
-        var networkName = await req.body.network;
-        try{
-            var networks  = await database.raw(`
-	            select NOME_REDE from rede
-            `)
-
-            for(var x=0; x < networks.length; x++){
-                if(JSON.stringify(networks[x].NOME_REDE.toUpperCase()).match(networkName.toUpperCase())){
-                    res.status(406);
-                    res.send({err: `Já existe uma rede criada com o nome ${networkName}`});
-                    return;
-                }
-            }
-
-            var select = await database.raw(`
-                insert into rede (NOME_REDE) values ('${networkName}')
-            `); 
-        } catch(error) {
-            res.status(406);
-            res.send({err: `Ocorreu um erro na inserção da rede ${networkName}, segue a mensagem de erro: ${error}`});
-            return;
-        }
-
-        res.send({success: "Rede cadastrada com sucesso!"})
-    }
-
     async postStores(req, res) {
         var numberStoreNewStore = req.body.numberStoreNewStore;
         var nameStore = req.body.nameStore;

@@ -54,39 +54,72 @@
                         </div>
                     </div>
                 </div>
+
                 <v-dialog v-model="dialogNewNetwork" max-width="600px">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn color="primary" dark v-bind="attrs" v-on="on">
                             Cadastrar Rede
                         </v-btn>
                     </template>
-                    <v-card>
+                    <v-card ref="form">
                         <v-card-title>
-                            <span class="text-h5">User Profile</span>
+                            <span class="text-h5">Cadastrar Rede</span>
                         </v-card-title>
                         <v-card-text>
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field label="Nome da rede*" required></v-text-field>
+                                        <v-text-field label="Nome da rede *" v-model="newNetwork.NOME_REDE" required></v-text-field>
                                     </v-col>
-                                    
+
+                                    <v-col cols="12">
+                                        <v-text-field label="Login do radmin" v-model="newNetwork.RADMIN_NOMEREDE"></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12">
+                                        <v-text-field label="Senha do radmin" v-model="newNetwork.RADMIN_SENHAREDE"></v-text-field>
+                                    </v-col>
+
                                     <v-col cols="12" sm="6">
-                                        <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required ></v-select>
+                                        <v-select :items="['Sim', 'Não']" v-model="newNetwork.REDE_REPLICA" label="Rede replica *" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
+                                        <v-select :items="['Sim', 'Não']" v-model="newNetwork.ISATIVA" label="Loja Ativa" required ></v-select>
                                     </v-col>
                                 </v-row>
+                                <span class="outlined my-3">
+                                    * indica campo obrigatório de ser preenchido
+                                </span>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
+                            
                             <v-spacer></v-spacer>
                             <v-btn color="blue darken-1" text @click="dialogNewNetwork = false">
                                 Fechar
                             </v-btn>
-                            <v-btn color="blue darken-1" text @click="editStore()">
+                            <v-btn color="blue darken-1" text @click="saveNetwork()">
                                 Salvar
                             </v-btn>
                         </v-card-actions>
                     </v-card>
+                </v-dialog>
+
+                <v-dialog transition="dialog-bottom-transition" max-width="600" v-model="dialogTwo">
+                    <template>
+                        <v-card>
+                            <v-toolbar :color="colorDialog" dark>Maximus Farma</v-toolbar>
+                            <v-card-text class="justify-center">
+                                <h3 class="pa-12">
+                                    {{ msgDialog }}
+                                </h3>
+                            </v-card-text>
+                            <v-card-actions class="justify-end">
+                                <v-btn text @click="dialogTwo = false">Fechar</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
                 </v-dialog>
 
                 <v-dialog v-model="dialog" max-width="600px">
@@ -203,6 +236,9 @@ export default {
         return {
             err: '', 
             dialog: false,
+            dialogTwo: false,
+            msgDialog: '',
+            colorDialog: 'success', /* success,  primary*/
             dialogNewNetwork: false,
             dataTable: {
                 serverIP: '',
@@ -221,6 +257,14 @@ export default {
                 ],
             },
             networkSelected: {
+                id: '',
+                NOME_REDE: '',
+                RADMIN_NOMEREDE: '',
+                RADMIN_SENHAREDE: '',
+                REDE_REPLICA: '',
+                ISATIVA: '',
+            },
+            newNetwork: {
                 id: '',
                 NOME_REDE: '',
                 RADMIN_NOMEREDE: '',
@@ -253,7 +297,6 @@ export default {
         },
         modalEdit(item){
             this.networkSelected.id = item.id
-            console.log(item)
             this.networkSelected.NOME_REDE = item.NOME_REDE
             this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
             this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
@@ -262,14 +305,6 @@ export default {
             this.dialog = true;
         },
         editNetwork(){
-            /*networkSelected: {
-                id: '',
-                RADMIN_NOMEREDE: '',
-                RADMIN_SENHAREDE: '',
-                REDE_REPLICA: '',
-                ISATIVA: '',
-            },*/
-
             if(this.networkSelected.id == null || this.networkSelected.id == ""){
                 this.err = "Ocorreu um erro, o identificador único da rede não foi selecionada."
             } else if(this.networkSelected.NOME_REDE == null || this.networkSelected.NOME_REDE == ""){
@@ -284,10 +319,48 @@ export default {
                     REDE_REPLICA: this.networkSelected.REDE_REPLICA == "Sim" ? 1 : 0,
                     ISATIVA: this.networkSelected.ISATIVA == "Sim" ? 1 : 0
                 }).then(res => {
-                    console.log(res.data)
+                    this.dialogTwo = true
+                    this.dialog = ""
+                    this.myFunction();
+                    this.msgDialog = res.data.success
+                    this.networkSelected.id = "";
+                    this.networkSelected.NOME_REDE = "";
+                    this.networkSelected.RADMIN_NOMEREDE = "";
+                    this.networkSelected.RADMIN_SENHAREDE = "";
+                    this.networkSelected.REDE_REPLICA = "";
+                    this.networkSelected.ISATIVA = "";
                 }).catch(err => {
                     this.err = err.response.data.err
                 })
+            }
+        },
+        saveNetwork(){
+            if(this.newNetwork.NOME_REDE.trim() == ""){
+                this.err = 'Nome da rede não pode ser vazio'
+            } else if(this.newNetwork.REDE_REPLICA.trim() == ""){
+                this.err = 'Informe se a loja replica ou não'
+            }
+            else{
+                var confirmation = confirm("Confirma gravação de " + this.newNetwork.NOME_REDE +' ?');
+                if(confirmation) {
+                    axios.post(`${this.serverIP}/network`, {
+                        NOME_REDE: this.newNetwork.NOME_REDE,
+                        RADMIN_NOMEREDE: this.newNetwork.RADMIN_NOMEREDE,
+                        RADMIN_SENHAREDE: this.newNetwork.RADMIN_SENHAREDE,
+                        REDE_REPLICA: this.newNetwork.REDE_REPLICA == "Sim" ? 1 : 0,
+                        ISATIVA: this.newNetwork.ISATIVA == "Sim" ? 1 : 0
+                    }).then(res => {
+                        this.err = res.data.success
+                        this.newNetwork.RADMIN_NOMEREDE = ""
+                        this.newNetwork.RADMIN_SENHAREDE = ""
+                        this.newNetwork.REDE_REPLICA = ""
+                        this.newNetwork.ISATIVA = ""
+                    }).catch(err => {
+                        this.msgDialog = err.response.data.err
+                        this.colorDialog = 'danger'
+                        this.dialogTwo = true
+                    })
+                }   
             }
         },
         closeToastErr(){
