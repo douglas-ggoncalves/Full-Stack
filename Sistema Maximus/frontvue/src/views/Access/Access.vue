@@ -55,12 +55,21 @@
                     </div>
                 </div>
 
+                <v-snackbar v-model="snackbar" timeout="3000" color="deep-purple accent-4" absolute top right elevation="24">
+                    <strong>{{ snackbarText }}</strong>
+
+                    <template v-slot:action="{ attrs }">
+                        <v-btn color="White" text v-bind="attrs" @click="snackbar = false">Fechar</v-btn>
+                    </template>
+                </v-snackbar>
+
                 <v-dialog v-model="dialogNewNetwork" max-width="600px">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn color="primary" dark v-bind="attrs" v-on="on">
                             Cadastrar Rede
                         </v-btn>
                     </template>
+
                     <v-card ref="form">
                         <v-card-title>
                             <span class="text-h5">Cadastrar Rede</span>
@@ -177,16 +186,25 @@
                             :search="dataTable.search">
 
                                 <template v-slot:[`item.RADMIN_NOMEREDE`]="{ item }">
-                                    <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
+                                    <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.RADMIN_NOMEREDE" bottom>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <span v-bind="attrs" v-on="on" style="">{{ item.RADMIN_NOMEREDE }}</span>
-                                        </template> 
-                                        <span>{{ item.RADMIN_NOMEREDE }}</span>
+                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_NOMEREDE, true)">
+                                                {{ item.RADMIN_NOMEREDE }}
+                                            </v-btn>
+                                        </template>
+                                        <span>Copiar</span>
                                     </v-tooltip>
                                 </template>
 
                                 <template v-slot:[`item.RADMIN_SENHAREDE`]="{ item }">
-                                    <span>{{ item.RADMIN_SENHAREDE }}</span>
+                                    <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.RADMIN_SENHAREDE" bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_SENHAREDE), false">
+                                                {{ item.RADMIN_SENHAREDE }}
+                                            </v-btn>
+                                        </template>
+                                        <span>Copiar</span>
+                                    </v-tooltip>
                                 </template>
 
                                 <template v-slot:[`item.action`]="{ item }" class="text-end"> 
@@ -214,7 +232,7 @@
                                 </template>
 
                                 <template v-slot:[`item.COMPLETED`]="{ item }">
-                                    <v-simple-checkbox :ripple="false" v-model="item.COMPLETED"></v-simple-checkbox>
+                                    <v-simple-checkbox :ripple="false" v-model="item.COMPLETED" @click="checkItem(item)"></v-simple-checkbox>
                                 </template>
                             </v-data-table>
                         </v-card>
@@ -240,6 +258,9 @@ export default {
             msgDialog: '',
             colorDialog: 'success', /* success,  primary*/
             dialogNewNetwork: false,
+            snackbar: false,
+            snackbarText: '',
+            networksCheckeds: [],
             dataTable: {
                 serverIP: '',
                 roleUserLogged: '',
@@ -281,7 +302,8 @@ export default {
     methods: {
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
-
+            this.setItensChecked();
+            
             axios.get(`${this.serverIP}/networks`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
@@ -289,11 +311,32 @@ export default {
             }).then(res => {
                 for(var y=0; y < res.data.networks.length; y++) {
                     var element = res.data.networks[y];
-                    Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não"})
+                    var completed = this.networksCheckeds.find(network => network.id == element.id)
+                    Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não", COMPLETED: completed ? true: false})
                 }
             }).catch(err => {
                 this.err = err.response.data.err
             })
+        },
+        copyText(text, isNome){
+            navigator.clipboard.writeText(text)
+            this.snackbarText = isNome ? "Nome da rede copiado com sucesso" : "Senha copiada com sucesso"
+            this.snackbar = true;
+        },
+        checkItem(item){
+            if(window) {
+                if(this.networksCheckeds != null){
+                    this.networksCheckeds.push({id: item.id})
+                } else{
+                    this.networksCheckeds = [{id: item.id}]
+                }
+                localStorage.setItem("dataMaximus", JSON.stringify(this.networksCheckeds));
+            }
+        },
+        setItensChecked(){
+            if(window){
+                this.networksCheckeds = JSON.parse(localStorage.getItem("dataMaximus"))
+            }
         },
         modalEdit(item){
             this.networkSelected.id = item.id
