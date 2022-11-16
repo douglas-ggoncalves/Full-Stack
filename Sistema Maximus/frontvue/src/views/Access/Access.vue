@@ -55,7 +55,7 @@
                     </div>
                 </div>
 
-                <v-snackbar v-model="snackbar" timeout="3000" color="deep-purple accent-4" absolute top right elevation="24">
+                <v-snackbar style="z-index: 99999" v-model="snackbar" timeout="3000" :color="snackbarColor" absolute top right elevation="24">
                     <strong>{{ snackbarText }}</strong>
 
                     <template v-slot:action="{ attrs }">
@@ -63,13 +63,198 @@
                     </template>
                 </v-snackbar>
 
-                <v-dialog v-model="dialogNewNetwork" max-width="600px">
+                <v-tooltip :color="'rgb(0, 0, 0)'" top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="black" outlined v-bind="attrs" v-on="on" style="text-transform: none" @click="myFunction(true)">
+                            Recarregar
+                        </v-btn>
+                    </template>
+                    <span>Recarregar os dados da página</span>
+                </v-tooltip>
+
+                <v-dialog v-model="dialogFullScreen"  class="w-100" fullscreen hide-overlay transition="dialog-bottom-transition">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                            Open Dialog
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-toolbar dark color="primary">
+                            <v-btn icon dark @click="dialogFullScreen = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                            <v-toolbar-title>{{ networkSelected.NOME_REDE }}</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                            <v-toolbar-items>
+                                <v-btn dark text @click="dialogFullScreen = false">Fechar</v-btn>
+                            </v-toolbar-items>
+                        </v-toolbar>
+                        
+                        <v-card-text>
+                            <v-container>
+                                <v-row class="mt-5">
+                                    <span class="text-h5">Dados da Rede</span>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="12" sm="4">
+                                        <v-text-field label="Nome da rede" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="4">
+                                        <v-text-field label="Login do radmin" v-model="networkSelected.RADMIN_NOMEREDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="4">
+                                        <v-text-field label="Senha do radmin" v-model="networkSelected.RADMIN_SENHAREDE" required></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="4">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.REDE_REPLICA" label="Rede replica" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="4">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.ISATIVA" label="Loja Ativa" required ></v-select>
+                                    </v-col>
+                                    <v-col cols="12" sm="4" style="margin-top: 14px">
+                                        <v-btn  color="success" @click="editNetwork()">
+                                            Alterar
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+                    
+                        <v-divider></v-divider>
+                        
+                        <v-card-text>
+                            <v-container>
+                                <v-row class="" justify="center">
+                                    <v-col :cols="12">
+                                        <div style="float: left; padding-top: 20px">
+                                            <span class="text-h5">Lojas</span>
+                                        </div>
+                                        
+                                        <v-sheet style="float: right" class="px-5 d-inline-block">
+                                            <v-switch v-model="switchMode" inset :label="`Modo ${switchMode ? 'Tabela': 'Painéis'}`" ></v-switch>
+                                        </v-sheet>
+                                    </v-col>
+                                </v-row>
+                                <v-row justify="center">
+                                    <v-col :cols="12" v-if="!switchMode">
+                                        <v-expansion-panels popout>
+                                            <v-expansion-panel v-for="item in storesFiltered" :key="item.id">
+                                                <v-expansion-panel-header>{{ item.NUMERO_LOJA | convertName }}</v-expansion-panel-header>
+                                                <v-expansion-panel-content>
+                                                    <v-card-text>
+                                                        <v-container>
+                                                            <v-row class="mt-5">
+                                                                <span class="text-h5">Dados da Loja</span>
+                                                            </v-row>
+                                                            <v-row>
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-text-field label="Nome da loja" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                                                </v-col>
+                                                                
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-text-field label="IP da loja" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                                                </v-col>
+
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-select :items="['Sim', 'Não']" v-model="networkSelected.REDE_REPLICA" label="Rede da loja" required ></v-select>
+                                                                </v-col>
+
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-text-field label="Porta referente ao IP" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                                                </v-col>
+
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-text-field label="Login do banco" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                                                </v-col>
+
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-text-field label="Senha do banco" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'" @click:append="showPassword = !showPassword" v-model="networkSelected.NOME_REDE" required></v-text-field>
+                                                                </v-col>
+
+                                                                <v-col cols="12" sm="4" style="margin-top: 14px">
+                                                                    <v-btn color="success" @click="editNetwork()">
+                                                                        Alterar
+                                                                    </v-btn>
+                                                                </v-col>
+                                                            </v-row>
+                                                        </v-container>
+                                                    </v-card-text>
+                                                </v-expansion-panel-content>
+                                            </v-expansion-panel>
+                                        </v-expansion-panels>
+                                    </v-col>
+
+                                    <v-col :cols="12" v-else>
+                                        <v-card>
+                                            <v-card-title>
+                                                <v-text-field v-model="dataTableStores.search" append-icon="mdi-magnify" label="Pesquisar" single-line hide-details></v-text-field>
+                                            </v-card-title>
+                                            <v-data-table :no-data-text="'Não há dados'" :no-results-text="'Nenhum resultado encontrado'" 
+                                            :header-props="{'sortByText': 'Ordenar por'}" :footer-props="{'items-per-page-text':'Itens por página', 
+                                            pageText: '{0}-{1} de {2}', 'items-per-page-all-text':'Todos'}" :headers="dataTableStores.headers" :items="storesFiltered" 
+                                            :search="dataTableStores.search">
+
+                                                <template v-slot:[`item.NUMERO_LOJA`]="{ item }">
+                                                    <span>
+                                                        {{ item.NUMERO_LOJA | convertName }}
+                                                    </span>
+                                                </template>
+
+                                                <template v-slot:[`item.IP_LOJA`]="{ item }">
+                                                    <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.IP_LOJA" bottom>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.IP_LOJA, 'IP da loja')">
+                                                                {{ item.IP_LOJA }}
+                                                            </v-btn>
+                                                        </template>
+                                                        <span>Copiar</span>
+                                                    </v-tooltip>
+                                                </template>
+
+
+                                                <template v-slot:[`item.action`]="{ item }" class="text-end"> 
+                                                    <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <span v-bind="attrs" v-on="on" style="">
+                                                                <v-icon class="mr-2" @click="modalEdit(item)">
+                                                                    mdi-pencil
+                                                                </v-icon>
+                                                            </span>
+                                                        </template> 
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+
+                                                    <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                            <span v-bind="attrs" v-on="on" style="">
+                                                                <v-icon class="mr-2" @click="infoNetwork(item)">
+                                                                    mdi-information
+                                                                </v-icon>
+                                                            </span>
+                                                        </template> 
+                                                        <span>Info</span>
+                                                    </v-tooltip>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="dialogNewNetwork" max-width="600px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="primary" style="text-transform: none" dark v-bind="attrs" v-on="on">
                             Cadastrar Rede
                         </v-btn>
                     </template>
-
+                    
                     <v-card ref="form">
                         <v-card-title>
                             <span class="text-h5">Cadastrar Rede</span>
@@ -188,7 +373,7 @@
                                 <template v-slot:[`item.RADMIN_NOMEREDE`]="{ item }">
                                     <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.RADMIN_NOMEREDE" bottom>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_NOMEREDE, true)">
+                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_NOMEREDE, 'Nome da rede')">
                                                 {{ item.RADMIN_NOMEREDE }}
                                             </v-btn>
                                         </template>
@@ -199,12 +384,18 @@
                                 <template v-slot:[`item.RADMIN_SENHAREDE`]="{ item }">
                                     <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.RADMIN_SENHAREDE" bottom>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_SENHAREDE), false">
+                                            <v-btn text color="primary" v-bind="attrs" v-on="on" style="text-transform: none" @click="copyText(item.RADMIN_SENHAREDE, 'Senha', true), false">
                                                 {{ item.RADMIN_SENHAREDE }}
                                             </v-btn>
                                         </template>
                                         <span>Copiar</span>
                                     </v-tooltip>
+                                </template>
+
+                                <template v-slot:[`item.ISATIVA`]="{ item }">
+                                    <span>
+                                        {{ item.ISATIVA }}
+                                    </span>
                                 </template>
 
                                 <template v-slot:[`item.action`]="{ item }" class="text-end"> 
@@ -222,7 +413,7 @@
                                     <v-tooltip :color="'rgb(0, 0, 0)'" :max-width="220" bottom>
                                         <template v-slot:activator="{ on, attrs }">
                                             <span v-bind="attrs" v-on="on" style="">
-                                                <v-icon class="mr-2" @click="editItem(item)">
+                                                <v-icon class="mr-2" @click="infoNetwork(item)">
                                                     mdi-information
                                                 </v-icon>
                                             </span>
@@ -252,29 +443,47 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            switchMode: true,
             err: '', 
             dialog: false,
+            serverIP: '',
+            roleUserLogged: '',
             dialogTwo: false,
             msgDialog: '',
             colorDialog: 'success', /* success,  primary*/
             dialogNewNetwork: false,
+            dialogFullScreen: true,
             snackbar: false,
             snackbarText: '',
+            snackbarColor: '',
+            showPassword: true,
             networksCheckeds: [],
             dataTable: {
-                serverIP: '',
-                roleUserLogged: '',
                 search: '',
                 headers: [
                     { text: 'Nome Rede Radmin', align: 'center', value: 'RADMIN_NOMEREDE',},
                     { text: 'Senha Rede Radmin', align: 'center', value: 'RADMIN_SENHAREDE'},
+                    { text: 'Rede Ativa', align: 'center', value: 'ISATIVA'},
                     { text: 'Ações', align: 'center', value: 'action', sortable: false },
                     { text: 'Concluído', align: 'center', value: 'COMPLETED'},
                 ],
                 items: [
-                    //{ id: 0, NOME_REDE: 'Big Farma', RADMIN_NOMEREDE: 'Big Farma', RADMIN_SENHAREDE: 'd120588', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
-                    //{ id: 1, NOME_REDE: 'Bom Preço', RADMIN_NOMEREDE: 'Bom Preço', RADMIN_SENHAREDE: 'Maximus', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO',COMPLETED: false},
-                    //{ id: 2, NOME_REDE: 'Drogaria Canaã', RADMIN_NOMEREDE: 'Drogaria Canaã', RADMIN_SENHAREDE: 'segredo!2019', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
+                    //{ id: 1, NOME_REDE: 'Big Farma', RADMIN_NOMEREDE: 'Big Farma', RADMIN_SENHAREDE: 'd120588', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
+                    //{ id: 2, NOME_REDE: 'Bom Preço', RADMIN_NOMEREDE: 'Bom Preço', RADMIN_SENHAREDE: 'Maximus', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO',COMPLETED: false},
+                    //{ id: 3, NOME_REDE: 'Drogaria Canaã', RADMIN_NOMEREDE: 'Drogaria Canaã', RADMIN_SENHAREDE: 'segredo!2019', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
+                ],
+            },
+            dataTableStores: {
+                search: '',
+                headers: [
+                    { text: 'Loja', align: 'center', value: 'NOME_LOJA'},
+                    { text: 'IP Radmin', align: 'center', value: 'IP_LOJA'},
+                    { text: 'Ações', align: 'center', value: 'action', sortable: false },
+                ],
+                items: [
+                    //{ id: 1, NOME_REDE: 'Big Farma', RADMIN_NOMEREDE: 'Big Farma', RADMIN_SENHAREDE: 'd120588', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
+                    //{ id: 2, NOME_REDE: 'Bom Preço', RADMIN_NOMEREDE: 'Bom Preço', RADMIN_SENHAREDE: 'Maximus', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO',COMPLETED: false},
+                    //{ id: 3, NOME_REDE: 'Drogaria Canaã', RADMIN_NOMEREDE: 'Drogaria Canaã', RADMIN_SENHAREDE: 'segredo!2019', REDE_REPLICA: 'SIM', ISATIVA: 'NÃO', COMPLETED: true},
                 ],
             },
             networkSelected: {
@@ -293,14 +502,20 @@ export default {
                 REDE_REPLICA: '',
                 ISATIVA: '',
             },
+            stores:[
+                //ID_LOJA: '',
+            ],
+            storesFiltered: [
+
+            ]
         }
     },
     created(){
         this.serverIP = scrypt.serverIP
-        this.myFunction();
+        this.myFunction(false);
     },
     methods: {
-        myFunction(){
+        myFunction(cond){
             this.roleUserLogged = localStorage.getItem("roleUser")
             this.setItensChecked();
             
@@ -317,21 +532,49 @@ export default {
             }).catch(err => {
                 this.err = err.response.data.err
             })
+
+            if(cond){
+                this.snackbarText = 'Dados recarregados com sucesso'
+                this.snackbar = true;
+            } 
+
+            axios.get(`${this.serverIP}/stores`, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            }).then(res => {
+                res.data.stores.forEach(element => {
+                    this.stores.push(element)
+                })
+                this.storesFiltered = this.stores.filter(element => element.id == 2)
+            }).catch(err => {
+                this.err = err.response.data.err
+            })
         },
-        copyText(text, isNome){
+        copyText(text, value, female){
+            this.dialogFullScreen ? this.snackbarColor = 'success' : this.snackbarColor = 'deep-purple accent-4' // o dialog dialogFullScreen tem a cor de fundo azul, impedindo o user de ver o snackBar
             navigator.clipboard.writeText(text)
-            this.snackbarText = isNome ? "Nome da rede copiado com sucesso" : "Senha copiada com sucesso"
+            this.snackbarText = `${value} ${female ? 'copiada' : 'copiado'}  com sucesso`
             this.snackbar = true;
         },
         checkItem(item){
             if(window) {
-                if(this.networksCheckeds != null){
-                    this.networksCheckeds.push({id: item.id})
+                if(item.COMPLETED){
+                    if(this.networksCheckeds != null){
+                        this.networksCheckeds.push({id: item.id})
+                    } else{
+                        this.networksCheckeds = [{id: item.id}]
+                    }
                 } else{
-                    this.networksCheckeds = [{id: item.id}]
+                    this.networksCheckeds = this.networksCheckeds.filter(element => element.id != item.id)
                 }
+                
                 localStorage.setItem("dataMaximus", JSON.stringify(this.networksCheckeds));
             }
+        },
+        infoNetwork(item){
+            this.storesFiltered = this.stores.filter(element => element.id == item.id)
+            console.log(this.storesFiltered)
         },
         setItensChecked(){
             if(window){
@@ -343,8 +586,8 @@ export default {
             this.networkSelected.NOME_REDE = item.NOME_REDE
             this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
             this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
-            this.networkSelected.REDE_REPLICA = 'Sim'
-            this.networkSelected.ISATIVA = 'Sim'
+            this.networkSelected.REDE_REPLICA = item.REDE_REPLICA
+            this.networkSelected.ISATIVA = item.ISATIVA
             this.dialog = true;
         },
         editNetwork(){
@@ -413,6 +656,11 @@ export default {
             scrypt.clique(this);
         }
     },
+    filters: {
+        convertName(value){
+            return value == 0 ? "Integração" : "Loja " + value
+        }
+    }
     
 }
 </script>
