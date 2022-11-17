@@ -50,7 +50,7 @@ class BotWhatsapp{
                         })
                     )
                 
-                    await page.type("._13NKt", "GRUPO DO SUPORTE MX");
+                    await page.type("._13NKt", "Mx versões teste"); // GRUPO DO SUPORTE MX
                     await page.keyboard.press("Enter");
                     await page.type(".p3_M1", "*Bot: Tarefa Checar replicação das lojas*");
                 

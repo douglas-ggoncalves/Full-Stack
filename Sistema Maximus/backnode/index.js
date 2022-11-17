@@ -9,16 +9,18 @@ app.use(bodyParser.urlencoded({limit: "50mb", extended: false, parameterLimit:50
 app.use(bodyParser.json({limit: '50mb'}))
 app.use("/",router);
 
+
 /*
 setInterval(function () {
     var today = new Date();
-    if(today.getMinutes() == 32){ // 0 indica que acabou de começar o horário
+    if(today.getMinutes() == 1){ // 0 indica que acabou de começar o horário
         botWhatsapp.initBot();
         clearInterval(this);
-        console.log("entrou")
+        console.log("Conectado")
     }
 }, 1000); // 60000 é a cada 1 minuto
 */
+
 app.listen(4000, function(err){
     //console.log("logamos")
 })
