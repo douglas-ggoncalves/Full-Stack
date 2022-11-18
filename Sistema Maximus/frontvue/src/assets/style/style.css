@@ -182,7 +182,7 @@ button {
   margin: 0  .15rem !important;
 }
 
-#divMainReplic #modalStore .vm--modal, #divMainReplic #modalStoreEdit .vm--modal {
+#divMainReplic #modalStore .vm--modal, #divMainReplic #modalStoreEdit .vm--modal, #divMainReplic #modalNetwork .vm--modal {
   height: auto !important;
   bottom: 2rem !important;
   top: 2rem !important;

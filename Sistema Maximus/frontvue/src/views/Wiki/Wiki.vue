@@ -10,7 +10,15 @@
           </div>
 
           <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+              <a href="acessos">Acessos</a>
+          </li>
+
+          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
             <a href="usuarios">Gestão de Usuários</a>
+          </li>
+
+          <li>
+            <a href="implantacoes">Implantações</a>
           </li>
 
           <li>

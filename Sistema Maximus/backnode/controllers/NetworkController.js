@@ -13,7 +13,6 @@ class NetworkController{
     }
 
     async create(req, res) {
-
         var NOME_REDE = await req.body.NOME_REDE
         var RADMIN_NOMEREDE = await req.body.RADMIN_NOMEREDE
         var RADMIN_SENHAREDE = await req.body.RADMIN_SENHAREDE
@@ -31,18 +30,18 @@ class NetworkController{
             var select = await Network.newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA);
             if(select != undefined){
                 res.status(200);
-                res.send({success: 'Rede salva com sucesso'});
+                res.send({success: 'Rede cadastrada com sucesso'});
+                return;
             } else{
                 res.status(406);
                 res.send({err: "Não foi possível cadastrar a rede"})
+                return;
             }
         } catch(error) {
             res.status(406);
             res.send({err: `Ocorreu um erro na inserção da rede ${NOME_REDE}, segue a mensagem de erro: ${error}`});
             return;
         }
-        res.status(200);
-        res.send({success: "Rede cadastrada com sucesso!"})
     }
 
     async editNetwork(req, res){

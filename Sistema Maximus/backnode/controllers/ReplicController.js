@@ -129,6 +129,8 @@ class ReplicController{
         var editDoorIP = req.body.editDoorIP;
         var editLogin =  req.body.editLogin; 
         
+        var SENHAACESSOREMOTO =  req.body.SENHAACESSOREMOTO; 
+
         if(idStore == undefined){
             res.status(406);
             res.send({err: `Não foi informado o id da loja`});
@@ -146,7 +148,7 @@ class ReplicController{
         }
         if(editIpStore == undefined){
             res.status(406);
-            res.send({err: `Não foi informado o ip da loja`});
+            res.send({err: `Não foi informado o IP da loja`});
             return;
         }
         if(editSelected == undefined){
@@ -161,7 +163,7 @@ class ReplicController{
         }
         if(editLogin == undefined){
             res.status(406);
-            res.send({err: `Não foi informado o login da lojar`});
+            res.send({err: `Não foi informado o login da loja`});
             return;
         }
 
@@ -174,7 +176,8 @@ class ReplicController{
             try{
                 await database.raw(`
                     update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
-                    IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', REDEID = '${editSelected}'
+                    IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', 
+                    ACESSOREMOTO = '${ACESSOREMOTO}', SENHAACESSOREMOTO = '${SENHAACESSOREMOTO}', REDEID = '${editSelected}'
                     where ID_LOJA = '${idStore}'
                 `); 
             } catch(error) {
@@ -183,6 +186,7 @@ class ReplicController{
                 return;
             }
         }
+        res.status(200);
         res.send({success: `Loja alterada com sucesso`})
     }
 

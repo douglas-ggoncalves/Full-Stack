@@ -10,8 +10,16 @@
           </div>
 
           <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+              <a href="acessos">Acessos</a>
+          </li>
+
+          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
             <a href="usuarios">Gestão de Usuários</a>
           </li>
+
+          <li>
+            <a href="implantacoes">Implantações</a>
+        </li>
 
           <li>
             <a href="replicacoes">Replicação</a>
@@ -186,7 +194,7 @@
         </div>
     </div>
 
-    <modal name="modalNetwork">
+    <modal name="modalNetwork" id="modalNetwork">
       <div class="row">
           <div class="card">
             <h4 class="card-header">Cadastrar Rede</h4>
@@ -197,6 +205,16 @@
                 <div class="invalid-feedback">
                   Nome da rede não pode ser vazio
                 </div>
+              </div>
+
+              <div class="col">
+                <label>Login do Radmin</label>
+                <input type="text" class="form-control" placeholder="Digite o Login do Radmin" v-model="loginRadmin" @keydown="clear()" required>
+              </div>
+              
+              <div class="col">
+                <label>Senha do Radmin</label>
+                <input type="text" class="form-control" placeholder="Digite a senha do Radmin" v-model="passwordRadmin" @keydown="clear()" required>
               </div>
 
               <div class="col text-center mt-2">
@@ -316,6 +334,20 @@
                 <input type="text" class="form-control" placeholder="Informe o nome da loja" v-model="editNameStore" required>
               </div>
             </div>
+            
+            <div class="col">
+              <div class="form-group">
+                <Label for="storeName">Acesso RustDesk</Label>
+                <input type="text" class="form-control" placeholder="Informe o Acesso RustDesk" v-model="editAcessRush" required>
+              </div>
+            </div>
+            
+            <div class="col">
+              <div class="form-group">
+                <Label for="storeName">Senha RustDesk</Label>
+                <input type="text" class="form-control" placeholder="Informe a senha RustDesk" v-model="editPAssRush" required>
+              </div>
+            </div>
 
             <div class="col">
               <div class="form-group">
@@ -390,6 +422,8 @@ export default {
       nameStore: '',
       ipStore: '',
       network: '',
+      loginRadmin: '',
+      passwordRadmin: '',
       selected: '',
       login: 'sa',
       doorIP: '3739',
@@ -397,6 +431,8 @@ export default {
       buttonIdClicked: '',
       editNumberStoreNewStore: '',
       editNameStore: '',
+      editAcessRush: '',
+      editPAssRush: '',
       editIpStore: '',
       editSelected: '',
       editDoorIP: '',
@@ -599,6 +635,8 @@ export default {
 
       this.editNumberStoreNewStore = myElement.NUMERO_LOJA.toString()
       this.editNameStore = myElement.NOME_LOJA
+      this.editAcessRush = myElement.ACESSOREMOTO
+      this.editPAssRush = myElement.SENHAACESSOREMOTO
       this.editIpStore = myElement.IP_LOJA
       this.editSelected = myElement.REDEID
       this.editDoorIP = myElement.PORTA_LOJA
@@ -644,14 +682,16 @@ export default {
         var confirmation = await confirm("Confirma a alteração de dados ?");
         if(confirmation){
           try {
-            await axios.patch(`${this.serverIP}/store`, {
+            await axios.put(`${this.serverIP}/store`, {
               editNumberStoreNewStore: this.editNumberStoreNewStore,
               editNameStore: this.editNameStore,
               editIpStore: this.editIpStore,
               editSelected: this.editSelected,
               editDoorIP: this.editDoorIP,
               editLogin: this.editLogin,
-              idStore: this.buttonIdClicked
+              idStore: this.buttonIdClicked,
+              ACESSOREMOTO: this.editAcessRush,
+              SENHAACESSOREMOTO: this.editPAssRush,
             })
             .then(res => {
               this.editNumberStoreNewStore = '',
@@ -660,6 +700,8 @@ export default {
               this.editSelected = '',
               this.editDoorIP = '',
               this.editLogin = ''
+              this.editAcessRush = ''
+              this.editPAssRush = ''
               this.networks = [];
               this.lojas = [];
               this.data = [];

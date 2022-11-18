@@ -8,6 +8,10 @@
                 </div>
 
                 <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+                    <a href="acessos">Acessos</a>
+                </li>
+
+                <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
                     <a href="usuarios">Gestão de Usuários</a>
                 </li>
 
@@ -879,7 +883,6 @@ export default {
                 }
             }
         },
-
         progressStage1 () {
             if(this.stage1.model.length / this.stage1.items.length * 100 == 100){
                 this.stage1.color = 'success'

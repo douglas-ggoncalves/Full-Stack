@@ -20,7 +20,7 @@ router.post('/token', UserController.validateToken);
 router.delete('/user/:login', UserController.delete);
 router.get('/replic', AdminAuth, ReplicController.getData);
 router.post('/replic', ReplicController.searchComands);
-router.post('/store', ReplicController.postStores);
+//router.post('/store', ReplicController.postStores);
 router.post('/post', WikiController.create);
 router.get('/posts', WikiController.getPosts);
 router.get('/post', WikiController.getPost);
@@ -28,6 +28,7 @@ router.delete('/post/:slug', WikiController.deletePost);
 router.patch('/post', WikiController.editPost);
 router.delete('/store/:id', ReplicController.delete);
 router.patch('/store', ReplicController.patchStores);
+router.put('/store', ReplicController.edit);
 router.post('/validate', AdminAuth, UserController.validate);
 //router.get('/post', WikiController.getPost);
 router.get('/stores', AdminAuth, StoreController.getStores);
@@ -39,7 +40,7 @@ router.post('/items', ItemController.create);
 router.post('/implantation', Implantation.create);
 router.get('/implants', Implantation.getImplants);
 router.post('/network', Network.create);
-
+router.post('/store', StoreController.create);
 
 
 
