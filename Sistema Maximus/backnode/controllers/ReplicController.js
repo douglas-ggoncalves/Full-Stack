@@ -128,7 +128,84 @@ class ReplicController{
         var editSelected = req.body.editSelected;
         var editDoorIP = req.body.editDoorIP;
         var editLogin =  req.body.editLogin; 
-        
+        var SENHA_LOJA = req.body.SENHA_LOJA;
+        var RAZAO_LOJA = req.body.RAZAO_LOJA;
+        var CNPJ_LOJA = req.body.CNPJ_LOJA;
+        var SISTEMA_LOJA = req.body.SISTEMA_LOJA;
+        var ENDERECO_LOJA = req.body.ENDERECO_LOJA;
+        var ACESSOREMOTO = req.body.ACESSOREMOTO;
+        var SENHAACESSOREMOTO = req.body.SENHAACESSOREMOTO;
+
+        if(idStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o id da loja`});
+            return;
+        }
+        if(editNumberStoreNewStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o número da loja`});
+            return;
+        }
+        if(editNameStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o nome da loja`});
+            return;
+        }
+        if(editIpStore == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o IP da loja`});
+            return;
+        }
+        if(editSelected == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o id da rede para esta loja`});
+            return;
+        }
+        if(editDoorIP == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado a porta da loja`});
+            return;
+        }
+        if(editLogin == undefined){
+            res.status(406);
+            res.send({err: `Não foi informado o login da loja`});
+            return;
+        }
+
+        var result = await database.select().where({ID_LOJA: idStore}).from("LOJA");
+        if(result == ''){
+            res.status(406);
+            res.send({err: `Não foi encontrada nenhuma loja com o id informado`});
+            return;
+        } else{
+            try{
+                await database.raw(`
+                    update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
+                    IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', 
+                    SENHA_LOJA = '${SENHA_LOJA}', RAZAO_LOJA = '${RAZAO_LOJA}', CNPJ_LOJA = '${CNPJ_LOJA}',
+                    SISTEMA_LOJA = '${SISTEMA_LOJA}', ENDERECO_LOJA = '${ENDERECO_LOJA}', ACESSOREMOTO = '${ACESSOREMOTO}',
+                    SENHAACESSOREMOTO = '${SENHAACESSOREMOTO}', REDEID = '${editSelected}'
+                    where ID_LOJA = '${idStore}'
+                `); 
+            } catch(error) {
+                res.status(406);
+                res.send({err: `Ocorreu um erro na edição da ${nameStore}, segue a mensagem de erro: ${error}`});
+                return;
+            }
+        }
+        res.status(200);
+        res.send({success: `Loja alterada com sucesso`})
+    }
+    
+    async edit(req, res) {
+        var idStore = req.body.idStore; 
+        var editNumberStoreNewStore = req.body.editNumberStoreNewStore;
+        var editNameStore = req.body.editNameStore;
+        var editIpStore = req.body.editIpStore;
+        var editSelected = req.body.editSelected;
+        var editDoorIP = req.body.editDoorIP;
+        var editLogin =  req.body.editLogin; 
+        var ACESSOREMOTO =  req.body.ACESSOREMOTO; 
         var SENHAACESSOREMOTO =  req.body.SENHAACESSOREMOTO; 
 
         if(idStore == undefined){
