@@ -619,7 +619,7 @@ export default {
                 editedItemDateIni: '',
                 editedDateFinal: '',
             },
-            checkImplantation: true,
+            checkImplantation: false,
             serverIP: '',
             roleUserLogged: '',
             dataTable: {
@@ -803,7 +803,8 @@ export default {
                 this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
                 this.checkImplantation = !this.checkImplantation;
             } else{
-                alert("Elemento inválido, deseja criar uma implantação para esta loja?")
+                alert("Função ainda em implementação")
+                //alert("Elemento inválido, deseja criar uma implantação para esta loja?")
             }
             
         },

@@ -200,7 +200,7 @@
             <h4 class="card-header">Cadastrar Rede</h4>
             <div class="card-body">
               <div class="col">
-                <label>Nome Da Rede</label>
+                <label>Nome Da Rede *</label>
                 <input type="text" id="inputNameNetwork" class="form-control" placeholder="Digite o nome da rede" v-model="network" @keydown="clear()" required>
                 <div class="invalid-feedback">
                   Nome da rede não pode ser vazio
@@ -217,13 +217,35 @@
                 <input type="text" class="form-control" placeholder="Digite a senha do Radmin" v-model="passwordRadmin" @keydown="clear()" required>
               </div>
 
-              <div class="col text-center mt-2">
+              <div class="col">
+                <div class="form-group">
+                  <Label for="selectedReplic">Rede Replica *</Label>
+                  <select id="selectedReplic" class="form-control" v-model="selectedReplic">
+                    <option disabled value="">Escolha uma Opção</option>
+                    <option v-for="(option, index) in ['Sim','Não']" v-bind:value="option" :key="index">
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="col">
+                <div class="form-group">
+                  <Label for="selectedAtive">Rede Ativa</Label>
+                  <select id="selectedAtive" class="form-control" v-model="selectedAtive">
+                    <option disabled value="">Escolha uma Opção</option>
+                    <option v-for="(option, index) in ['Sim','Não']" v-bind:value="option" :key="index">
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col text-end mt-2">
                 <button type="button" class="btn btn-outline-dark" @click="hideNewNetwork()">
                   Fechar
                 </button>
-              </div>
 
-              <div class="col text-center mt-1">
                 <button type="button" class="btn btn-success" @click="registerNetwork()">
                   Cadastrar
                 </button>
@@ -273,6 +295,20 @@
 
             <div class="col">
               <div class="form-group">
+                <Label for="acessRustDesk">Acesso RustDesk</Label>
+                <input type="text" id="acessRustDesk" class="form-control" v-model="acessRustDesk" placeholder="Informe o Acesso do RustDesk">
+              </div>
+            </div>
+            
+            <div class="col">
+              <div class="form-group">
+                <Label for="passwordRustkDest">Senha RustDesk</Label>
+                <input type="password" id="passwordRustkDest" class="form-control" v-model="passwordRustkDest" placeholder="Informe a senha do RustDesk">
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
                 <Label for="doorIP">Porta referente ao IP</Label>
                 <input type="text" id="doorIP" class="form-control" v-model="doorIP" placeholder="Informe a porta da loja" required readonly>
               </div>
@@ -291,25 +327,19 @@
                 <input type="password" id="passwordBank" class="form-control" v-model="password" placeholder="Informe a senha do banco" required readonly>
               </div>
             </div>
-
-            <div class="col text-center mt-2">
+            
+            <div class="col text-end mt-2">
               <button type="button" class="btn btn-outline-dark" @click="hideNewStore()">
                 Fechar
               </button>
-            </div>
 
-            <div class="col text-center mt-1">
               <button type="button" class="btn btn-success" @click="registerStore()">
                 Cadastrar Loja
               </button>
-            </div>
-            
-            <div class="col mt-1">
-              <div class="text-center">
-                <button type="button" class="btn btn-outline-danger" @click="defaults()">
-                  Alterar valores padrões
-                </button>
-              </div>
+
+              <button type="button" class="btn btn-outline-danger" @click="defaults()">
+                Alterar valores padrões
+              </button>
             </div>
           </div>
         </div>
@@ -424,6 +454,8 @@ export default {
       network: '',
       loginRadmin: '',
       passwordRadmin: '',
+      acessRustDesk: '',
+      passwordRustkDest: '',
       selected: '',
       login: 'sa',
       doorIP: '3739',
@@ -431,6 +463,8 @@ export default {
       buttonIdClicked: '',
       editNumberStoreNewStore: '',
       editNameStore: '',
+      selectedReplic: '',
+      selectedAtive: '',
       editAcessRush: '',
       editPAssRush: '',
       editIpStore: '',
@@ -520,15 +554,25 @@ export default {
       if(this.network.trim() == ""){
         this.err = 'Nome da rede não pode ser vazio'
         document.getElementById('inputNameNetwork').classList.add("is-invalid")
+      } else if(this.selectedReplic.trim() == ""){
+        this.err = 'Informe se a Rede replica'
       } else{
         var confirmation = await confirm("Deseja cadastrar a rede com o nome " + this.network +' ?');
         if(confirmation) {
           try {
             await axios.post(`${this.serverIP}/network`, {
-              network: this.network
+              NOME_REDE: this.network,
+              RADMIN_NOMEREDE: this.loginRadmin,
+              RADMIN_SENHAREDE: this.passwordRadmin,
+              REDE_REPLICA: this.selectedReplic == "Sim" ? 1 : 0,
+              ISATIVA: this.selectedAtive == "Sim" ? 1 : 0
             })
             .then(res => {
               this.network = ''
+              this.loginRadmin = ''
+              this.passwordRadmin = ''
+              this.selectedReplic = ''
+              this.selectedAtive = ''
               this.networks = [];
               this.lojas = [];
               this.data = [];
@@ -581,19 +625,27 @@ export default {
         if(confirmation){
           try {
             await axios.post(`${this.serverIP}/store`, {
-              numberStoreNewStore: this.numberStoreNewStore,
-              nameStore: this.nameStore,
-              ipStore: this.ipStore,
-              selected: this.selected,
-              doorIP: this.doorIP,
-              login: this.login,
-              password: this.password
+              NUMERO_LOJA: this.numberStoreNewStore,
+              NOME_LOJA: this.nameStore,
+              IP_LOJA: this.ipStore,
+              REDEID: this.selected,
+              PORTA_LOJA: this.doorIP,
+              LOGIN_LOJA: this.login,
+              SENHA_LOJA: this.password,
+              RAZAO_LOJA: '',
+              CNPJ_LOJA: '',
+              SISTEMA_LOJA: 0,
+              ENDERECO_LOJA: '',
+              ACESSOREMOTO: this.acessRustDesk,
+              SENHAACESSOREMOTO: this.passwordRustkDest
             })
             .then(res => {
               this.numberStoreNewStore = '',
               this.nameStore = '',
               this.ipStore = '',
               this.selected = '',
+              this.acessRustDesk = '',
+              this.passwordRustkDest = '',
               this.doorIP = '3739',
               this.login = 'sa',
               this.password = 'd120588$788455'

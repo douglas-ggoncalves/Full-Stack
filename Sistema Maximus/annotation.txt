@@ -138,3 +138,8 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 	end
 	update rede set ISATIVA = 1  
 
+	alter table loja 
+	add ACESSOREMOTO varchar(50)
+
+	alter table loja
+	add SENHAACESSOREMOTO varchar(50)
