@@ -582,6 +582,7 @@
                 <v-row>
                     <v-col class="col" :cols="12" v-show="switchNetwork">
                         <v-card>
+                           
                             <v-card-title>
                                 <v-text-field v-model="dataTable.search" append-icon="mdi-magnify" label="Pesquisar" class="pr-5" single-line hide-details></v-text-field>
                                 <v-btn color="primary" dark style="margin-top: 16px !important;" @click="dialogNewNetwork = true">
@@ -873,7 +874,6 @@ export default {
         myFunction(cond){
             this.roleUserLogged = localStorage.getItem("roleUser")
             this.setItensChecked();
-            
             axios.get(`${this.serverIP}/networks`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
@@ -1054,6 +1054,9 @@ export default {
         },
         setItensChecked(){
             if(window){
+                if(localStorage.getItem('dataMaximus') == null){
+                    localStorage.setItem("dataMaximus", JSON.stringify([]))
+                }
                 this.networksCheckeds = JSON.parse(localStorage.getItem("dataMaximus"))
             }
         },

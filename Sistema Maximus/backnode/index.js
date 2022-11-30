@@ -13,7 +13,7 @@ app.use("/",router);
 /*
 setInterval(function () {
     var today = new Date();
-    if(today.getMinutes() == 1){ // 0 indica que acabou de começar o horário
+    if(today.getMinutes() == 56){ // 0 indica que acabou de começar o horário
         botWhatsapp.initBot();
         clearInterval(this);
         console.log("Conectado")
