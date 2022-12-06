@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import SocketioService from '../services/socketio.service.js';
 
 export default {
   
@@ -15,6 +16,12 @@ export default {
   data: () => ({
     //
   }),
+  created() {
+    SocketioService.setupSocketConnection();
+  },
+  beforeUnmount() {
+    SocketioService.disconnect();
+  }
 };
 </script>
 

@@ -115,7 +115,7 @@
                                         <v-select :items="['Sim', 'Não']" v-model="networkSelected.ISATIVA" label="Loja Ativa" required ></v-select>
                                     </v-col>
                                     <v-col cols="12" sm="4" style="margin-top: 14px">
-                                        <v-btn  color="success" @click="editNetwork(false)">
+                                        <v-btn color="success" @click="editNetwork(false)">
                                             Alterar
                                         </v-btn>
                                     </v-col>

@@ -48,15 +48,35 @@ class Implantation{
                 inner join loja loja on loja.ID_LOJA = implantacao.IMP_CODLOJA
                 inner join ETAPAS_IMPLANTACAO etapas on etapas.COD_ETAPA = implantacao.ETAPA_CODETAPA
                 inner join ITENS_IMPLANTACAO itens on implantacao.IMP_CODITEM = itens.COD_ITEM
-                inner join DATAS_IMPLANTACAO datas on datas.DATAIMP_CODIGO = cast(implantacao.IMP_CODIMP as varchar) + cast(loja.ID_LOJA as varchar) + cast(etapas.COD_ETAPA as varchar)
+                inner join DATAS_IMPLANTACAO datas on datas.DATASIMP_CODIGO = cast(implantacao.IMP_CODIMP as varchar) + cast(loja.ID_LOJA as varchar) + cast(etapas.COD_ETAPA as varchar)
             `)
-            console.log("result " + JSON.stringify(result))
             return result;
         } catch(err) {
             return undefined;
         }
-        
+    }
 
+    async editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA, IMP_USUARIOSITEM){
+        try {
+            var result = await knex.where('IMP_CODIMP', '=', IMP_CODIMP).
+            where("IMP_CODITEM", "=", IMP_CODITEM).
+            where("IMP_CODLOJA", "=", IMP_CODLOJA).
+            where("ETAPA_CODETAPA", "=", ETAPA_CODETAPA).
+            where("ITEM_CODETAPA", "=", ITEM_CODETAPA).
+            update({
+                //IMP_CODLOJA: IMP_CODLOJA, 
+                IMP_STATUSOK: IMP_STATUSOK, 
+               // IMP_CODITEM: IMP_CODITEM, 
+               // ETAPA_CODETAPA: ETAPA_CODETAPA, 
+                //ITEM_CODETAPA: ITEM_CODETAPA, 
+                IMP_USUARIOSITEM: IMP_USUARIOSITEM 
+            }).table("IMPLANTACAO")
+
+            console.log("resulttt " + result)
+            return result;
+        } catch(err) {
+            return undefined;
+        }
     }
 }
 

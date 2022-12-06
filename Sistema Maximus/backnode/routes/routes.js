@@ -39,9 +39,10 @@ router.get('/stages', StageController.getStages);
 router.post('/items', ItemController.create);
 router.post('/implantation', Implantation.create);
 router.get('/implants', Implantation.getImplants);
+router.patch('/implants', Implantation.editImplant);
 router.post('/network', Network.create);
 router.post('/store', StoreController.create);
-
+router.get("/items", ItemController.getItems)
 
 
 

@@ -35,6 +35,21 @@ class ItemController{
             return;
         }
     }
+
+    async getItems(req, res){
+        var items = await Item.findImplants();
+        
+        if(items != undefined) 
+        {
+            res.status(200);
+            res.send({items: items})
+            return;
+        } else{
+            res.status(406);
+            res.send({err: 'Não foi possível consultar as informações de implementação'});
+            return;
+        }
+    }
 }
 
 module.exports = new ItemController();

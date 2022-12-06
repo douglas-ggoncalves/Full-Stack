@@ -22,6 +22,21 @@ class Item{
             return undefined;
         }
     }
+
+    async findImplants(){
+        try {
+            var result = await knex.raw(`
+                select 
+                    COD_ITEM, 
+                    DESC_ITEM, 
+                    ITEM_CODETAPA 
+                from ITENS_IMPLANTACAO
+            `)
+            return result;
+        } catch(err) {
+            return undefined;
+        }
+    }
 }
 
 module.exports = new Item();

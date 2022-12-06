@@ -42,6 +42,13 @@
                 </div>
             </nav>
             <v-container fluid v-show="!checkImplantation">
+                <button class="btn btn-primary" @click="testeeasdasdee()">
+                    Enviar
+                </button>
+
+                <div id="chat">
+
+                </div>
                 <v-row justify="center">
                     <v-menu v-for="user in USUARIO" :key="user.ID_USUARIO" bottom min-width="200px" rounded offset-y>
                         <template v-slot:activator="{ on }">
@@ -159,6 +166,11 @@
                 <v-row>
                     <h4>Maximus Gestão</h4>
                     <h5>Relatório de implantação</h5>
+
+
+                    <button class="btn btn-success" @click="updateItem()">
+                        Enviar
+                    </button>
                 </v-row>
 
                 <v-row id="dataImplant">
@@ -553,10 +565,14 @@
 </template>
 
 <script>
+</script>
+
+<script>
 import Vue from 'vue'
 import '../../assets/style/style.css'
 import scrypt from "../../assets/js/scrypt";
 import axios from 'axios';
+import SocketioService from '../../../services/socketio.service.js';
 
 export default {
     data(){
@@ -569,10 +585,16 @@ export default {
             id_Store: 1,
             stages: [/* {COD_ETAPA: 1, DESC_ETAPA: "Etapa 1"}, {COD_ETAPA: 2, DESC_ETAPA: "Etapa 2"}, {COD_ETAPA: 3, DESC_ETAPA: "Etapa 3"}, {COD_ETAPA: 4, DESC_ETAPA: "Etapa 4"} */],
             dataClient: {
+                ID_LOJA: '',
                 RAZAO_LOJA: '',
                 CNPJ_LOJA: '',
                 ENDERECO_LOJA: '',
                 SISTEMA_LOJA: '',
+                IMP_CODIMP: '',
+                IMP_CODITEM: '',
+                IMP_CODLOJA: '',
+                ETAPA_CODETAPA: '',
+                ITEM_CODETAPA: '',
             },
             stage1: {
                 items: [/*'Verificar servidor', 'Instalação impressora', 'Instalação certificado digital'*/],
@@ -619,12 +641,22 @@ export default {
                 editedItemDateIni: '',
                 editedDateFinal: '',
             },
+            allItems: {
+                IMP_CODIMP: 0,
+                IMP_CODLOJA: 0,
+                IMP_STATUSOK: 0,
+                IMP_CODITEM: 0,
+                ETAPA_CODETAPA: 0,
+                ITEM_CODETAPA: 0,
+                IMP_USUARIOSITEM: 0
+            },
             checkImplantation: false,
             serverIP: '',
             roleUserLogged: '',
             dataTable: {
                 search: '',
                 headers: [
+                    { text: 'IMP_CODIMP', align: 'center', value: 'IMP_CODIMP'},
                     { text: 'Loja', align: 'center', value: 'NOME_LOJA',},
                     { text: 'Razão Social', align: 'center', value: 'RAZAO_LOJA',},
                     { text: 'CNPJ', align: 'center', value: 'CNPJ_LOJA'},
@@ -680,7 +712,7 @@ export default {
         },
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
-        
+            
             axios.get(`${this.serverIP}/stores`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
@@ -698,6 +730,13 @@ export default {
             }).then(res => {
                 this.stages = res.data
 
+            }).catch(err => {
+                console.log(err);
+            })
+
+            axios.get(`${this.serverIP}/items`, {
+            }).then(res => {
+               this.allItems = res.data.items
             }).catch(err => {
                 console.log(err);
             })
@@ -736,43 +775,43 @@ export default {
                         }
                     }
                 });
-                    this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
-                    this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
-                    this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
-                    this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
-                    if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
-                        this.stage1.dateFormattedFinal = '';
-                        this.stage1.editedDateFinal = '';
-                    }
+                this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
+                this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
+                this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
+                this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
+                if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
+                    this.stage1.dateFormattedFinal = '';
+                    this.stage1.editedDateFinal = '';
+                }
 
-                    if(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2)){
-                        this.stage2.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAINICIAL.substr(0,10));
-                        this.stage2.editedItemDateIni = this.parseDate(this.stage2.iniDateFormatted)
-                        this.stage2.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAFINAL.substr(0,10));
-                        this.stage2.editedDateFinal = this.parseDate(this.stage2.dateFormattedFinal)
-                        if(this.stage2.iniDateFormatted > this.stage2.dateFormattedFinal ){
-                            this.stage2.dateFormattedFinal = '';
-                            this.stage2.editedDateFinal = '';
-                        }
+                if(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2)){
+                    this.stage2.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage2.editedItemDateIni = this.parseDate(this.stage2.iniDateFormatted)
+                    this.stage2.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage2.editedDateFinal = this.parseDate(this.stage2.dateFormattedFinal)
+                    if(this.stage2.iniDateFormatted > this.stage2.dateFormattedFinal ){
+                        this.stage2.dateFormattedFinal = '';
+                        this.stage2.editedDateFinal = '';
                     }
+                }
 
-                    this.stage3.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAINICIAL.substr(0,10));
-                    this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
-                    this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
-                    this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
-                    if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
-                        this.stage3.dateFormattedFinal = '';
-                        this.stage3.editedDateFinal = '';
-                    }
+                this.stage3.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAINICIAL.substr(0,10));
+                this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
+                this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
+                this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
+                if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
+                    this.stage3.dateFormattedFinal = '';
+                    this.stage3.editedDateFinal = '';
+                }
 
-                    this.stage4.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAINICIAL.substr(0,10));
-                    this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
-                    this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
-                    this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
-                    if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
-                        this.stage4.dateFormattedFinal = '';
-                        this.stage4.editedDateFinal = '';
-                    }
+                this.stage4.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAINICIAL.substr(0,10));
+                this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
+                this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
+                this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
+                if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
+                    this.stage4.dateFormattedFinal = '';
+                    this.stage4.editedDateFinal = '';
+                }
                 }).catch(err => {
                     console.log("Erro: " + err)
                 }
@@ -794,17 +833,18 @@ export default {
            }
         },
         viewItem(item){
-            console.log('item ' + item);
             var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
             if(aux != undefined){
+                this.dataClient.IMP_CODIMP = item.IMP_CODIMP
+                this.dataClient.ID_LOJA = item.ID_LOJA
                 this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
                 this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
                 this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
+                this.dataClient.IMP_CODLOJA = item.ID_LOJA
                 this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
                 this.checkImplantation = !this.checkImplantation;
             } else{
-                alert("Função ainda em implementação")
-                //alert("Elemento inválido, deseja criar uma implantação para esta loja?")
+                alert("Elemento inválido, deseja criar uma implantação para esta loja ?")
             }
             
         },
@@ -823,6 +863,32 @@ export default {
         },
         clique() {
             scrypt.clique(this);
+        },
+        testeeasdasdee(){
+            SocketioService.pimba();
+        },
+
+        async updateItem(){
+            if(this.dataClient.IMP_CODITEM != '' && this.checkImplantation)  // 555  
+            {
+                console.log("entrou no if " + JSON.stringify(this.dataClient))
+                
+                await axios.patch(`${this.serverIP}/implants`, {
+                    IMP_CODIMP: 1,
+                    IMP_CODLOJA: 1,
+                    IMP_STATUSOK: 15,
+                    IMP_CODITEM: 3,
+                    ETAPA_CODETAPA: 3,
+                    ITEM_CODETAPA: 3,
+                    IMP_USUARIOSITEM: 4
+                }).then(res => {
+                    console.log(res);
+                }).catch(err => {
+                    console.log(err);
+                })  
+               
+            }
+          
         }
     },
     filters: {
@@ -859,6 +925,9 @@ export default {
       },
     },
     watch: {
+       /* 'stage1.model'(){
+            console.log("Asdasdasd")
+        },*/
         'stage1.editedItemDateIni'(){
             this.stage1.iniDateFormatted = this.formatDate(this.stage1.editedItemDateIni);
         },
@@ -885,6 +954,14 @@ export default {
             }
         },
         progressStage1 () {
+            if(this.allItems){ // 555 ???
+                var aux = this.allItems.find(element => element.DESC_ITEM == this.stage1.model[this.stage1.model.length - 1])
+                this.dataClient.IMP_CODITEM = aux.COD_ITEM
+                this.dataClient.ITEM_CODETAPA = aux.ITEM_CODETAPA
+                this.dataClient.ETAPA_CODETAPA = aux.ITEM_CODETAPA
+            }
+            this.updateItem();
+       
             if(this.stage1.model.length / this.stage1.items.length * 100 == 100){
                 this.stage1.color = 'success'
             } else{
