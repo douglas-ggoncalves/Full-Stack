@@ -230,7 +230,7 @@ export default {
     }, 
     async recoverPasswordUser(){
       if(this.emailForRecovery.trim() == ''){
-        this.err = 'Email precisa ser preenchido'
+        this.err = 'E-mail precisa ser preenchido'
       } else{
         await axios.post(`${this.serverIP}/password`, {
           email: this.emailForRecovery

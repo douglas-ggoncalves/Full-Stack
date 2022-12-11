@@ -1,3 +1,4 @@
+const connection = require("../../../../connection/backConnection.json")
 let exports = {};
 
 exports.clique = () => {
@@ -9,9 +10,7 @@ exports.clique = () => {
     }
 };
 
-exports.serverIP = 'http://localhost:4000'
-//exports.serverIP = 'http://replic.maximusgestao.com:4000'
-
+exports.serverIP = connection.serverIP
 
 export default exports
 

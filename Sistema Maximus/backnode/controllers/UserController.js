@@ -1,13 +1,11 @@
-var database = require("../database/database");
 var User = require("../models/User");
 var jwt = require("jsonwebtoken");
 var secret = "as55a6a5as5d4a5qvjnkalçKASNFJLkakfnJKKjknldjsn";
 var bcrypt = require("bcrypt");
 const PasswordTokens = require("../models/PasswordTokens");
 const nodemailer = require("nodemailer");
-//const serverIP = '67.207.84.123'
-const serverIP = 'localhost:8080'
-//const serverIP = '192.168.1.12:8080'
+const serverIP = require("../../connection/frontConnection.json")
+const emailData = require("../../connection/gmailConnection.json")
 var jwt = require("jsonwebtoken");
 var secret = "as55a6a5as5d4a5qvjnkalçKASNFJLkakfnJKKjknldjsn";
 
@@ -16,8 +14,8 @@ let transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth:{
-        user: "douglasrnn1@gmail.com",
-        pass: 'D92770228'
+        user: "douglasrnn62@gmail.com",
+        pass: "???????????"
     }
 })
 
@@ -85,7 +83,9 @@ class UserController{
     }
 
     async recoveryPassword(req, res) {
-        var email = req.body.email;
+
+        console.log("chegou no método!! " + req.body.email)
+        var email = await req.body.email;
         var result = await PasswordTokens.create(email);
         if(result.status){
             res.status(200);
@@ -175,7 +175,7 @@ class UserController{
                         <h5>
                         Este e-mail foi enviado para ajudar na recuperação de acesso à sua Conta da Maximus:
                         </h5>
-                        <a href="http://${serverIP}/conta/${result.token}">Clique aqui para recuperar sua senha</a>
+                        <a href="${serverIP.address}/conta/${result.token}">Clique aqui para recuperar sua senha</a>
                 
                         <h5>
                         Se você não solicitou esse código provavelmente outra pessoa esteja tentando acessar a sua conta <b>${email}</b> Não encaminhe ou mostre esse e-mail a ninguém.

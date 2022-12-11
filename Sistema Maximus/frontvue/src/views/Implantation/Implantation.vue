@@ -41,10 +41,25 @@
                     </button>
                 </div>
             </nav>
+            
+            <v-snackbar style="z-index: 99999" v-model="snackbar" timeout="3000" :color="snackbarColor" fixed top right elevation="24">
+                <strong>{{ snackbarText }}</strong>
+
+                <template v-slot:action="{ attrs }">
+                    <v-btn color="White" text v-bind="attrs" @click="snackbar = false">Fechar</v-btn>
+                </template>
+            </v-snackbar>
+
             <v-container fluid v-show="!checkImplantation">
-                <button class="btn btn-primary" @click="testeeasdasdee()">
-                    Enviar
-                </button>
+                <v-dialog v-model="dialogMsgSuccess" max-width="600">
+                    <v-card>
+                    <v-toolbar class="text-center" color="success" dark>Maximus Farma</v-toolbar>
+                        <v-card-text class="text-center">
+                        <div class="text-h5 pa-12">{{ msgSuccess }}</div>
+                        <v-btn class="success" @click="dialogMsgSuccess = false">CONFIRMAR</v-btn>
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
 
                 <div id="chat">
 
@@ -131,7 +146,7 @@
                         <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected }}</v-toolbar>
                         <v-card-text class="text-center">
                             <div class="text-h5 pa-12">
-                                <v-combobox   hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                                <v-combobox  hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
                                     <template  @click="testeeeeee()"  v-slot:selection="data"> 
                                         <v-chip  :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                             <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
@@ -166,14 +181,16 @@
                 <v-row>
                     <h4>Maximus Gestão</h4>
                     <h5>Relatório de implantação</h5>
-
-
+                    <input type="text" class="d-none" id="inputText">
+                    <input type="text" class="d-none" id="inputActive">
+                    <input type="text" class="d-none" id="inputID_LOJA">
+                    
                     <button class="btn btn-success" @click="updateItem()">
                         Enviar
                     </button>
                 </v-row>
 
-                <v-row id="dataImplant">
+                <v-row id="dataImplant" @click="syncInfo()">
                     <v-col :cols="10">
                         <h5>Dados do cliente</h5>
                     </v-col>
@@ -191,14 +208,23 @@
                     </v-col>
                     
                     <v-col :cols="5">
-                        <v-select v-model="dataClient.SISTEMA_LOJA" :items="optionsSystem"  label="Sistema" required></v-select>
+                        <v-select v-model="dataClient.SISTEMA_LOJA" :items="optionsSystem" label="Sistema" required></v-select>
                     </v-col>
                 </v-row>
                 
                 <v-row class="stages">
-                    
+                    <h5>
+                            {{ stage1.items }}
+                        </h5>
+                            <br><br>
+                            <br><br>
+                        <h5>
+                            {{ stage1.model }}
+                        </h5>
+
                     <v-col class="myColumn" :cols="3">
                         <h5>Implantação Etapa 1</h5>
+                        
                         <div>
                             <v-progress-circular :value="progressStage1" :size="55" :color="stage1.color">
                                 {{ progressStage1 }}%
@@ -226,7 +252,6 @@
                                 <v-text-field v-model="stage1.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
                                 hint="informe a data desejada" v-bind="attrs" @blur="stage1.editedItemDateIni = parseDate(stage1.iniDateFormatted)" v-on="on" ></v-text-field>
                             </template>
-                            
                             <v-date-picker v-model="stage1.editedItemDateIni" no-title @input="stage1.dateInit = false" locale="pt"></v-date-picker>
                         </v-menu>
                     </v-col>
@@ -250,7 +275,7 @@
                                     <v-list-item-group v-model="stage1.model" multiple>
                                         <template v-for="(item, i) in stage1.items">
                                             <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
-                                            <v-list-item v-else :active="false" :key="`item-${i}`" :value="item" active-class="success text-white">
+                                            <v-list-item v-else :active="false" :key="`item-${i}`" :value="item" active-class="success text-white" @click="selectItemImp(item)">
                                                 <template v-slot:default="{ active }">
                                                     <v-list-item-action>
                                                         <v-checkbox :input-value="active" color="white"></v-checkbox>
@@ -578,6 +603,8 @@ export default {
     data(){
         return {
             dialog: false,
+            dialogMsgSuccess: false,
+            msgSuccess: '',
             itemSelected: '',
             items: [{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me 2'}],
             implantsAll: [],
@@ -595,6 +622,7 @@ export default {
                 IMP_CODLOJA: '',
                 ETAPA_CODETAPA: '',
                 ITEM_CODETAPA: '',
+                ITEM_ATIVO: ''
             },
             stage1: {
                 items: [/*'Verificar servidor', 'Instalação impressora', 'Instalação certificado digital'*/],
@@ -653,10 +681,12 @@ export default {
             checkImplantation: false,
             serverIP: '',
             roleUserLogged: '',
+            snackbar: false,
+            snackbarText: '',
+            snackbarColor: '',
             dataTable: {
                 search: '',
                 headers: [
-                    { text: 'IMP_CODIMP', align: 'center', value: 'IMP_CODIMP'},
                     { text: 'Loja', align: 'center', value: 'NOME_LOJA',},
                     { text: 'Razão Social', align: 'center', value: 'RAZAO_LOJA',},
                     { text: 'CNPJ', align: 'center', value: 'CNPJ_LOJA'},
@@ -710,6 +740,10 @@ export default {
             this.itemSelected = element;
             this.dialog = true;
         },
+        callmsgSuccess(msg){
+            this.msgSuccess =  msg
+            this.dialogMsgSuccess = true;
+        },
         myFunction(){
             this.roleUserLogged = localStorage.getItem("roleUser")
             
@@ -729,7 +763,6 @@ export default {
             axios.get(`${this.serverIP}/stages`, {
             }).then(res => {
                 this.stages = res.data
-
             }).catch(err => {
                 console.log(err);
             })
@@ -744,10 +777,81 @@ export default {
             axios.get(`${this.serverIP}/implants`, {
             }).then(res => {
                 this.implantsAll = res.data.implants
-                this.stages.forEach(stage => {
+               /* this.stages.forEach(stage => { // 555
                     console.log("stage " + JSON.stringify(stage.COD_ETAPA))
-                })
-                this.implantsAll.filter(store => store.ID_LOJA == 2).forEach(element => {
+                })*/
+                
+                }).catch(err => {
+                    console.log("Erro: " + err)
+                }
+            )
+        },
+        parseDate (date) {
+            if (!date) return null
+
+            const [day, month, year] = date.split('/')
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+        },
+        logout(){
+           if(confirm("Deseja sair?")){
+                localStorage.removeItem("token")
+                localStorage.removeItem("roleUser")
+                localStorage.removeItem("redeIdUser")
+                localStorage.removeItem("loginUser")
+                this.$router.push({name: "Home"})
+           }
+        },
+        clearData(){
+            this.dataClient.IMP_CODIMP = ''
+            this.dataClient.ID_LOJA = ''
+            this.dataClient.RAZAO_LOJA = ''
+            this.dataClient.CNPJ_LOJA = ''
+            this.dataClient.ENDERECO_LOJA = ''
+            this.dataClient.IMP_CODLOJA = ''
+            this.dataClient.SISTEMA_LOJA = ''
+            this.stage1.items = []
+            this.stage1.model = []
+            this.stage2.items = []
+            this.stage2.model = []
+            this.stage3.items = []
+            this.stage3.model = []
+            this.stage4.items = []
+            this.stage4.model = []
+            this.stage1.iniDateFormatted = ''
+            this.stage1.editedItemDateIni = ''
+            this.stage1.dateFormattedFinal = ''
+            this.stage1.editedDateFinal = ''
+
+            this.stage2.iniDateFormatted = ''
+            this.stage2.editedItemDateIni = ''
+            this.stage2.dateFormattedFinal = ''
+            this.stage2.editedDateFinal = ''
+
+            this.stage3.iniDateFormatted = ''
+            this.stage3.editedItemDateIni = ''
+            this.stage3.dateFormattedFinal = ''
+            this.stage3.editedDateFinal = ''
+
+            this.stage4.iniDateFormatted = ''
+            this.stage4.editedItemDateIni = ''
+            this.stage4.dateFormattedFinal = ''
+            this.stage4.editedDateFinal = ''
+        },
+        viewItem(item){
+            var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
+           
+            if(aux != undefined){
+                this.clearData()
+                this.dataClient.IMP_CODIMP = aux.IMP_CODIMP
+                this.dataClient.ID_LOJA = aux.ID_LOJA
+                this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
+                this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
+                this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
+                this.dataClient.IMP_CODLOJA = item.ID_LOJA
+                this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
+                this.checkImplantation = !this.checkImplantation;
+
+                this.implantsAll.filter(store => store.ID_LOJA == aux.ID_LOJA).forEach(element => {
                     if(element.COD_ETAPA == 1){
                         this.stage1.items.push(element.DESC_ITEM)
                         if(element.IMP_STATUSOK == 1){
@@ -775,10 +879,12 @@ export default {
                         }
                     }
                 });
+
                 this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
                 this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
                 this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
                 this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
+                
                 if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
                     this.stage1.dateFormattedFinal = '';
                     this.stage1.editedDateFinal = '';
@@ -799,6 +905,7 @@ export default {
                 this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
                 this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
                 this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
+                
                 if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
                     this.stage3.dateFormattedFinal = '';
                     this.stage3.editedDateFinal = '';
@@ -808,43 +915,17 @@ export default {
                 this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
                 this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
                 this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
+                
                 if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
                     this.stage4.dateFormattedFinal = '';
                     this.stage4.editedDateFinal = '';
                 }
-                }).catch(err => {
-                    console.log("Erro: " + err)
-                }
-            )
-        },
-        parseDate (date) {
-            if (!date) return null
-
-            const [day, month, year] = date.split('/')
-            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-        },
-        logout(){
-           if(confirm("Deseja sair?")){
-                localStorage.removeItem("token")
-                localStorage.removeItem("roleUser")
-                localStorage.removeItem("redeIdUser")
-                localStorage.removeItem("loginUser")
-                this.$router.push({name: "Home"})
-           }
-        },
-        viewItem(item){
-            var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
-            if(aux != undefined){
-                this.dataClient.IMP_CODIMP = item.IMP_CODIMP
-                this.dataClient.ID_LOJA = item.ID_LOJA
-                this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
-                this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
-                this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
-                this.dataClient.IMP_CODLOJA = item.ID_LOJA
-                this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
-                this.checkImplantation = !this.checkImplantation;
             } else{
-                alert("Elemento inválido, deseja criar uma implantação para esta loja ?")
+                var confirmation = confirm("Elemento inválido, deseja criar uma implantação para esta loja ? ")
+                if(confirmation){
+                    var NOME_LOJA = this.dataTable.items.filter(element => element.ID_LOJA == item.ID_LOJA)[0].NOME_LOJA
+                    this.newImp(item.ID_LOJA, NOME_LOJA)
+                }
             }
             
         },
@@ -853,6 +934,28 @@ export default {
 
             const [year, month, day] = date.split('-')
             return `${day}/${month}/${year}`
+        },
+        newImp(ID_LOJA, NOME_LOJA){
+            axios.post(`${this.serverIP}/implantation`, {
+                IMP_IDSTORES: [ID_LOJA]
+            }).then(() => {
+                this.implantsAll = []
+                axios.get(`${this.serverIP}/implants`, {
+                }).then(res => {
+                    this.implantsAll = res.data.implants
+                    /* this.stages.forEach(stage => { // 555
+                        console.log("stage " + JSON.stringify(stage.COD_ETAPA))
+                    })*/
+                    
+                    }).catch(err => {
+                        console.log("Erro: " + err)
+                    }
+                )
+                this.callmsgSuccess(`Implantação para a loja ${NOME_LOJA} criado com sucesso`)
+            }).catch(err => {
+                this.msgErr = err.response.data.err
+                this.dialogErr = true
+            })
         },
         transformCNPJ(value){
             if(value){
@@ -864,31 +967,51 @@ export default {
         clique() {
             scrypt.clique(this);
         },
-        testeeasdasdee(){
-            SocketioService.pimba();
+        callSnackBar(msg, error){
+            this.snackbarColor = error ? 'red' : 'green darken-3'
+            this.snackbarText = msg
+            this.snackbar = true;
         },
-
-        async updateItem(){
-            if(this.dataClient.IMP_CODITEM != '' && this.checkImplantation)  // 555  
-            {
-                console.log("entrou no if " + JSON.stringify(this.dataClient))
-                
+        selectItemImp(item){
+            if(this.allItems){ 
+                var aux = this.allItems.find(element => element.DESC_ITEM == item)
+                this.dataClient.IMP_CODITEM = aux.COD_ITEM
+                this.dataClient.ITEM_ATIVO = this.stage1.model.find(element => element == item) == undefined ? "1" : "0"
+                this.dataClient.ITEM_CODETAPA = aux.ITEM_CODETAPA
+                this.dataClient.ETAPA_CODETAPA = aux.ITEM_CODETAPA
+            }
+            this.updateItem(aux.DESC_ITEM);
+        },
+        async updateItem(DESC_ITEM){
+            if(this.dataClient.IMP_CODITEM != '' && this.checkImplantation){
                 await axios.patch(`${this.serverIP}/implants`, {
-                    IMP_CODIMP: 1,
-                    IMP_CODLOJA: 1,
-                    IMP_STATUSOK: 15,
-                    IMP_CODITEM: 3,
-                    ETAPA_CODETAPA: 3,
-                    ITEM_CODETAPA: 3,
-                    IMP_USUARIOSITEM: 4
+                    IMP_CODIMP: this.dataClient.IMP_CODIMP,
+                    IMP_CODLOJA: this.dataClient.ID_LOJA,
+                    IMP_STATUSOK: this.dataClient.ITEM_ATIVO,
+                    IMP_CODITEM: this.dataClient.IMP_CODITEM,
+                    ETAPA_CODETAPA: this.dataClient.ETAPA_CODETAPA,
+                    ITEM_CODETAPA: this.dataClient.ETAPA_CODETAPA
                 }).then(res => {
-                    console.log(res);
+                    SocketioService.updateItemImp(DESC_ITEM, this.dataClient.ITEM_ATIVO, this.dataClient.ID_LOJA);
+
+                    this.callSnackBar(res.data.success);
                 }).catch(err => {
                     console.log(err);
                 })  
-               
             }
-          
+        },
+        syncInfo(){
+            var ID_LOJA = document.getElementById("inputID_LOJA").value
+            console.log("entrou no método sync info ")
+            if(ID_LOJA == this.dataClient.ID_LOJA){
+                var element = document.getElementById("inputText").value
+                var itemActive = document.getElementById("inputActive").value 
+                if(itemActive == 1){
+                    this.stage1.model.push(element)
+                } else{
+                    this.stage1.model = this.stage1.model.filter(element => element != element)
+                }
+            }
         }
     },
     filters: {
@@ -908,7 +1031,6 @@ export default {
         toDate(value){
             return value.substr(0, 10)
         },
-        
     },
     computed: {
       progressStage1 () {
@@ -925,9 +1047,6 @@ export default {
       },
     },
     watch: {
-       /* 'stage1.model'(){
-            console.log("Asdasdasd")
-        },*/
         'stage1.editedItemDateIni'(){
             this.stage1.iniDateFormatted = this.formatDate(this.stage1.editedItemDateIni);
         },
@@ -954,14 +1073,6 @@ export default {
             }
         },
         progressStage1 () {
-            if(this.allItems){ // 555 ???
-                var aux = this.allItems.find(element => element.DESC_ITEM == this.stage1.model[this.stage1.model.length - 1])
-                this.dataClient.IMP_CODITEM = aux.COD_ITEM
-                this.dataClient.ITEM_CODETAPA = aux.ITEM_CODETAPA
-                this.dataClient.ETAPA_CODETAPA = aux.ITEM_CODETAPA
-            }
-            this.updateItem();
-       
             if(this.stage1.model.length / this.stage1.items.length * 100 == 100){
                 this.stage1.color = 'success'
             } else{

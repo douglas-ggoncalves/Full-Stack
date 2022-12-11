@@ -56,7 +56,7 @@ class Implantation{
         }
     }
 
-    async editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA, IMP_USUARIOSITEM){
+    async editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA){
         try {
             var result = await knex.where('IMP_CODIMP', '=', IMP_CODIMP).
             where("IMP_CODITEM", "=", IMP_CODITEM).
@@ -64,15 +64,9 @@ class Implantation{
             where("ETAPA_CODETAPA", "=", ETAPA_CODETAPA).
             where("ITEM_CODETAPA", "=", ITEM_CODETAPA).
             update({
-                //IMP_CODLOJA: IMP_CODLOJA, 
-                IMP_STATUSOK: IMP_STATUSOK, 
-               // IMP_CODITEM: IMP_CODITEM, 
-               // ETAPA_CODETAPA: ETAPA_CODETAPA, 
-                //ITEM_CODETAPA: ITEM_CODETAPA, 
-                IMP_USUARIOSITEM: IMP_USUARIOSITEM 
+                IMP_STATUSOK: IMP_STATUSOK
             }).table("IMPLANTACAO")
 
-            console.log("resulttt " + result)
             return result;
         } catch(err) {
             return undefined;

@@ -192,7 +192,6 @@ import scrypt from "../../assets/js/scrypt";
           axios.post(`${this.serverIP}/implantation`, {
             IMP_IDSTORES: this.aux
           }).then(res => {
-              console.log("resposta: " + res)
             if(res.data.itensSuccess.length > 0 && res.data.itensErr.length == 0){
               this.msgSuccess = "Todos os cadastros foram efetuados com sucesso"
               this.dialog = true;

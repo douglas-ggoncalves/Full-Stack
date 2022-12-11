@@ -44,26 +44,17 @@ class ImplantationController{
     }
 
     async editImplant(req, res){
-        console.log("está chegando no edit Implant")
         var IMP_CODIMP = await req.body.IMP_CODIMP
         var IMP_CODLOJA = await req.body.IMP_CODLOJA
         var IMP_STATUSOK = await req.body.IMP_STATUSOK
         var IMP_CODITEM = await req.body.IMP_CODITEM
         var ETAPA_CODETAPA = await req.body.ETAPA_CODETAPA
         var ITEM_CODETAPA = await req.body.ITEM_CODETAPA
-        var IMP_USUARIOSITEM = await req.body.IMP_USUARIOSITEM
-        console.log("IMP_CODIMP " + IMP_CODIMP)
-        console.log("IMP_CODLOJA " + IMP_CODLOJA)
-        console.log("IMP_STATUSOK " + IMP_STATUSOK)
-        console.log("IMP_CODITEM " + IMP_CODITEM)
-        console.log("ETAPA_CODETAPA " + ETAPA_CODETAPA)
-        console.log("ITEM_CODETAPA " + ITEM_CODETAPA)
-        console.log("IMP_USUARIOSITEM " + IMP_USUARIOSITEM)
 
-        var update = await Implantation.editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA, IMP_USUARIOSITEM);
+        var update = await Implantation.editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA);
         if(update != undefined){
             res.status(200);
-            res.send({success: "Alterada gravada com sucesso"})
+            res.send({success: "Alteração gravada com sucesso"})
         } else{
             res.status(406);
             res.send({success: "Não foi possível fazer a gravação da alteração"})

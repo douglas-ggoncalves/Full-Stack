@@ -5,14 +5,15 @@ app.use(cors());
 var bodyParser = require('body-parser')
 var router = require("./routes/routes")
 var botWhatsapp = require("../backnode/controllers/BotWhatsapp")
+const connection = require("../connection/frontConnection.json")
 app.use(bodyParser.urlencoded({limit: "50mb", extended: false, parameterLimit:50000}))
 app.use(bodyParser.json({limit: '50mb'}))
 app.use("/",router);
 var http = require("http").createServer(app);
-//var io = require("socket.io")(http, {allowEIO3: true});
+
 const io = require('socket.io')(http, {
     cors: {
-      origins: ['http://localhost:8080']
+      origins: [connection.address]
     }
   });
 
@@ -30,6 +31,10 @@ io.on("connection", (socket) => {
 
     socket.on('replicInfo', (msg) => {
         io.emit("showmsg", msg);
+    });
+
+    socket.on('refreshItems', (msg) => {
+        socket.broadcast.emit("itemsRefresh", msg); // Emitimos o evento para todo mundo do server menos para quem enviou
     });
 })
 
