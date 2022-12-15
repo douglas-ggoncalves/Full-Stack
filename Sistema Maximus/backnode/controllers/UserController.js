@@ -15,7 +15,7 @@ let transporter = nodemailer.createTransport({
     secure: false,
     auth:{
         user: "douglasrnn62@gmail.com",
-        pass: "???????????"
+        pass: "yotlerevcuyldqje"
     }
 })
 
@@ -83,8 +83,6 @@ class UserController{
     }
 
     async recoveryPassword(req, res) {
-
-        console.log("chegou no método!! " + req.body.email)
         var email = await req.body.email;
         var result = await PasswordTokens.create(email);
         if(result.status){
@@ -97,7 +95,7 @@ class UserController{
                 subject: "Recuperação de senha - Maximus Gestão",
                 attachments: [{
                     filename: 'Logo Maximus',
-                    path: './../../projects/frontvue/src/assets/img/logo_maximus_gestao.png',
+                    path: '../../Sistema Maximus/frontvue/src/assets/img/logo_maximus_gestao.png',
                     cid: 'logo'
                 }],
                 html: `<html>
@@ -166,30 +164,34 @@ class UserController{
                  
                 <body>
                     <div id="divMain">
-                    <div id="divTitle">
-                        <h4>Código de verificação da Maximus</h4>
-                    </div>
+                        <div id="divTitle">
+                            <h4>Código de verificação da Maximus</h4>
+                        </div>
+                        
+                        <div id="divData">
+                            <h6>Prezado cliente</h6>
+                            <h5>
+                                Este e-mail foi enviado para ajudar na recuperação de acesso à sua Conta da Maximus:
+                            </h5>
+                            <a href="${serverIP.address}/conta/${result.token}">Clique aqui para recuperar sua senha</a>
                     
-                    <div id="divData">
-                        <h6>Prezado cliente</h6>
-                        <h5>
-                        Este e-mail foi enviado para ajudar na recuperação de acesso à sua Conta da Maximus:
-                        </h5>
-                        <a href="${serverIP.address}/conta/${result.token}">Clique aqui para recuperar sua senha</a>
-                
-                        <h5>
-                        Se você não solicitou esse código provavelmente outra pessoa esteja tentando acessar a sua conta <b>${email}</b> Não encaminhe ou mostre esse e-mail a ninguém.
-                        </h5>
-                    </div>
-                
-                    <footer>
-                        <img src="cid:logo" alt="">
-                    </footer>
+                            <h5>
+                                Se você não solicitou esse código provavelmente outra pessoa esteja tentando acessar a sua conta <b>${email}</b> Não encaminhe ou mostre esse e-mail a ninguém.
+                            </h5>
+                        </div>
+                    
+                        <footer>
+                            <img src="cid:logo" alt="">
+                        </footer>
                     </div>`,
             }).then(message => {
                 console.log(message)
+                res.status(200)
+                res.send({success: "E-mail enviado com sucesso"})
             }).catch(err => {
                 console.log(err)
+                res.status(406);
+                res.send({err: err})
             })
         } else{
             res.status(406);
@@ -262,9 +264,9 @@ class UserController{
     }
 
     async validateToken(req, res) {
-        var token = req.body.token;
+        var token = await req.body.token;
         var tokenIsValid = await PasswordTokens.validate(token);
-
+        
         if(tokenIsValid.status) {
             res.status(200);
             res.send({success: 'Token válido'})
@@ -278,6 +280,7 @@ class UserController{
         var token = await req.body.token;
         var password = await req.body.password;
         var tokenIsValid = await PasswordTokens.validate(token);
+
         if(tokenIsValid.status) {
             var editUser = await User.editPasswordUser(password, tokenIsValid.token.USERID_PASSWORDTOKENS)
 

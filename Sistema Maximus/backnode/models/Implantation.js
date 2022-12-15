@@ -44,7 +44,7 @@ class Implantation{
     async findImplants(){
         try {
             var result = await knex.raw(`
-                select IMP_CODIMP, loja.RAZAO_LOJA, loja.CNPJ_LOJA, loja.ID_LOJA, loja.ENDERECO_LOJA, loja.SISTEMA_LOJA, etapas.COD_ETAPA, etapas.DESC_ETAPA, itens.COD_ITEM, itens.DESC_ITEM, implantacao.IMP_STATUSOK , datas.DATASIMP_DATAINICIAL, datas.DATASIMP_DATAFINAL from IMPLANTACAO implantacao
+                select IMP_CODIMP, loja.RAZAO_LOJA, loja.CNPJ_LOJA, loja.ID_LOJA, loja.ENDERECO_LOJA, loja.SISTEMA_LOJA, etapas.COD_ETAPA, etapas.DESC_ETAPA, itens.COD_ITEM, itens.DESC_ITEM, implantacao.IMP_STATUSOK, implantacao.IMP_USUARIOSITEM, datas.DATASIMP_DATAINICIAL, datas.DATASIMP_DATAFINAL, datas.DATASIMP_USUARIOS from IMPLANTACAO implantacao
                 inner join loja loja on loja.ID_LOJA = implantacao.IMP_CODLOJA
                 inner join ETAPAS_IMPLANTACAO etapas on etapas.COD_ETAPA = implantacao.ETAPA_CODETAPA
                 inner join ITENS_IMPLANTACAO itens on implantacao.IMP_CODITEM = itens.COD_ITEM

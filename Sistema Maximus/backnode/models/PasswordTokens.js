@@ -18,7 +18,6 @@ class PasswordTokens{
 
     async create(email) {
         var user = await this.findEmail(email);
-        console.log("console do usuário " + JSON.stringify(user))
         if(user != undefined) {
             try {
                 var token = uuidv4();

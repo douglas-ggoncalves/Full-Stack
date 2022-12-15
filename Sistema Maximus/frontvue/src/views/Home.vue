@@ -181,7 +181,7 @@ Vue.use(VModal, {
 })
 
 export default {
-   data(){
+  data(){
     return {
       login: '',
       password: '',
@@ -197,7 +197,8 @@ export default {
       errEmail: '',
       errLogin: ''
     }
-  }, methods: {
+  }, 
+  methods: {
     async log(){
       if(this.login.trim() == '' || this.password.trim() == ''){
         this.err = `Usuário e/ou senha inválidos`
@@ -302,7 +303,7 @@ export default {
     }
   }, 
   async created(){
-    this.serverIP = scrypt.serverIP
+    this.serverIP = await scrypt.serverIP
 
     if(this.$route.params.token != undefined){
       await axios.post(`${this.serverIP}/token`, {
@@ -310,7 +311,7 @@ export default {
       }).then(() => {
         this.divForRecoveryPassword = this.$route.params.token
       }).catch(err => {
-        console.log(err)
+        console.log('erro ' + err)
         console.log(err.response.data.err)
       })
     }

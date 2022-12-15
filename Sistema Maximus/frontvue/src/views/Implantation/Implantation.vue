@@ -146,9 +146,9 @@
                         <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected }}</v-toolbar>
                         <v-card-text class="text-center">
                             <div class="text-h5 pa-12">
-                                <v-combobox  hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
-                                    <template  @click="testeeeeee()"  v-slot:selection="data"> 
-                                        <v-chip  :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
+                                <v-combobox hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                                    <template v-slot:selection="data"> 
+                                        <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                             <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
                                                 <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                             </v-avatar>
@@ -213,15 +213,6 @@
                 </v-row>
                 
                 <v-row class="stages">
-                    <h5>
-                            {{ stage1.items }}
-                        </h5>
-                            <br><br>
-                            <br><br>
-                        <h5>
-                            {{ stage1.model }}
-                        </h5>
-
                     <v-col class="myColumn" :cols="3">
                         <h5>Implantação Etapa 1</h5>
                         
@@ -236,8 +227,8 @@
                         <v-combobox v-model="USUARIO_SELECT" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
                             <template v-slot:selection="data">
                                 <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
-                                    <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
-                                        <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
+                                    <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
+                                        <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO + ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                     </v-avatar>
                                     <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                     {{ data.item.LOGIN_USUARIO | getFirstName }}
@@ -288,7 +279,7 @@
                                                     <v-list-item-icon class="display: flex; align-items-center"> 
                                                         <span v-for="user in USUARIO_SELECT" :key="user.ID_USUARIO"> <!-- 555 -->
                                                             <v-avatar color="brown" size="36" v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
-                                                                <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO +  ".jpg"' :alt="user.LOGIN_USUARIO">
+                                                                <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO + ".jpg"' :alt="user.LOGIN_USUARIO">
                                                             </v-avatar>
 
                                                             <v-avatar size="36" v-else color="red">
@@ -606,7 +597,7 @@ export default {
             dialogMsgSuccess: false,
             msgSuccess: '',
             itemSelected: '',
-            items: [{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me' },{ title: 'Click Me 2'}],
+            items: [{ title: 'Click Me' }, { title: 'Click Me' }, { title: 'Click Me' }, { title: 'Click Me 2'}],
             implantsAll: [],
             optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
             id_Store: 1,
@@ -701,8 +692,8 @@ export default {
                     //{ ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
                 ],
             },
-            USUARIO_SELECT:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }, { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' },],
-            USUARIO_SELECT2:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }, { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' }],
+            USUARIO_SELECT:[{ ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' }],
+            USUARIO_SELECT2:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }],
             USUARIO2: [
                 'Rafael', 'Gabriel', 'Jonas', 'Gyselle', 'Eduardo', 'Maurício Xavier', 'Raynaldo Macedo'
             ],
@@ -722,20 +713,6 @@ export default {
         this.myFunction();
     },
     methods: {
-        teste(loginUser){
-            var element = this.USUARIO.find(element => element.LOGIN_USUARIO == loginUser)
-            if(element != undefined && element != null){
-                if(this.USUARIO_SELECT.find(element => element.LOGIN_USUARIO == loginUser) != undefined){
-                    this.USUARIO_SELECT = this.USUARIO_SELECT.filter(teste => teste.LOGIN_USUARIO != loginUser)
-                }
-                else{
-                    this.USUARIO_SELECT.push(element)
-                }
-            }
-        },
-        testeeeeee(){
-            alert('asdsa ')
-        },
         addMembers(element){
             this.itemSelected = element;
             this.dialog = true;
@@ -1002,7 +979,6 @@ export default {
         },
         syncInfo(){
             var ID_LOJA = document.getElementById("inputID_LOJA").value
-            console.log("entrou no método sync info ")
             if(ID_LOJA == this.dataClient.ID_LOJA){
                 var element = document.getElementById("inputText").value
                 var itemActive = document.getElementById("inputActive").value 
@@ -1047,6 +1023,9 @@ export default {
       },
     },
     watch: {
+        USUARIO_SELECT(){ // 555
+            console.log("usuário alterado")
+        },
         'stage1.editedItemDateIni'(){
             this.stage1.iniDateFormatted = this.formatDate(this.stage1.editedItemDateIni);
         },

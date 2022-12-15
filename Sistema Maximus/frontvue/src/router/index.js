@@ -47,17 +47,13 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
-  },
+  },/*
   {
     path: '*',
     name: 'DefaultRouter',
     component: Home
-  },
-  {
-    path: '/conta/:token',
-    name: 'HomeRecover',
-    component: Home
-  },
+  },*/
+  
   {
     path: '/index',
     name: 'Index',
@@ -105,6 +101,11 @@ const routes = [
     path: '/:slug',
     name: 'Post',
     component: Post
+  },
+  {
+    path: '/conta/:token',
+    name: 'HomeRecover',
+    component: Home
   }
 ]
 

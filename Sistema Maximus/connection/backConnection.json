@@ -1,0 +1,8 @@
+{
+    "host" : "localhost",
+    "port" : 3739,
+    "user" : "sa",
+    "password" : "d120588$788455",
+    "database" : "MAXIMUS",
+    "serverIP": "http://localhost:4000"
+}
