@@ -36,6 +36,10 @@ io.on("connection", (socket) => {
     socket.on('refreshItems', (msg) => {
         socket.broadcast.emit("itemsRefresh", msg); // Emitimos o evento para todo mundo do server menos para quem enviou
     });
+
+    socket.on('refreshStageUsers', (msg) => {
+        socket.broadcast.emit("usersRefresh", msg);
+    });
 })
 
 /*

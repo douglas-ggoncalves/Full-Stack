@@ -55,6 +55,23 @@ class Implantation{
             return undefined;
         }
     }
+    
+    async findUserImplants(){
+        try {
+            var result = await knex.raw(`
+                select 
+                    CODIMP_IMP, 
+                    DATASIMP_CODLOJA, 
+                    DATASIMP_CODETAPA, 
+                    DATASIMP_CODIGO, 
+                    DATASIMP_USUARIOS 
+                from DATAS_IMPLANTACAO
+            `)
+            return result;
+        } catch(err) {
+            return undefined;
+        }
+    }
 
     async editImplant(IMP_CODIMP, IMP_CODLOJA, IMP_STATUSOK, IMP_CODITEM, ETAPA_CODETAPA, ITEM_CODETAPA){
         try {
@@ -67,6 +84,20 @@ class Implantation{
                 IMP_STATUSOK: IMP_STATUSOK
             }).table("IMPLANTACAO")
 
+            return result;
+        } catch(err) {
+            return undefined;
+        }
+    }
+
+    async usersEdit(DATASIMP_CODLOJA, DATASIMP_CODETAPA, CODIMP_IMP, DATASIMP_USUARIOS){
+        try {
+            var result = await knex.where('DATASIMP_CODLOJA', '=', DATASIMP_CODLOJA).
+            where('DATASIMP_CODETAPA', '=', DATASIMP_CODETAPA).
+            where('CODIMP_IMP', '=', CODIMP_IMP).
+            update({ 
+                DATASIMP_USUARIOS: DATASIMP_USUARIOS.toString() 
+            }).table("DATAS_IMPLANTACAO")
             return result;
         } catch(err) {
             return undefined;

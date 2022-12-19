@@ -17,6 +17,13 @@ class SocketioService {
         document.getElementById("dataImplant").click();
       });
 
+      this.socket.on('usersRefresh', (data) => {
+        console.log('data de usersRefreshhhh ' + JSON.stringify(data))
+        document.getElementById("divUsersStage" + data.value).value = JSON.stringify(data.arrayElements)
+        document.getElementById("syncUsersStage").click();
+        
+      });
+
       this.socket.on('showmsg', () => {
         document.getElementById("chat").append(document.createElement("p").innerHTML = 'ABC')
         document.getElementById("chat").append(document.createElement("br"))
@@ -26,6 +33,10 @@ class SocketioService {
 
     updateItemImp(DESC_ITEM, ITEM_ATIVO, ID_LOJA){
       this.socket.emit('refreshItems', {DESC_ITEM: DESC_ITEM, ITEM_ATIVO: ITEM_ATIVO, ID_LOJA: ID_LOJA})
+    }
+
+    updateStageUsers(ID_LOJA, IMP_CODIMP, value, arrayElements){
+      this.socket.emit('refreshStageUsers', {ID_LOJA: ID_LOJA, IMP_CODIMP: IMP_CODIMP, value: value, arrayElements: arrayElements})
     }
 
     disconnect() {

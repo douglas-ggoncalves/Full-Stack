@@ -43,6 +43,37 @@ class ImplantationController{
         }
     }
 
+    async getUsersImplants(req, res){
+        var usersImplants = await Implantation.findUserImplants();
+        
+        if(usersImplants != undefined) 
+        {
+            res.status(200);
+            res.send({usersImplants: usersImplants})
+            return;
+        } else{
+            res.status(406);
+            res.send({err: 'Não foi possível consultar as informações dos usuários'});
+            return;
+        }
+    }
+
+    async editUsers(req, res){
+        var DATASIMP_CODLOJA = await req.body.DATASIMP_CODLOJA
+        var DATASIMP_CODETAPA = await req.body.DATASIMP_CODETAPA
+        var CODIMP_IMP = await req.body.CODIMP_IMP
+        var DATASIMP_USUARIOS = await req.body.DATASIMP_USUARIOS
+
+        var update = await Implantation.usersEdit(DATASIMP_CODLOJA, DATASIMP_CODETAPA, CODIMP_IMP, DATASIMP_USUARIOS);
+        if(update != undefined){
+            res.status(200);
+            res.send({success: "Alteração gravada com sucesso"})
+        } else{
+            res.status(406);
+            res.send({success: "Não foi possível fazer a alteração dos usuários"})
+        }
+    }
+
     async editImplant(req, res){
         var IMP_CODIMP = await req.body.IMP_CODIMP
         var IMP_CODLOJA = await req.body.IMP_CODLOJA
