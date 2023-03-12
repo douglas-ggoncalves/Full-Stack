@@ -9,11 +9,19 @@
             <hr>
           </div>
 
-          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+          <li>
               <a href="acessos">Acessos</a>
           </li>
 
-          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+          <li>
+            <a href="napp">Checagem Napp</a>
+          </li>
+
+          <li>
+            <a href="dashboard">Dashboard</a>
+          </li>
+
+          <li>
             <a href="usuarios">Gestão de Usuários</a>
           </li>
 
@@ -113,7 +121,13 @@ export default {
   created(){
     this.serverIP = scrypt.serverIP
     this.roleUserLogged = localStorage.getItem("roleUser")
-    this.myFunction();
+
+    if(this.roleUserLogged != "N"){
+      this.myFunction();
+    } else{
+      alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
+      this.$router.push({name: "Index"})
+    }
   },
   methods: {
     clique() {

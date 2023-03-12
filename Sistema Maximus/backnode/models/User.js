@@ -81,9 +81,16 @@ class User{
         }
     }
 
-    async editUser(login, role, network, idUser){
+    async editUser(login, role, network, idUser, passwordUser, alterPassword){
         try {
-            var result = await knex.where('ID_USUARIO', '=', idUser).update({ LOGIN_USUARIO: login, CARGO_USUARIO: role, REDEID_USUARIO: network }).table("USUARIO")
+            if(alterPassword){
+                var hash = await bcrypt.hash(passwordUser, 10);
+                var result = await knex.where('ID_USUARIO', '=', idUser).update({ LOGIN_USUARIO: login, CARGO_USUARIO: role, REDEID_USUARIO: network, SENHA_USUARIO: hash }).table("USUARIO")
+            }
+            else{
+                var result = await knex.where('ID_USUARIO', '=', idUser).update({ LOGIN_USUARIO: login, CARGO_USUARIO: role, REDEID_USUARIO: network}).table("USUARIO")
+            }
+            
             return result;
         } catch(err) {
             console.log(err)

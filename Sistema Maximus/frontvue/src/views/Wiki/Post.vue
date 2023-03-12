@@ -9,11 +9,19 @@
             <hr>
           </div>
 
-          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+          <li>
             <a href="acessos">Acessos</a>
           </li>
 
-          <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+          <li>
+            <a href="napp">Checagem Napp</a>
+          </li>
+
+          <li>
+            <a href="dashboard">Dashboard</a>
+          </li>
+
+          <li>
             <a href="usuarios">Gestão de Usuários</a>
           </li>
 

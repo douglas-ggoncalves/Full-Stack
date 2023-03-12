@@ -18,7 +18,6 @@ const io = require('socket.io')(http, {
   });
 
 io.on("connection", (socket) => {
-
     console.log("Usuário conectado: " + socket.id)
 
     socket.on("disconnect", () => {
@@ -39,6 +38,10 @@ io.on("connection", (socket) => {
 
     socket.on('refreshStageUsers', (msg) => {
         socket.broadcast.emit("usersRefresh", msg);
+    });
+
+    socket.on('dashboardRefresh', (msg) => {
+        io.emit("dashboardRefresh", msg.loginUser);
     });
 })
 

@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Extreme';
+  src: url("/fonts/Extreme-Regular.woff2") format("woff2"), url("/fonts/Extreme-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: fallback;
+}
+
 a {
   color: white !important;
   text-decoration: none !important;
@@ -93,6 +101,303 @@ a[data-toggle="collapse"] {
   text-align: left !important;
   background-color: #f2f7ec;
   padding: .5rem;
+}
+
+.col > div.elements {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+  text-align: left;
+}
+
+.col > div.elements a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  color: black !important;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 16px;
+  -webkit-box-shadow: 1px 2px 7px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 2px 7px 0px rgba(0, 0, 0, 0.75);
+}
+
+.col > div.elements a:hover {
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+          box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+}
+
+.col > div.elements div.left span.value {
+  font-weight: bold;
+}
+
+.col > div.elements div.right {
+  margin-left: auto;
+}
+
+.col > div.elements div.right span i {
+  color: white;
+  border-radius: 50%;
+  padding: .5rem;
+}
+
+.col > div.elements div.right span i.iGreen {
+  background-color: #3b963b;
+}
+
+.col > div.elements div.right span i.iRed {
+  background-color: #dc0c0c;
+}
+
+.col > div.elements div.right span i.iBlue {
+  background-color: #2196f3;
+}
+
+#napp #rowDataDash {
+  margin-top: 1rem;
+  padding: 0 12px;
+}
+
+#napp #rowDataDash > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+#napp #rowDataDash div.col > div {
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 8px;
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+  padding: .5rem .5rem;
+}
+
+#napp #rowDataDash div.col > div h4.text-h2 {
+  font-weight: bold;
+}
+
+#napp #rowDataDash div.col > div#partVendas h4 {
+  color: #1ac71a;
+}
+
+#napp #rowDataDash div.col > div#partCatalog h4 {
+  color: #AD390B;
+}
+
+#dashboard a.totalAcomp {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  color: black !important;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 16px;
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+}
+
+#dashboard div.datasDash {
+  margin-top: 5rem !important;
+}
+
+#dashboard div.datasDash div.dash {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+#dashboard div.datasDash div.dash h3 {
+  font-size: 1rem !important;
+  font-weight: bold !important;
+}
+
+#dashboard div.datasDash div.dash h4 {
+  font-size: 1rem !important;
+  font-weight: bold !important;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span {
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 16px;
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+  width: 100%;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span h3 {
+  margin-bottom: 1.5rem;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span div.data {
+  border-bottom: 1px solid rgba(200, 185, 185, 0.9);
+  margin-bottom: 1.3rem;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span div.data > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span div.data > div div.divLeft {
+  float: left;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span div.data > div div.divLeft span {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#dashboard div.datasDash div.dash div#arrayMov > span div.data > div div.divRight {
+  margin-left: auto;
+}
+
+#dashboard div.datasDash div.dash div.elements {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+  margin-bottom: .7rem;
+}
+
+#dashboard div.datasDash div.dash div.elements > span {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  color: black;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 16px;
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9) !important;
+}
+
+#dashboard div.datasDash div.dash div.elements > span:hover {
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+          box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+}
+
+#dashboard div.datasDash div.dash div.elements div.left {
+  text-align: left;
+}
+
+#dashboard div.datasDash div.dash div.elements div.left span.value {
+  font-weight: bold;
+}
+
+#dashboard div.datasDash div.dash div.elements div.right {
+  margin-left: auto;
+}
+
+#dashboard div.datasDash div.dash div.elements div.right span i {
+  color: white;
+  border-radius: 50%;
+  padding: .5rem;
+}
+
+#dashboard div.datasDash div.dash div.elements div.right span i.iGreen {
+  background-color: #3b963b;
+}
+
+#dashboard div.datasDash div.dash > div#first {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+  height: 100%;
+  border: 1px solid rgba(200, 185, 185, 0.5);
+  border-radius: 16px;
+  max-width: 100%;
+  -webkit-box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+  box-shadow: 2px 2px 6px -4px rgba(0, 0, 0, 0.9);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#dashboard div.datasDash div.dash > div#first div.divDash {
+  text-align: center;
+  margin-bottom: auto !important;
+  margin-top: auto !important;
+  padding: 1.5rem 1.25rem;
+  width: 100%;
+}
+
+#dashboard div.datasDash div.dash > div#first div.divDash #apexchart {
+  max-height: 100% !important;
+}
+
+#dashboard div.datasDash div.dash > div#first div.divDash #apexchart > div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#dashboard div.datasDash div.dash > div#first div.divDash #dashExpAndRecs > div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#dashboard div.datasDash div.dash > div#first .v-input {
+  max-width: 70% !important;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (max-width: 768px) {

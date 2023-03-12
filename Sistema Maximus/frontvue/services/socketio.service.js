@@ -18,7 +18,6 @@ class SocketioService {
       });
 
       this.socket.on('usersRefresh', (data) => {
-        console.log('data de usersRefreshhhh ' + JSON.stringify(data))
         document.getElementById("divUsersStage" + data.value).value = JSON.stringify(data.arrayElements)
         document.getElementById("syncUsersStage").click();
         
@@ -29,6 +28,17 @@ class SocketioService {
         document.getElementById("chat").append(document.createElement("br"))
       });
 
+      this.socket.on('dashboardRefresh', (loginUser) => {
+        if(document.getElementById("syncInfoDashboard") != null){
+          document.getElementById("inputTextDashboard").value = loginUser
+          document.getElementById("syncInfoDashboard").click();
+        }
+      });
+    }
+
+    refreshDashboard(loginUser){
+      this.socket.emit('dashboardRefresh', {loginUser: loginUser});
+      console.log("valor de data " + loginUser)
     }
 
     updateItemImp(DESC_ITEM, ITEM_ATIVO, ID_LOJA){

@@ -214,7 +214,7 @@ export default {
           localStorage.setItem("roleUser", res.data.user.CARGO_USUARIO);
           localStorage.setItem("redeIdUser", res.data.user.REDEID_USUARIO);
           localStorage.setItem("loginUser", res.data.user.LOGIN_USUARIO);
-
+          localStorage.setItem("idUser", res.data.user.ID_USUARIO);
           this.$router.push({name: "Index"})
         }).catch(err => {
           this.errLogin = err.response.data.err

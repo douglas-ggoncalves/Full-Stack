@@ -7,11 +7,19 @@
                     <hr>
                 </div>
 
-                <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+                <li>
                     <a href="acessos">Acessos</a>
                 </li>
 
-                <li v-if="roleUserLogged == 'M' || roleUserLogged == 'A'">
+                <li>
+                    <a href="napp">Checagem Napp</a>
+                </li>
+
+                <li>
+                    <a href="dashboard">Dashboard</a>
+                </li>
+
+                <li>
                     <a href="usuarios">Gestão de Usuários</a>
                 </li>
 
@@ -53,10 +61,10 @@
             <v-container fluid v-show="!checkImplantation">
                 <v-dialog v-model="dialogMsgSuccess" max-width="600">
                     <v-card>
-                    <v-toolbar class="text-center" color="success" dark>Maximus Farma</v-toolbar>
+                        <v-toolbar class="text-center" color="success" dark>Maximus Farma</v-toolbar>
                         <v-card-text class="text-center">
-                        <div class="text-h5 pa-12">{{ msgSuccess }}</div>
-                        <v-btn class="success" @click="dialogMsgSuccess = false">CONFIRMAR</v-btn>
+                            <div class="text-h5 pa-12">{{ msgSuccess }}</div>
+                            <v-btn class="success" @click="dialogMsgSuccess = false">CONFIRMAR</v-btn>
                         </v-card-text>
                     </v-card>
                 </v-dialog>
@@ -146,7 +154,7 @@
                         <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected }}</v-toolbar>
                         <v-card-text class="text-center">
                             <div class="text-h5 pa-12">
-                                <v-combobox hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                                <v-combobox hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips >
                                     <template v-slot:selection="data"> 
                                         <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                             <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
@@ -225,7 +233,7 @@
                     </v-col>
 
                     <v-col :cols="5">
-                        <v-combobox v-model="stage1.usersStage" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
+                        <v-combobox v-model="stage1.usersStage" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" @change="testeee()" multiple chips>
                             <template v-slot:selection="data">
                                 <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                     <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
@@ -685,7 +693,9 @@ export default {
     },
     created(){
         this.serverIP = scrypt.serverIP
-        this.myFunction();
+        alert("Página/funções ainda em desenvolvimento.\n\nVocê será direcionado para a página inicial.");
+        this.$router.push({name: "Index"})
+        //this.myFunction(); // descomentar futuramente...
     },
     methods: {
         addMembers(element){
@@ -757,6 +767,7 @@ export default {
                 localStorage.removeItem("roleUser")
                 localStorage.removeItem("redeIdUser")
                 localStorage.removeItem("loginUser")
+                localStorage.removeItem("idUser")
                 this.$router.push({name: "Home"})
            }
         },
@@ -855,11 +866,18 @@ export default {
                 console.log(err);
             })  
         },
+        testeee(){
+            console.log("entrou no método testeee, então usuário clicou no combobox")
+
+            var arrayElements = document.getElementById("divUsersStage1").value
+
+            if(!this.checkArrays(arrayElements, this.stage1.usersStage)){
+                this.alterUserStage(1);
+            }
+        },
         viewItem(item){
             var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
 
-            
-            
             if(aux != undefined){
                 this.clearData()
                 this.usersImplants.forEach(element => {
@@ -1082,12 +1100,19 @@ export default {
             if(this.checkImplantation){
                 
                 var arrayElements = document.getElementById("divUsersStage1").value
-                this.toArray();
                 console.log("arrayElements " + arrayElements)
+
+                var elements = arrayElements.map(function(person){
+                    return person;
+                });
+
+                console.log("esse é os elements sem o stringy " + elements)
+                console.log("esse é os elements com o stringy " + JSON.stringify(elements))
                 
+
                 if(!this.checkArrays(arrayElements, this.stage1.usersStage)){
-                    //this.stage1.usersStage = [{ ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas'}]
-                    //this.stage1.usersStage = [{"ID_USUARIO":3,"LOGIN_USUARIO":"Jonas","IMG_USUARIO":"Jonas"},{"ID_USUARIO":6,"LOGIN_USUARIO":"Maurício Xavier","IMG_USUARIO":""}]
+                    //this.stage1.usersStage = arrayElements
+                    this.stage1.usersStage = [{"ID_USUARIO":3,"LOGIN_USUARIO":"Jonas","IMG_USUARIO":"Jonas"},{"ID_USUARIO":6,"LOGIN_USUARIO":"Maurício Xavier","IMG_USUARIO":""}]
                     //this.stage1.usersStage = document.getElementById("divUsersStage1").value
                 }
             }
@@ -1129,7 +1154,7 @@ export default {
       },
     },
     watch: {
-        'stage1.usersStage'(){
+        /*'stage1.usersStage'(){
             if(this.pageLoaded){
                 var arrayElements = document.getElementById("divUsersStage1").value
 
@@ -1137,7 +1162,7 @@ export default {
                     this.alterUserStage(1);
                 }
             }
-        },
+        },*/
         'stage2.usersStage'(){
             if(this.pageLoaded){
                 this.alterUserStage(2);

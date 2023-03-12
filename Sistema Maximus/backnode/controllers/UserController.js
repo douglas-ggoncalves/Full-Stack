@@ -228,6 +228,8 @@ class UserController{
         var role = await req.body.editRoleUser;
         var network = await req.body.editRoleNetwork;
         var idUser = await req.body.idUser;
+        var passwordUser = await req.body.passwordUser;
+        var alterPassword = await req.body.alterPassword;
 
         try{
             var loginExists = await User.findLogin(login);
@@ -241,7 +243,7 @@ class UserController{
                     var idExist = await User.findUserById(idUser);
                     
                     if(idExist != undefined){ // login existe
-                        var editUser = await User.editUser(login, role, network, idUser);
+                        var editUser = await User.editUser(login, role, network, idUser, passwordUser, alterPassword);
                         if(editUser != undefined) {
                             res.status(200);
                             res.send({success: "Usuário editado com sucesso"})
@@ -307,6 +309,38 @@ class UserController{
     }
 
     async validate(req, res) {
+        var redeUser = req.body.redeUser
+        var roleUser = req.body.roleUser
+        var loginUser = req.body.loginUser
+
+        if(roleUser == undefined){
+            res.status(400);
+            res.send({err:"O cargo do usuário não foi enviado, não foi possível fazer a verificação"});
+            return;
+        }
+        
+        if(loginUser == undefined){
+            res.status(400);
+            res.send({err:"O login do usuário não foi enviado, não foi possível fazer a verificação"});
+            return;
+        }
+
+        if(redeUser == 'null'){
+            redeUser = null;
+        }
+     
+        var users = await User.findAllUser();
+        var oneUser = users.filter(user => user.LOGIN_USUARIO == loginUser && user.CARGO_USUARIO == roleUser && user.REDEID_USUARIO == redeUser)
+        if(oneUser != ''){
+            res.status(200);
+            res.send("Ok");
+        } else{
+            res.status(406);
+            res.send({err:"Usuário inválido"});
+        }
+    }
+
+    async validateUser(req, res) {
         var redeUser = req.body.redeUser
         var roleUser = req.body.roleUser
         var loginUser = req.body.loginUser

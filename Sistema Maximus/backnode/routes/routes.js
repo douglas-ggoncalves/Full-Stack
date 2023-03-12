@@ -7,18 +7,22 @@ var StoreController = require("../controllers/StoreController");
 var ItemController = require("../controllers/ItemController");
 var StageController = require("../controllers/StageController");
 var AdminAuth = require("../middleware/AdminAuth")
+var UserMaximusAuth = require("../middleware/UserMaximusAuth");
+var UserAuth = require("../middleware/UserAuth");
 var Implantation = require("../controllers/ImplantationController")
+var DashboardController = require("../controllers/DashboardController")
 var Network = require ("../controllers/NetworkController")
+var NappController = require("../controllers/NappController")
 
 router.post('/login', UserController.login);
-router.get('/user', AdminAuth, UserController.getUsers);
+router.get('/user', UserAuth, UserController.getUsers); // 555
 router.post('/user', UserController.create);
 router.patch('/user', UserController.edit);
 router.post('/password', UserController.recoveryPassword);
 router.patch('/token', UserController.editPassword);
 router.post('/token', UserController.validateToken);
 router.delete('/user/:login', UserController.delete);
-router.get('/replic', AdminAuth, ReplicController.getData);
+router.get('/replic', UserAuth, ReplicController.getData);
 router.post('/replic', ReplicController.searchComands);
 router.post('/post', WikiController.create);
 router.get('/posts', WikiController.getPosts);
@@ -28,9 +32,9 @@ router.patch('/post', WikiController.editPost);
 router.delete('/store/:id', ReplicController.delete);
 router.patch('/store', ReplicController.patchStores);
 router.put('/store', ReplicController.edit);
-router.post('/validate', AdminAuth, UserController.validate);
-router.get('/stores', AdminAuth, StoreController.getStores);
-router.get("/networks", AdminAuth, Network.getNetworks)
+router.post('/validate', UserAuth, UserController.validate); // 555
+router.get('/stores', UserMaximusAuth, StoreController.getStores);
+router.get("/networks", UserMaximusAuth, Network.getNetworks)
 router.patch('/network', Network.editNetwork);
 router.post('/stage', StageController.create);
 router.get('/stages', StageController.getStages);
@@ -43,7 +47,13 @@ router.patch('/implants', Implantation.editImplant);
 router.post('/network', Network.create);
 router.post('/store', StoreController.create);
 router.get("/items", ItemController.getItems)
-
-
+router.post('/dataReplic', DashboardController.create);
+router.get('/dataReplic', UserMaximusAuth, DashboardController.getUsers);
+router.get('/dataCountReplic', UserMaximusAuth, DashboardController.getCountUsers);
+router.get('/napp', NappController.getData);
+router.get('/nappDetailed', NappController.getAllDataDetailed);
+router.post('/nappStore', NappController.create);
+router.post('/nappData', NappController.createDataNapp);
+router.patch('/napp', NappController.editStore);
 
 module.exports = router;

@@ -27,7 +27,6 @@ module.exports = function(req, res, next) {
         res.send({err:"Você não está autenticado"});
         return;
     }
-    
 }
 
 

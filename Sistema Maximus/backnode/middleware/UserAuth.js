@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
 
         try{
             var decoded = jwt.verify(token, secret);
-            if(decoded.role == 'M' || decoded.role == 'A' || decoded.role == 'S') {
+            if(decoded.role == 'M' || decoded.role == 'A' || decoded.role == 'S' || decoded.role == 'N') {
                 next();
             } else{
                 res.status(403);
@@ -27,7 +27,6 @@ module.exports = function(req, res, next) {
         res.send({err:"Você não está autenticado"});
         return;
     }
-    
 }
 
 

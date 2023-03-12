@@ -156,3 +156,20 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 
 	alter table loja
 	add SENHAACESSOREMOTO varchar(50)
+
+	CREATE TABLE EMPRESAS_NAPP(
+		[CNPJ] [varchar](16) primary key NOT NULL,
+		[RazaoSocial] [varchar](60) NOT NULL,
+		[Status] [int] NULL
+	)
+
+	create table DATA_NAPP(
+		CNPJ varchar(16) not null,
+		DataVendaEnviada dateTime,
+		MsgVendas varchar(60),
+		DataCatalogoEnviado dateTime,
+		MsgCatalogo varchar(60),
+		foreign key (CNPJ) references EMPRESAS_NAPP (CNPJ)
+	)
+
+	
