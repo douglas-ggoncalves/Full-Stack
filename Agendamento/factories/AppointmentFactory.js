@@ -2,7 +2,6 @@
 
 class AppointmentFactory{
     Build(simpleAppointment){
-
         // juntar data com hora
         var day = simpleAppointment.date.getDate() + 1;
         var month = simpleAppointment.date.getMonth();
@@ -15,7 +14,9 @@ class AppointmentFactory{
             id: simpleAppointment._id,
             title: simpleAppointment.name + " - " + simpleAppointment.description,
             start: startDate,
-            end: startDate
+            end: startDate,
+            notified: simpleAppointment.notified,
+            email: simpleAppointment.email
         }
 
         return appo;

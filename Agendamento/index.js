@@ -50,5 +50,19 @@ app.post("/finish", async (req, res) => {
     res.redirect("/");
 })
 
+app.get("/list", async (req, res) => {
+    var appos = await AppointmentService.getAll(true);
+    res.render("list", {appos});
+})
+
+app.get("/searchresult", async(req, res) => {
+    var appos = await AppointmentService.search(req.query.search);
+    res.render("list", {appos});
+})
+
+setInterval(async () => {
+    await AppointmentService.sendNotification();
+}, 5500)
+
 app.listen(8080, () => {})
 

@@ -15,7 +15,7 @@ const io = require('socket.io')(http, {
     cors: {
       origins: [connection.address]
     }
-  });
+});
 
 io.on("connection", (socket) => {
     console.log("Usuário conectado: " + socket.id)
