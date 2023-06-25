@@ -15,7 +15,7 @@ var Network = require ("../controllers/NetworkController")
 var NappController = require("../controllers/NappController")
 
 router.post('/login', UserController.login);
-router.get('/user', UserAuth, UserController.getUsers); // 555
+router.get('/user', UserAuth, UserController.getUsers);
 router.post('/user', UserController.create);
 router.patch('/user', UserController.edit);
 router.post('/password', UserController.recoveryPassword);
@@ -32,7 +32,7 @@ router.patch('/post', WikiController.editPost);
 router.delete('/store/:id', ReplicController.delete);
 router.patch('/store', ReplicController.patchStores);
 router.put('/store', ReplicController.edit);
-router.post('/validate', UserAuth, UserController.validate); // 555
+router.post('/validate', UserAuth, UserController.validate);
 router.get('/stores', UserMaximusAuth, StoreController.getStores);
 router.get("/networks", UserMaximusAuth, Network.getNetworks)
 router.patch('/network', Network.editNetwork);
@@ -43,6 +43,7 @@ router.post('/implantation', Implantation.create);
 router.get('/implants', Implantation.getImplants);
 router.get('/userImplants', Implantation.getUsersImplants);
 router.patch('/userImplants', Implantation.editUsers);
+router.patch('/userItemImp', Implantation.editUserItemImp);
 router.patch('/implants', Implantation.editImplant);
 router.post('/network', Network.create);
 router.post('/store', StoreController.create);

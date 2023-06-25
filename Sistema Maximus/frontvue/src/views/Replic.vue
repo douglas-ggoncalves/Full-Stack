@@ -637,7 +637,6 @@ export default {
       }
     },
     eventSelect(event){
-      alert("teste")
       if(event.NOME_REDE == "Selecionar tudo"){
         // se tiver algum elemento não selecionado selecionar tudo, caso contrário deixar array vazio
         if(this.value.length > 0){

@@ -56,7 +56,7 @@ class Implantation{
         }
     }
     
-    async findUserImplants(){
+    async findUserImplants(IMP_CODIMP, IMP_CODLOJA){
         try {
             var result = await knex.raw(`
                 select 
@@ -66,6 +66,8 @@ class Implantation{
                     DATASIMP_CODIGO, 
                     DATASIMP_USUARIOS 
                 from DATAS_IMPLANTACAO
+                where CODIMP_IMP = ${IMP_CODIMP}
+	            and DATASIMP_CODLOJA = ${IMP_CODLOJA}
             `)
             return result;
         } catch(err) {
@@ -103,6 +105,22 @@ class Implantation{
             return undefined;
         }
     }
+
+    async usersEditImp(IMP_CODLOJA, ETAPA_CODETAPA, IMP_CODIMP, IMP_USUARIOSITEM, IMP_CODITEM){
+        try {
+            var result = await knex.where('IMP_CODLOJA', '=', IMP_CODLOJA).
+            where('ETAPA_CODETAPA', '=', ETAPA_CODETAPA).
+            where('IMP_CODIMP', '=', IMP_CODIMP).
+            where('IMP_CODITEM', '=', IMP_CODITEM).
+            update({ 
+                IMP_USUARIOSITEM: IMP_USUARIOSITEM.toString() 
+            }).table("IMPLANTACAO")
+            return result;
+        } catch(err) {
+            return undefined;
+        }
+    }
+    
 }
 
 module.exports = new Implantation();

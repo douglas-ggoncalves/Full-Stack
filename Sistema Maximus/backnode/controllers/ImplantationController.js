@@ -44,7 +44,10 @@ class ImplantationController{
     }
 
     async getUsersImplants(req, res){
-        var usersImplants = await Implantation.findUserImplants();
+        var codImp = await req.query.codImp;
+        var codLoja = await req.query.codLoja;
+
+        var usersImplants = await Implantation.findUserImplants(codImp, codLoja);
         
         if(usersImplants != undefined) 
         {
@@ -73,6 +76,24 @@ class ImplantationController{
             res.send({success: "Não foi possível fazer a alteração dos usuários"})
         }
     }
+
+    async editUserItemImp(req, res){
+        var IMP_CODLOJA = await req.body.IMP_CODLOJA
+        var ETAPA_CODETAPA = await req.body.ETAPA_CODETAPA
+        var IMP_CODIMP = await req.body.IMP_CODIMP
+        var IMP_USUARIOSITEM = await req.body.IMP_USUARIOSITEM
+        var IMP_CODITEM = await req.body.IMP_CODITEM
+
+        var update = await Implantation.usersEditImp(IMP_CODLOJA, ETAPA_CODETAPA, IMP_CODIMP, IMP_USUARIOSITEM, IMP_CODITEM);
+        if(update != undefined){
+            res.status(200);
+            res.send({success: "Alteração gravada com sucesso"})
+        } else{
+            res.status(406);
+            res.send({success: "Não foi possível fazer a alteração dos usuários"})
+        }
+    }
+    
 
     async editImplant(req, res){
         var IMP_CODIMP = await req.body.IMP_CODIMP

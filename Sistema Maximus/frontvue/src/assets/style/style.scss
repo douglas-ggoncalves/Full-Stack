@@ -70,6 +70,15 @@ div.ql-editor{
                     margin: 0 auto 2.5rem auto;
                 }
             }
+
+            div.containerItens{
+                display: flex;
+                justify-content: center;
+
+                div.observation{
+                    margin-top: 0.85rem;
+                }
+            }
         }
     }
 }
@@ -681,5 +690,15 @@ button.close{
 }
 
 @media (min-width: 1200px) {
-
+    .wrapper {
+        #content{
+            #implantation{
+                div.containerItens{
+                    div.observation{
+                        margin-top: 0 !important;
+                    }
+                }
+            }
+        }
+    }
 }

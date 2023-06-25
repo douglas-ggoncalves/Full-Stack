@@ -139,7 +139,7 @@
                                     <span>{{ new Date(item.DATAINI_LOJA.replace("-",',')).toLocaleString() | toDate }}</span>
                                 </template>
 
-                                <template v-slot:[`item.action`]="{ item }" class="text-end"> 
+                                <template v-slot:[`item.action`]="{ item }"> 
                                     <v-btn class="ml-auto" color="success" @click="viewItem(item)">Selecionar</v-btn>
                                 </template>
                             </v-data-table>
@@ -149,24 +149,24 @@
             </v-container>
 
             <v-container id="implantation" fluid v-show="checkImplantation">
-                <v-dialog v-model="dialog" max-width="600">
+                <v-dialog v-model="dialog" persistent max-width="600">
                     <v-card>
-                        <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected }}</v-toolbar>
+                        <v-toolbar class="text-center" color="dark" dark>Atribua membros a {{ itemSelected.DESC_ITEM }}</v-toolbar>
                         <v-card-text class="text-center">
                             <div class="text-h5 pa-12">
-                                <v-combobox hide-selected solo v-model="USUARIO_SELECT2" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips >
+                                <v-combobox hide-selected solo v-model="itemSelected.USUARIOS" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" multiple chips>
                                     <template v-slot:selection="data"> 
                                         <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                             <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' &&  data.item.IMG_USUARIO != null">
                                                 <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO +  ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                             </v-avatar>
-                                            <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                            <v-avatar class="accent white--text" :v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                             {{ data.item.LOGIN_USUARIO | getFirstName }}
                                         </v-chip>
                                     </template>
                                 </v-combobox>
                             </div>
-                            <v-btn class="success" @click="dialog = false">Fechar</v-btn>
+                            <v-btn class="success" @click="saveMembersItem()">Fechar</v-btn>
                         </v-card-text>
                     </v-card>
                 </v-dialog>
@@ -192,11 +192,12 @@
                     <input type="text" class="d-none" id="inputText">
                     <input type="text" class="d-none" id="inputActive">
                     <input type="text" class="d-none" id="inputID_LOJA">
-                    {{ stage1.usersStage }}
-                    <input type="text" class="" id="divUsersStage1">
-                    <input type="text" class="" id="divUsersStage2">
-                    <input type="text" class="" id="divUsersStage3">
-                    <input type="text" class="" id="divUsersStage4">
+                    <input type="text" class="d-none" id="divUsersStage1">
+                    <input type="text" class="d-none" id="divUsersStage2">
+                    <input type="text" class="d-none" id="divUsersStage3">
+                    <input type="text" class="d-none" id="divUsersStage4">
+                    <div id="divItemsAux" class="d-none" @click="usersItemsRefresh()"/>
+                    <input type="text" class="" id="inputItemsAux">
                 </v-row>
 
                 <v-row id="dataImplant" @click="syncInfo()">
@@ -222,7 +223,7 @@
                 </v-row>
                 
                 <v-row class="stages">
-                    <v-col class="myColumn" :cols="3">
+                    <v-col class="myColumn" :cols="12" :lg="3">
                         <h5>Implantação Etapa 1</h5>
                         
                         <div>
@@ -232,21 +233,21 @@
                         </div>
                     </v-col>
 
-                    <v-col :cols="5">
-                        <v-combobox v-model="stage1.usersStage" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" @change="testeee()" multiple chips>
+                    <v-col :cols="12" :lg="5">
+                        <v-combobox v-model="stage1.usersStage" :items="USUARIO" item-text="LOGIN_USUARIO" return-object label="Usuários" @change="saveMembersStage()" multiple chips>
                             <template v-slot:selection="data">
                                 <v-chip :key="JSON.stringify(data.item)" close v-bind="data.attrs" :input-value="data.selected" :disabled="data.disabled" @click:close="data.parent.selectItem(data.item)">
                                     <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
                                         <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO + ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                     </v-avatar>
-                                    <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                    <v-avatar class="accent white--text" :v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                     {{ data.item.LOGIN_USUARIO | getFirstName }}
                                 </v-chip>
                             </template>
                         </v-combobox>
                     </v-col>
 
-                    <v-col :cols="2">
+                    <v-col :cols="6" :lg="2">
                         <v-menu ref="stage1.dateInit" v-model="stage1.dateInit" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field v-model="stage1.iniDateFormatted" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Início" 
@@ -256,7 +257,7 @@
                         </v-menu>
                     </v-col>
 
-                    <v-col :cols="2">
+                    <v-col :cols="6" :lg="2">
                         <v-menu ref="stage1.dateFinal" v-model="stage1.dateFinal" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field v-model="stage1.dateFormattedFinal" readonly :prepend-inner-icon="'mdi-calendar'" label="Data Conclusão" 
@@ -267,26 +268,25 @@
                     </v-col>
                     
                     <div class="separate"/>
-                    
-                    <v-row>
-                        <v-col :cols="6">
+                    <v-row class="containerItens">
+                        <v-col class="col-12 col-lg-11 col-xl-6">
                             <v-card class="mx-auto">
                                 <v-list class="p-0">
                                     <v-list-item-group v-model="stage1.model" multiple>
                                         <template v-for="(item, i) in stage1.items">
                                             <v-divider v-if="!item" :key="`divider-${i}`"></v-divider>
-                                            <v-list-item v-else :active="false" :key="`item-${i}`" :value="item" active-class="success text-white" @click="selectItemImp(item)">
+                                            <v-list-item v-else :active="false" :key="`item-${i}`" :value="item.DESC_ITEM" active-class="success text-white" @click="selectItemImp(item.DESC_ITEM)">
                                                 <template v-slot:default="{ active }">
                                                     <v-list-item-action>
                                                         <v-checkbox :input-value="active" color="white"></v-checkbox>
                                                     </v-list-item-action>
 
                                                     <v-list-item-content>
-                                                        <v-list-item-title v-text="item"></v-list-item-title>
+                                                        <v-list-item-title v-text="item.DESC_ITEM"></v-list-item-title>
                                                     </v-list-item-content>
 
                                                     <v-list-item-icon class="display: flex; align-items-center"> 
-                                                        <span v-for="user in USUARIO_SELECT" :key="user.ID_USUARIO"> <!-- 555 -->
+                                                        <span v-for="user in item.USUARIOS" :key="user.ID_USUARIO">
                                                             <v-avatar color="brown" size="36" v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
                                                                 <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO + ".jpg"' :alt="user.LOGIN_USUARIO">
                                                             </v-avatar>
@@ -314,7 +314,7 @@
                             </v-card>
                         </v-col>
 
-                        <v-col :cols="6">
+                        <v-col class="col-12 col-lg-11 col-xl-6 observation">
                             <div class="mb-1" style="max-height: 20%;">
                                 <v-radio-group class="mt-0 pt-0" v-model="stage1.switch" row>Todos os itens foram instalados?
                                     <v-radio class="mx-3" label="Sim" :value="true"></v-radio> 
@@ -347,7 +347,7 @@
                                     <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
                                         <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO + ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                     </v-avatar>
-                                    <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                    <v-avatar class="accent white--text" :v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                     {{ data.item.LOGIN_USUARIO | getFirstName }}
                                 </v-chip>
                             </template>
@@ -432,7 +432,7 @@
                                     <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
                                         <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO + ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                     </v-avatar>
-                                    <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                    <v-avatar class="accent white--text" :v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                     {{ data.item.LOGIN_USUARIO | getFirstName }}
                                 </v-chip>
                             </template>
@@ -503,7 +503,7 @@
                                     <v-avatar class="accent white--text" left v-if="data.item.IMG_USUARIO != '' && data.item.IMG_USUARIO != null">
                                         <img :src='"../../assets/img/Funcionarios/" + data.item.IMG_USUARIO + ".jpg"' :alt="data.item.LOGIN_USUARIO">
                                     </v-avatar>
-                                    <v-avatar class="accent white--text" v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
+                                    <v-avatar class="accent white--text" :v-text="data.item.LOGIN_USUARIO.slice(0, 1).toUpperCase()" left v-else/>
                                     {{ data.item.LOGIN_USUARIO | getFirstName }}
                                 </v-chip>
                             </template>
@@ -580,6 +580,7 @@ export default {
             pageLoaded: false,
             optionsSystem: ['Maximus Gestão', 'Maximus Lite'],
             id_Store: 1,
+            usersItemAux: [],
             stages: [/* {COD_ETAPA: 1, DESC_ETAPA: "Etapa 1"}, {COD_ETAPA: 2, DESC_ETAPA: "Etapa 2"}, {COD_ETAPA: 3, DESC_ETAPA: "Etapa 3"}, {COD_ETAPA: 4, DESC_ETAPA: "Etapa 4"} */],
             dataClient: {
                 ID_LOJA: '',
@@ -605,7 +606,8 @@ export default {
                 dateFormattedFinal: '',
                 editedItemDateIni: '',
                 editedDateFinal: '',
-                usersStage:[/*{ ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas'}*/],
+                usersStageItem: [],
+                usersStage:[/*{ ID_USUARIO: 3, LOGIN_USUARIO: 'Erick', IMG_USUARIO: 'Erick'}*/],
             },
             stage2: {
                 items: [],
@@ -675,19 +677,19 @@ export default {
                     //{ ID_LOJA: 3, RAZAO_LOJA: 'STAR FARMA LTDA', CNPJ: '34.088.313/0001-65', DATAINI_LOJA: '01-11-2022', value: 'STAR FARMA'},
                 ],
             },
-            USUARIO_SELECT:[{ ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' }],
-            USUARIO_SELECT2:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' }],
+            USUARIO_SELECT:[{ ID_USUARIO: 3, LOGIN_USUARIO: 'rafael123', IMG_USUARIO: '' }],
+            USUARIO_SELECT2:[{ ID_USUARIO: 1, LOGIN_USUARIO: 'MAXIMUS', IMG_USUARIO: '' }],
             USUARIO2: [
-                'Rafael', 'Gabriel', 'Jonas', 'Gyselle', 'Eduardo', 'Maurício Xavier', 'Raynaldo Macedo'
+                'rafael123', 'Douglas', 'Eduardo'//, 'Gyselle', 'Eduardo', 'Maurício Xavier'
             ],
             USUARIO: [
-                { ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
-                { ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
-                { ID_USUARIO: 3, LOGIN_USUARIO: 'Jonas', IMG_USUARIO: 'Jonas' },
-                { ID_USUARIO: 4, LOGIN_USUARIO: 'Gyselle', IMG_USUARIO: 'Gyselle' },
-                { ID_USUARIO: 5, LOGIN_USUARIO: 'Eduardo', IMG_USUARIO: 'Eduardo' },
-                { ID_USUARIO: 6, LOGIN_USUARIO: 'Maurício Xavier', IMG_USUARIO: '' },
-                { ID_USUARIO: 7, LOGIN_USUARIO: 'Raynaldo Macedo', IMG_USUARIO: '' },
+                //{ ID_USUARIO: 1, LOGIN_USUARIO: 'Rafael', IMG_USUARIO: 'Rafael' },
+                //{ ID_USUARIO: 2, LOGIN_USUARIO: 'Gabriel', IMG_USUARIO: 'Gabriel' },
+                //{ ID_USUARIO: 3, LOGIN_USUARIO: 'Erick', IMG_USUARIO: 'Erick' },
+                //{ ID_USUARIO: 4, LOGIN_USUARIO: 'Gyselle', IMG_USUARIO: 'Gyselle' },
+                //{ ID_USUARIO: 5, LOGIN_USUARIO: 'Eduardo', IMG_USUARIO: 'Eduardo' },
+                //{ ID_USUARIO: 6, LOGIN_USUARIO: 'Maurício Xavier', IMG_USUARIO: '' },
+                //{ ID_USUARIO: 7, LOGIN_USUARIO: 'Rubens', IMG_USUARIO: 'Rubens' }
             ]
         }
     },
@@ -736,23 +738,28 @@ export default {
                 console.log(err);
             })
 
-            axios.get(`${this.serverIP}/implants`, {
-            }).then(res => {
-                this.implantsAll = res.data.implants
-               /* this.stages.forEach(stage => { // 555
-                    console.log("stage " + JSON.stringify(stage.COD_ETAPA))
-                })*/
-                
+            axios.get(`${this.serverIP}/implants`, {})
+                .then(res => {
+                    this.implantsAll = res.data.implants
                 }).catch(err => {
                     console.log("Erro: " + err)
                 }
             )
 
-            axios.get(`${this.serverIP}/userImplants`, {
+            axios.get(`${this.serverIP}/user`, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
             }).then(res => {
-               this.usersImplants = res.data.usersImplants;
+                for(var y=0; y < res.data.length; y++) {
+                    var user = res.data[y];
+                   
+                    if(user.IS_FUNCIONARIO == 1){
+                        Vue.set(this.USUARIO, y, { ID_USUARIO: user.ID_USUARIO, LOGIN_USUARIO: user.LOGIN_USUARIO, IMG_USUARIO: user.LOGIN_USUARIO })
+                    }
+                }
             }).catch(err => {
-                console.log(err);
+                console.log("Erro: " + err)
             })
         },
         parseDate (date) {
@@ -818,7 +825,6 @@ export default {
         },
         async alterUserStage(value){
             var arrayElements = [];
-            
             if(value == 1){
                 this.stage1.usersStage.forEach(element => {
                     arrayElements.push(element.ID_USUARIO)
@@ -866,144 +872,188 @@ export default {
                 console.log(err);
             })  
         },
-        testeee(){
-            console.log("entrou no método testeee, então usuário clicou no combobox")
-
+        saveMembersStage(){
             var arrayElements = document.getElementById("divUsersStage1").value
 
             if(!this.checkArrays(arrayElements, this.stage1.usersStage)){
                 this.alterUserStage(1);
             }
         },
+        async saveMembersItem(){
+            var auxUsuarios = await "";
+            this.itemSelected.USUARIOS.forEach(element => {
+                auxUsuarios += element.ID_USUARIO + ", ";
+            });
+            
+            this.dialog = await false;
+
+            var aux = this.implantsAll.find(element => element.ID_LOJA == this.dataClient.ID_LOJA)
+
+            await axios.patch(`${this.serverIP}/userItemImp`, {
+                IMP_CODLOJA: this.dataClient.ID_LOJA,
+                ETAPA_CODETAPA: this.itemSelected.COD_ETAPA,
+                IMP_CODITEM: this.itemSelected.COD_ITEM,
+                IMP_CODIMP: aux.IMP_CODIMP,
+                IMP_USUARIOSITEM: auxUsuarios.slice(0, -2)
+            }).then(res => {
+                SocketioService.updateItemUsers({ID_LOJA: this.dataClient.ID_LOJA, IMP_CODIMP: aux.IMP_CODIMP, COD_ETAPA: this.itemSelected.COD_ETAPA, IMP_USUARIOSITEM: auxUsuarios.slice(0, -2), COD_ITEM: this.itemSelected.COD_ITEM});
+
+                this.callSnackBar(res.data.success);
+            }).catch(err => {
+                console.log(err);
+            })
+        },
         viewItem(item){
             var aux = this.implantsAll.find(element => element.ID_LOJA == item.ID_LOJA)
-
             if(aux != undefined){
-                this.clearData()
-                this.usersImplants.forEach(element => {
-                    if(element.DATASIMP_CODLOJA == item.ID_LOJA && element.CODIMP_IMP == aux.IMP_CODIMP ){
-                        if(element.DATASIMP_USUARIOS != null && element.DATASIMP_USUARIOS != ""){
-                            var aaaaa = element.DATASIMP_USUARIOS;
+                this.clearData();
+                
+                axios.get(`${this.serverIP}/userImplants`, {
+                    params: {
+                        codImp: aux.IMP_CODIMP,
+                        codLoja: item.ID_LOJA,
+                    }
+                }).then(res => {
+                    this.usersImplants = res.data.usersImplants;
 
-                            for(var x=0; x < aaaaa.length; x++){
-                                if(this.isNumber(aaaaa[x])){
+                    this.usersImplants.forEach(element => {
+                        if(element.DATASIMP_USUARIOS != null && element.DATASIMP_USUARIOS != ""){
+                            var usuarios = element.DATASIMP_USUARIOS;
+
+                            for(var x=0; x < usuarios.length; x++){
+                                if(this.isNumber(usuarios[x])){
                                     if(element.DATASIMP_CODETAPA == 1){
                                         if(this.stage1.usersStage.length == undefined){
-                                            this.stage1.usersStage = this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x])
+                                            this.stage1.usersStage = this.USUARIO.find(element => element.ID_USUARIO == usuarios[x])
                                         } else{
-                                            this.stage1.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x]))
+                                            this.stage1.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == usuarios[x]))
                                         }
                                     }
 
                                     if(element.DATASIMP_CODETAPA == 2){
                                         if(this.stage2.usersStage.length == undefined){
-                                            this.stage2.usersStage = this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x])
+                                            this.stage2.usersStage = this.USUARIO.find(element => element.ID_USUARIO == usuarios[x])
                                         } else{
-                                            this.stage2.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x]))
+                                            this.stage2.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == usuarios[x]))
                                         }
                                     }
 
                                     if(element.DATASIMP_CODETAPA == 3){
                                         if(this.stage3.usersStage.length == undefined){
-                                            this.stage3.usersStage = this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x])
+                                            this.stage3.usersStage = this.USUARIO.find(element => element.ID_USUARIO == usuarios[x])
                                         } else{
-                                            this.stage3.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x]))
+                                            this.stage3.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == usuarios[x]))
                                         }
                                     }
 
                                     if(element.DATASIMP_CODETAPA == 4){
                                         if(this.stage4.usersStage.length == undefined){
-                                            this.stage4.usersStage = this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x])
+                                            this.stage4.usersStage = this.USUARIO.find(element => element.ID_USUARIO == usuarios[x])
                                         } else{
-                                            this.stage4.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == aaaaa[x]))
+                                            this.stage4.usersStage.push(this.USUARIO.find(element => element.ID_USUARIO == usuarios[x]))
                                         }
                                     }
                                 }
                             }
+                        }
+                    })
 
+                    this.dataClient.IMP_CODIMP = aux.IMP_CODIMP
+                    this.dataClient.ID_LOJA = aux.ID_LOJA
+                    this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
+                    this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
+                    this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
+                    this.dataClient.IMP_CODLOJA = item.ID_LOJA
+                    this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
+                    this.checkImplantation = !this.checkImplantation;
+
+                    this.implantsAll.filter(store => store.ID_LOJA == aux.ID_LOJA).forEach(element => {
+                        if(element.COD_ETAPA == 1){
+                            const targetIds = element.IMP_USUARIOSITEM.split(', ').map(Number);
+
+                            var user = [];
+                            var data = this.USUARIO.filter(e => targetIds.includes(e.ID_USUARIO));
+
+                            for(var x = 0; x < data.length; x++){
+                                user[x] = data[x];
+                            }
+
+                            this.stage1.items.push({DESC_ITEM: element.DESC_ITEM, COD_ETAPA: element.COD_ETAPA, COD_ITEM: element.COD_ITEM, USUARIOS: user})
+
+                            if(element.IMP_STATUSOK == 1){
+                                this.stage1.model.push(element.DESC_ITEM)
+                            }
+                        }
+
+                        else if(element.COD_ETAPA == 2){
+                            this.stage2.items.push(element.DESC_ITEM)
+
+                            if(element.IMP_STATUSOK == 1){
+                                this.stage2.model.push(element.DESC_ITEM)
+                            }
+                        }
+                        
+                        else if(element.COD_ETAPA == 3){
+                            this.stage3.items.push(element.DESC_ITEM)
+
+                            if(element.IMP_STATUSOK == 1){
+                                this.stage3.model.push(element.DESC_ITEM)
+                            }
+                        }
+                        
+                        else if(element.COD_ETAPA == 4){
+                            this.stage4.items.push(element.DESC_ITEM)
+
+                            if(element.IMP_STATUSOK == 1){
+                                this.stage4.model.push(element.DESC_ITEM)
+                            }
+                        }
+                    });
+                    
+                    this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
+                    this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
+                    
+                    if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
+                        this.stage1.dateFormattedFinal = '';
+                        this.stage1.editedDateFinal = '';
+                    }
+
+                    if(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2)){
+                        this.stage2.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAINICIAL.substr(0,10));
+                        this.stage2.editedItemDateIni = this.parseDate(this.stage2.iniDateFormatted)
+                        this.stage2.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAFINAL.substr(0,10));
+                        this.stage2.editedDateFinal = this.parseDate(this.stage2.dateFormattedFinal)
+                        
+                        if(this.stage2.iniDateFormatted > this.stage2.dateFormattedFinal ){
+                            this.stage2.dateFormattedFinal = '';
+                            this.stage2.editedDateFinal = '';
                         }
                     }
+
+                    this.stage3.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
+                    this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
+                    
+                    if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
+                        this.stage3.dateFormattedFinal = '';
+                        this.stage3.editedDateFinal = '';
+                    }
+
+                    this.stage4.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAINICIAL.substr(0,10));
+                    this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
+                    this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
+                    this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
+                    
+                    if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
+                        this.stage4.dateFormattedFinal = '';
+                        this.stage4.editedDateFinal = '';
+                    }
+                }).catch(err => {
+                    console.log(err);
                 })
-
-                this.dataClient.IMP_CODIMP = aux.IMP_CODIMP
-                this.dataClient.ID_LOJA = aux.ID_LOJA
-                this.dataClient.RAZAO_LOJA = item.RAZAO_LOJA
-                this.dataClient.CNPJ_LOJA = item.CNPJ_LOJA
-                this.dataClient.ENDERECO_LOJA = item.ENDERECO_LOJA;
-                this.dataClient.IMP_CODLOJA = item.ID_LOJA
-                this.dataClient.SISTEMA_LOJA = item.SISTEMA_LOJA
-                this.checkImplantation = !this.checkImplantation;
-
-                this.implantsAll.filter(store => store.ID_LOJA == aux.ID_LOJA).forEach(element => {
-                    if(element.COD_ETAPA == 1){
-                        this.stage1.items.push(element.DESC_ITEM)
-                        if(element.IMP_STATUSOK == 1){
-                            this.stage1.model.push(element.DESC_ITEM)
-                        }
-                    }
-                    else if(element.COD_ETAPA == 2){
-                        this.stage2.items.push(element.DESC_ITEM)
-                        if(element.IMP_STATUSOK == 1){
-                            this.stage2.model.push(element.DESC_ITEM)
-                        }
-                    }
-                    
-                    else if(element.COD_ETAPA == 3){
-                        this.stage3.items.push(element.DESC_ITEM)
-                        if(element.IMP_STATUSOK == 1){
-                            this.stage3.model.push(element.DESC_ITEM)
-                        }
-                    }
-                    
-                    else if(element.COD_ETAPA == 4){
-                        this.stage4.items.push(element.DESC_ITEM)
-                        if(element.IMP_STATUSOK == 1){
-                            this.stage4.model.push(element.DESC_ITEM)
-                        }
-                    }
-                });
-
-                this.stage1.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAINICIAL.substr(0,10));
-                this.stage1.editedItemDateIni = this.parseDate(this.stage1.iniDateFormatted)
-                this.stage1.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 1).DATASIMP_DATAFINAL.substr(0,10));
-                this.stage1.editedDateFinal = this.parseDate(this.stage1.dateFormattedFinal)
-                
-                if(this.stage1.iniDateFormatted > this.stage1.dateFormattedFinal ){
-                    this.stage1.dateFormattedFinal = '';
-                    this.stage1.editedDateFinal = '';
-                }
-
-                if(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2)){
-                    this.stage2.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAINICIAL.substr(0,10));
-                    this.stage2.editedItemDateIni = this.parseDate(this.stage2.iniDateFormatted)
-                    this.stage2.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 2).DATASIMP_DATAFINAL.substr(0,10));
-                    this.stage2.editedDateFinal = this.parseDate(this.stage2.dateFormattedFinal)
-                    if(this.stage2.iniDateFormatted > this.stage2.dateFormattedFinal ){
-                        this.stage2.dateFormattedFinal = '';
-                        this.stage2.editedDateFinal = '';
-                    }
-                }
-
-                this.stage3.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAINICIAL.substr(0,10));
-                this.stage3.editedItemDateIni = this.parseDate(this.stage3.iniDateFormatted)
-                this.stage3.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 3).DATASIMP_DATAFINAL.substr(0,10));
-                this.stage3.editedDateFinal = this.parseDate(this.stage3.dateFormattedFinal)
-                
-                if(this.stage3.iniDateFormatted > this.stage3.dateFormattedFinal ){
-                    this.stage3.dateFormattedFinal = '';
-                    this.stage3.editedDateFinal = '';
-                }
-
-                this.stage4.iniDateFormatted = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAINICIAL.substr(0,10));
-                this.stage4.editedItemDateIni = this.parseDate(this.stage4.iniDateFormatted)
-                this.stage4.dateFormattedFinal = this.formatDate(this.implantsAll.find(store => store.ID_LOJA == this.id_Store && store.COD_ETAPA == 4).DATASIMP_DATAFINAL.substr(0,10));
-                this.stage4.editedDateFinal = this.parseDate(this.stage4.dateFormattedFinal)
-                
-                if(this.stage4.iniDateFormatted > this.stage4.dateFormattedFinal ){
-                    this.stage4.dateFormattedFinal = '';
-                    this.stage4.editedDateFinal = '';
-                }
-
             } else{
                 var confirmation = confirm("Elemento inválido, deseja criar uma implantação para esta loja ? ")
                 if(confirmation){
@@ -1064,6 +1114,7 @@ export default {
                 this.dataClient.ITEM_CODETAPA = aux.ITEM_CODETAPA
                 this.dataClient.ETAPA_CODETAPA = aux.ITEM_CODETAPA
             }
+
             this.updateItem(aux.DESC_ITEM);
         },
         async updateItem(DESC_ITEM){
@@ -1086,39 +1137,61 @@ export default {
         },
         syncInfo(){
             var ID_LOJA = document.getElementById("inputID_LOJA").value
+
             if(ID_LOJA == this.dataClient.ID_LOJA){
                 var element = document.getElementById("inputText").value
                 var itemActive = document.getElementById("inputActive").value 
+                
                 if(itemActive == 1){
                     this.stage1.model.push(element)
                 } else{
-                    this.stage1.model = this.stage1.model.filter(element => element != element)
+                    this.stage1.model = this.stage1.model.filter(e => e != element)
                 }
             }
         },
         syncUsersStage(){
             if(this.checkImplantation){
-                
-                var arrayElements = document.getElementById("divUsersStage1").value
-                console.log("arrayElements " + arrayElements)
+                if(document.getElementById("divUsersStage1").value == "") return;
 
-                var elements = arrayElements.map(function(person){
+                var arrayElements = JSON.parse(document.getElementById("divUsersStage1").value);
+
+               // if(arrayElements.length == 0) return;
+
+                var elements = arrayElements.map(function(person){ // [{"ID_USUARIO":3,"LOGIN_USUARIO":"rafael123","IMG_USUARIO":""},{"ID_USUARIO":6,"LOGIN_USUARIO":"Erick","IMG_USUARIO":""}]
                     return person;
                 });
 
-                console.log("esse é os elements sem o stringy " + elements)
-                console.log("esse é os elements com o stringy " + JSON.stringify(elements))
-                
-
                 if(!this.checkArrays(arrayElements, this.stage1.usersStage)){
-                    //this.stage1.usersStage = arrayElements
-                    this.stage1.usersStage = [{"ID_USUARIO":3,"LOGIN_USUARIO":"Jonas","IMG_USUARIO":"Jonas"},{"ID_USUARIO":6,"LOGIN_USUARIO":"Maurício Xavier","IMG_USUARIO":""}]
-                    //this.stage1.usersStage = document.getElementById("divUsersStage1").value
+                    this.stage1.usersStage = elements;
+                }
+            }
+        },
+        usersItemsRefresh(){
+            if(this.checkImplantation){
+                if(document.getElementById("inputItemsAux").value == "") return;
+
+                var objElements = JSON.parse(document.getElementById("inputItemsAux").value); // {"ID_LOJA":10,"IMP_CODIMP":7,"COD_ETAPA":1,"IMP_USUARIOSITEM":"1","COD_ITEM":12}
+                var itemIndex = this.stage1.items.findIndex(e => e.COD_ETAPA == objElements.COD_ETAPA && e.COD_ITEM == objElements.COD_ITEM)
+
+                var newUsers = []; /*{ "ID_USUARIO": 4, "LOGIN_USUARIO": "Douglas", "IMG_USUARIO": "Douglas"},*/
+                
+                objElements.IMP_USUARIOSITEM.split(", ").forEach(y => {
+                    if(y != ""){
+                        var user = this.USUARIO.find(element => element.ID_USUARIO == y);
+                        newUsers.push(user);
+                    }
+                })
+
+                if (itemIndex !== -1) { // Se o item foi encontrado
+                    Vue.set(this.stage1.items[itemIndex], 'USUARIOS', newUsers);
                 }
             }
         },
         checkArrays(array1, array2) {
             return array1 === JSON.stringify(array2);
+        },
+        filteredUsers(itemCod) {
+            return this.stage1.usersStageItem.filter(user => user.codItem == itemCod.codItem);
         }
     },
     filters: {
@@ -1152,6 +1225,7 @@ export default {
       progressStage4 () {
         return Math.trunc(this.stage4.model.length / this.stage4.items.length * 100);
       },
+      
     },
     watch: {
         /*'stage1.usersStage'(){

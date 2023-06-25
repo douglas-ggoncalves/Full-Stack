@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("usersRefresh", msg);
     });
 
+    socket.on('refreshItemsUser', (msg) => {
+        socket.broadcast.emit("usersItemsRefresh", msg);
+    });
+
     socket.on('dashboardRefresh', (msg) => {
         io.emit("dashboardRefresh", msg.loginUser);
     });

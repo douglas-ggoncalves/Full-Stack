@@ -20,7 +20,11 @@ class SocketioService {
       this.socket.on('usersRefresh', (data) => {
         document.getElementById("divUsersStage" + data.value).value = JSON.stringify(data.arrayElements)
         document.getElementById("syncUsersStage").click();
-        
+      });
+
+      this.socket.on('usersItemsRefresh', (data) => {
+        document.getElementById("inputItemsAux").value = JSON.stringify(data);
+        document.getElementById("divItemsAux").click();
       });
 
       this.socket.on('showmsg', () => {
@@ -38,7 +42,6 @@ class SocketioService {
 
     refreshDashboard(loginUser){
       this.socket.emit('dashboardRefresh', {loginUser: loginUser});
-      console.log("valor de data " + loginUser)
     }
 
     updateItemImp(DESC_ITEM, ITEM_ATIVO, ID_LOJA){
@@ -47,6 +50,16 @@ class SocketioService {
 
     updateStageUsers(ID_LOJA, IMP_CODIMP, value, arrayElements){
       this.socket.emit('refreshStageUsers', {ID_LOJA: ID_LOJA, IMP_CODIMP: IMP_CODIMP, value: value, arrayElements: arrayElements})
+    }
+
+    updateItemUsers(obj){
+      console.log("ID_LOJA " + obj.ID_LOJA);
+      console.log("IMP_CODIMP " + obj.IMP_CODIMP);
+      console.log("value " + obj.value);
+      console.log("arrayElements " + obj.IMP_USUARIOSITEM);
+      console.log("COD_ITEM " + obj.COD_ITEM);
+      //this.socket.emit('refreshItemsUser', {ID_LOJA: ID_LOJA, IMP_CODIMP: IMP_CODIMP, value: value, arrayElements: arrayElements, COD_ITEM: COD_ITEM})
+      this.socket.emit('refreshItemsUser', obj)
     }
 
     disconnect() {
