@@ -2,7 +2,9 @@ var express = require("express")
 var router = express.Router();
 var UserController = require("../controllers/UserController");
 var ReplicController = require("../controllers/ReplicController");
+var TarefaAgendadaController = require("../controllers/TarefaAgendadaController");
 var WikiController = require("../controllers/WikiController");
+var WppConnectBot = require("../controllers/WppConnectBot");
 var StoreController = require("../controllers/StoreController");
 var ItemController = require("../controllers/ItemController");
 var StageController = require("../controllers/StageController");
@@ -56,5 +58,10 @@ router.get('/nappDetailed', NappController.getAllDataDetailed);
 router.post('/nappStore', NappController.create);
 router.post('/nappData', NappController.createDataNapp);
 router.patch('/napp', NappController.editStore);
+router.post('/createWppConnect', WppConnectBot.wppConnect);
+router.post('/sendText', WppConnectBot.wppConnect);
+router.get('/task', UserAuth, TarefaAgendadaController.getData);
+router.post('/task', TarefaAgendadaController.searchComands);
+
 
 module.exports = router;

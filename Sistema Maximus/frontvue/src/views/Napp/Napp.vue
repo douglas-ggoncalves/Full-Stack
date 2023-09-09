@@ -13,6 +13,10 @@
                     </li>
 
                     <li>
+                        <a href="tarefas">Checagem Fecha Mês</a>
+                    </li>
+
+                    <li>
                         <a href="#">Checagem Napp</a>
                     </li>
 

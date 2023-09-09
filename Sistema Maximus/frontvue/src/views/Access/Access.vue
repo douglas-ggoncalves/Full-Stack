@@ -12,6 +12,10 @@
                 </li>
 
                 <li>
+                    <a href="tarefas">Checagem Fecha Mês</a>
+                </li>
+
+                <li>
                     <a href="napp">Checagem Napp</a>
                 </li>
 
@@ -117,6 +121,10 @@
 
                                     <v-col cols="12" sm="4">
                                         <v-select :items="['Sim', 'Não']" v-model="networkSelected.REDE_REPLICA" label="Rede replica" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="4">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.UTILIZA_FECHA_MES" label="Verifica Fecha Mês" required ></v-select>
                                     </v-col>
 
                                     <v-col cols="12" sm="4">
@@ -423,6 +431,10 @@
                                     </v-col>
 
                                     <v-col cols="12" sm="6">
+                                        <v-select :items="['Sim', 'Não']" v-model="newNetwork.UTILIZA_FECHA_MES" label="Verifica Fecha Mês *" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
                                         <v-select :items="['Sim', 'Não']" v-model="newNetwork.ISATIVA" label="Rede Ativa" required ></v-select>
                                     </v-col>
                                 </v-row>
@@ -481,6 +493,10 @@
 
                                     <v-col cols="12" sm="6">
                                         <v-select :items="['Sim', 'Não']" v-model="networkSelected.REDE_REPLICA" label="Rede replica" required ></v-select>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="6">
+                                        <v-select :items="['Sim', 'Não']" v-model="networkSelected.UTILIZA_FECHA_MES" label="Verifica Fecha Mês" required ></v-select>
                                     </v-col>
 
                                     <v-col cols="12" sm="6">
@@ -824,6 +840,7 @@ export default {
                 RADMIN_NOMEREDE: '',
                 RADMIN_SENHAREDE: '',
                 REDE_REPLICA: '',
+                UTILIZA_FECHA_MES: '',
                 ISATIVA: '',
             },
             newNetwork: {
@@ -832,6 +849,7 @@ export default {
                 RADMIN_NOMEREDE: '',
                 RADMIN_SENHAREDE: '',
                 REDE_REPLICA: '',
+                UTILIZA_FECHA_MES: '',
                 ISATIVA: '',
             },
             storeSelected:{
@@ -897,7 +915,7 @@ export default {
                 for(var y=0; y < res.data.networks.length; y++) {
                     var element = res.data.networks[y];
                     var completed = this.networksCheckeds.find(network => network.id == element.id)
-                    Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não", COMPLETED: completed ? true: false})
+                    Vue.set(this.dataTable.items, y, {id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA == 1 ? "Sim" : "Não", UTILIZA_FECHA_MES: element.UTILIZA_FECHA_MES == 1 ? "Sim" : "Não", ISATIVA: element.ISATIVA == 1 ? "Sim" : "Não", COMPLETED: completed ? true: false})
                     Vue.set(this.nameNetworks, y, element.NOME_REDE)
                 }
             }).catch(err => {
@@ -916,7 +934,7 @@ export default {
             }).then(res => {
                 for(var x=0; x < res.data.stores.length; x++){
                     var element = res.data.stores[x];
-                    Vue.set(this.stores, x, {ID_LOJA: element.ID_LOJA, NUMERO_LOJA: element.NUMERO_LOJA, NOME_LOJA: element.NOME_LOJA, IP_LOJA: element.IP_LOJA, PORTA_LOJA: element.PORTA_LOJA, LOGIN_LOJA: element.LOGIN_LOJA, SENHA_LOJA: element.SENHA_LOJA, REDEID: element.REDEID, RAZAO_LOJA: element.RAZAO_LOJA, CNPJ_LOJA: element.CNPJ_LOJA, SISTEMA_LOJA: element.SISTEMA_LOJA, ENDERECO_LOJA: element.ENDERECO_LOJA, ACESSOREMOTO: element.ACESSOREMOTO, SENHAACESSOREMOTO: element.SENHAACESSOREMOTO, id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA, ISATIVA: element.ISATIVA})
+                    Vue.set(this.stores, x, {ID_LOJA: element.ID_LOJA, NUMERO_LOJA: element.NUMERO_LOJA, NOME_LOJA: element.NOME_LOJA, IP_LOJA: element.IP_LOJA, PORTA_LOJA: element.PORTA_LOJA, LOGIN_LOJA: element.LOGIN_LOJA, SENHA_LOJA: element.SENHA_LOJA, REDEID: element.REDEID, RAZAO_LOJA: element.RAZAO_LOJA, CNPJ_LOJA: element.CNPJ_LOJA, SISTEMA_LOJA: element.SISTEMA_LOJA, ENDERECO_LOJA: element.ENDERECO_LOJA, ACESSOREMOTO: element.ACESSOREMOTO, SENHAACESSOREMOTO: element.SENHAACESSOREMOTO, id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA, UTILIZA_FECHA_MES: element.UTILIZA_FECHA_MES, ISATIVA: element.ISATIVA})
                 }
                 this.storesFiltered = this.stores.filter(element => element.id == this.networkSelected.id)
 
@@ -1048,6 +1066,7 @@ export default {
             this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
             this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
             this.networkSelected.REDE_REPLICA = item.REDE_REPLICA
+            this.networkSelected.UTILIZA_FECHA_MES = item.UTILIZA_FECHA_MES
             this.networkSelected.ISATIVA = item.ISATIVA
             this.dialogFullScreen = true
         },
@@ -1081,6 +1100,7 @@ export default {
             this.networkSelected.RADMIN_NOMEREDE = item.RADMIN_NOMEREDE
             this.networkSelected.RADMIN_SENHAREDE = item.RADMIN_SENHAREDE
             this.networkSelected.REDE_REPLICA = item.REDE_REPLICA
+            this.networkSelected.UTILIZA_FECHA_MES = item.UTILIZA_FECHA_MES
             this.networkSelected.ISATIVA = item.ISATIVA
             this.dialog = true;
         },
@@ -1097,6 +1117,7 @@ export default {
                     RADMIN_NOMEREDE: this.networkSelected.RADMIN_NOMEREDE,
                     RADMIN_SENHAREDE: this.networkSelected.RADMIN_SENHAREDE,
                     REDE_REPLICA: this.networkSelected.REDE_REPLICA == "Sim" ? 1 : 0,
+                    UTILIZA_FECHA_MES: this.networkSelected.UTILIZA_FECHA_MES == "Sim" ? 1 : 0,
                     ISATIVA: this.networkSelected.ISATIVA == "Sim" ? 1 : 0
                 }).then(res => {
                     this.dialogTwo = true
@@ -1110,6 +1131,7 @@ export default {
                         this.networkSelected.RADMIN_NOMEREDE = "";
                         this.networkSelected.RADMIN_SENHAREDE = "";
                         this.networkSelected.REDE_REPLICA = "";
+                        this.networkSelected.UTILIZA_FECHA_MES = "";
                         this.networkSelected.ISATIVA = "";
                     }
                     
@@ -1128,7 +1150,11 @@ export default {
                 this.callErr('Nome da rede não pode ser vazio')
             } else if(this.newNetwork.REDE_REPLICA.trim() == ""){
                 this.callErr('Informe se a loja replica ou não')
-            } else{
+            }
+            else if(this.newNetwork.UTILIZA_FECHA_MES.trim() == ""){
+                this.callErr('Informe se a loja irá utilizar a verificação do fecha mês')
+            }
+            else{
                 var confirmation = confirm("Confirma gravação de " + this.newNetwork.NOME_REDE +' ?');
                 if(confirmation) {
                     axios.post(`${this.serverIP}/network`, {
@@ -1136,6 +1162,7 @@ export default {
                         RADMIN_NOMEREDE: this.newNetwork.RADMIN_NOMEREDE,
                         RADMIN_SENHAREDE: this.newNetwork.RADMIN_SENHAREDE,
                         REDE_REPLICA: this.newNetwork.REDE_REPLICA == "Sim" ? 1 : 0,
+                        UTILIZA_FECHA_MES: this.newNetwork.UTILIZA_FECHA_MES == "Sim" ? 1 : 0,
                         ISATIVA: this.newNetwork.ISATIVA == "Sim" ? 1 : 0
                     }).then(res => {
                         this.dialogNewNetwork = false
@@ -1145,6 +1172,7 @@ export default {
                         this.newNetwork.RADMIN_NOMEREDE = ""
                         this.newNetwork.RADMIN_SENHAREDE = ""
                         this.newNetwork.REDE_REPLICA = ""
+                        this.newNetwork.UTILIZA_FECHA_MES = ""
                         this.newNetwork.ISATIVA = ""
                     }).catch(err => {
                         this.callErr(err.response.data.err);

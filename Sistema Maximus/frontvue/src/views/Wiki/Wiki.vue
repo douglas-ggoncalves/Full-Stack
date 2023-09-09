@@ -12,6 +12,10 @@
           <li>
               <a href="acessos">Acessos</a>
           </li>
+        
+          <li>
+            <a href="tarefas">Checagem Fecha Mês</a>
+          </li>
 
           <li>
             <a href="napp">Checagem Napp</a>

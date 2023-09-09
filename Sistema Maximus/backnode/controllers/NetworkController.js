@@ -17,6 +17,7 @@ class NetworkController{
         var RADMIN_NOMEREDE = await req.body.RADMIN_NOMEREDE
         var RADMIN_SENHAREDE = await req.body.RADMIN_SENHAREDE
         var REDE_REPLICA = await req.body.REDE_REPLICA
+        var UTILIZA_FECHA_MES = await req.body.UTILIZA_FECHA_MES
         var ISATIVA = await req.body.ISATIVA
   
         var existLogin = await Network.findByName(NOME_REDE);
@@ -27,7 +28,7 @@ class NetworkController{
         }
 
         try{
-            var select = await Network.newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA);
+            var select = await Network.newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, UTILIZA_FECHA_MES, ISATIVA);
             if(select != undefined){
                 res.status(200);
                 res.send({success: 'Rede cadastrada com sucesso'});
@@ -50,6 +51,7 @@ class NetworkController{
         var RADMIN_NOMEREDE = req.body.RADMIN_NOMEREDE
         var RADMIN_SENHAREDE = req.body.RADMIN_SENHAREDE
         var REDE_REPLICA = req.body.REDE_REPLICA
+        var UTILIZA_FECHA_MES = req.body.UTILIZA_FECHA_MES
         var ISATIVA = req.body.ISATIVA
         
         var existLogin = await Network.findByName(NOME_REDE);
@@ -61,7 +63,7 @@ class NetworkController{
             } 
         }
 
-        var update = await Network.editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA);
+        var update = await Network.editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, UTILIZA_FECHA_MES, ISATIVA);
         if(update != undefined){
             res.status(200);
             res.send({success: "Rede alterada com sucesso"})

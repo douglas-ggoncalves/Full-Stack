@@ -12,6 +12,10 @@
                 </li>
 
                 <li>
+                    <a href="tarefas">Checagem Fecha Mês</a>
+                </li>
+
+                <li>
                     <a href="napp">Checagem Napp</a>
                 </li>
 
@@ -695,9 +699,9 @@ export default {
     },
     created(){
         this.serverIP = scrypt.serverIP
-        alert("Página/funções ainda em desenvolvimento.\n\nVocê será direcionado para a página inicial.");
-        this.$router.push({name: "Index"})
-        //this.myFunction(); // descomentar futuramente...
+       // alert("Página/funções ainda em desenvolvimento.\n\nVocê será direcionado para a página inicial.");
+        //this.$router.push({name: "Index"})
+        this.myFunction(); // descomentar futuramente...
     },
     methods: {
         addMembers(element){

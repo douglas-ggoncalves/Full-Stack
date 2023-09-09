@@ -14,6 +14,10 @@
           </li>
 
           <li>
+            <a href="tarefas">Checagem Fecha Mês</a>
+          </li>
+
+          <li>
             <a href="dashboard">Dashboard</a>
           </li>
 

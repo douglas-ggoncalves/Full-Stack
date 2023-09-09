@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Replic from '../views/Replic.vue'
+import Tasks from '../views/Tasks.vue'
 import Index from '../views/Index.vue'
 import AdminUsers from '../views/Admin/AdminUsers.vue'
 import Wiki from '../views/Wiki/Wiki.vue'
@@ -135,11 +136,16 @@ const routes = [
     component: Dashboard,
     beforeEnter: UserAuth
   },
-  
   {
     path: '/replicacoes',
     name: 'Replic',
     component: Replic,
+    beforeEnter: UserAuth
+  },
+  {
+    path: '/tarefas',
+    name: 'Tasks',
+    component: Tasks,
     beforeEnter: UserAuth
   },
   {

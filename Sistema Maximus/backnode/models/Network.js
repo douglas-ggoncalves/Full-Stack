@@ -4,7 +4,7 @@ class Network{
     async findAll() {
         try {
             var result = await knex.raw(`
-                select id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA from rede
+                select id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, UTILIZA_FECHA_MES, ISATIVA from rede
             `)
             return result;
         } catch(err) {
@@ -22,9 +22,9 @@ class Network{
         }
     }
 
-    async newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA){
+    async newNetwork(NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, UTILIZA_FECHA_MES, ISATIVA){
         try {
-            var result = await knex.insert({NOME_REDE: NOME_REDE, RADMIN_NOMEREDE: RADMIN_NOMEREDE, RADMIN_SENHAREDE: RADMIN_SENHAREDE, REDE_REPLICA: REDE_REPLICA, ISATIVA: ISATIVA,}).table("rede");
+            var result = await knex.insert({NOME_REDE: NOME_REDE, RADMIN_NOMEREDE: RADMIN_NOMEREDE, RADMIN_SENHAREDE: RADMIN_SENHAREDE, REDE_REPLICA: REDE_REPLICA, UTILIZA_FECHA_MES: UTILIZA_FECHA_MES, ISATIVA: ISATIVA}).table("rede");
             return result
         } catch(err) {
             return undefined;
@@ -33,9 +33,9 @@ class Network{
 
     //var result = await knex.select().where({TITULO: title}).table("POSTAGEM")
 
-    async editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, ISATIVA){
+    async editNetwork(id, NOME_REDE, RADMIN_NOMEREDE, RADMIN_SENHAREDE, REDE_REPLICA, UTILIZA_FECHA_MES, ISATIVA){
         try {
-            var result = await knex.where('id', '=', id).update({ NOME_REDE: NOME_REDE, RADMIN_NOMEREDE: RADMIN_NOMEREDE, RADMIN_SENHAREDE: RADMIN_SENHAREDE, REDE_REPLICA: REDE_REPLICA, ISATIVA: ISATIVA }).table("rede")
+            var result = await knex.where('id', '=', id).update({ NOME_REDE: NOME_REDE, RADMIN_NOMEREDE: RADMIN_NOMEREDE, RADMIN_SENHAREDE: RADMIN_SENHAREDE, REDE_REPLICA: REDE_REPLICA, UTILIZA_FECHA_MES: UTILIZA_FECHA_MES, ISATIVA: ISATIVA }).table("rede")
             return result;
         } catch(err) {
             return undefined;

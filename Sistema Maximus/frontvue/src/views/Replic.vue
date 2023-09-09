@@ -14,6 +14,10 @@
           </li>
 
           <li>
+            <a href="tarefas">Checagem Fecha Mês</a>
+          </li>
+
+          <li>
             <a href="napp">Checagem Napp</a>
           </li>
 
@@ -229,6 +233,18 @@
                 <div class="form-group">
                   <Label for="selectedReplic">Rede Replica *</Label>
                   <select id="selectedReplic" class="form-control" v-model="selectedReplic">
+                    <option disabled value="">Escolha uma Opção</option>
+                    <option v-for="(option, index) in ['Sim','Não']" v-bind:value="option" :key="index">
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col">
+                <div class="form-group">
+                  <Label for="verFechaMes">Verifica Fecha Mês *</Label>
+                  <select id="verFechaMes" class="form-control" v-model="selectedFechaMes">
                     <option disabled value="">Escolha uma Opção</option>
                     <option v-for="(option, index) in ['Sim','Não']" v-bind:value="option" :key="index">
                       {{ option }}
@@ -479,6 +495,7 @@ export default {
       editNumberStoreNewStore: '',
       editNameStore: '',
       selectedReplic: '',
+      selectedFechaMes: '',
       selectedAtive: '',
       editAcessRush: '',
       editPAssRush: '',
@@ -577,12 +594,6 @@ export default {
               this.data[e].err = ''
             }
           }}
-          console.log("this.value " + JSON.stringify(this.value))
-
-          console.log("this.valueLength " + JSON.stringify(this.value.length))
-
-
-          //console.log("this.data " + JSON.stringify(this.data)) // AQUI NÃO MOSTRAR A ÚLTIMA REDE
 
         for(var y=0; y < this.data.length; y++) {
           for(var x = 0; x< this.value.length; x++){
@@ -607,7 +618,10 @@ export default {
         document.getElementById('inputNameNetwork').classList.add("is-invalid")
       } else if(this.selectedReplic.trim() == ""){
         this.err = 'Informe se a Rede replica'
-      } else{
+      } else if(this.selectedFechaMes.trim() == ""){
+        this.err = 'Informe se a loja irá utilizar a verificação do fecha mês'
+      } 
+      else{
         var confirmation = await confirm("Deseja cadastrar a rede com o nome " + this.network +' ?');
         if(confirmation) {
           try {
@@ -616,6 +630,7 @@ export default {
               RADMIN_NOMEREDE: this.loginRadmin,
               RADMIN_SENHAREDE: this.passwordRadmin,
               REDE_REPLICA: this.selectedReplic == "Sim" ? 1 : 0,
+              UTILIZA_FECHA_MES: this.selectedFechaMes == "Sim" ? 1 : 0,
               ISATIVA: this.selectedAtive == "Sim" ? 1 : 0
             })
             .then(res => {
@@ -623,6 +638,7 @@ export default {
               this.loginRadmin = ''
               this.passwordRadmin = ''
               this.selectedReplic = ''
+              this.selectedFechaMes = ''
               this.selectedAtive = ''
               this.networks = [];
               this.lojas = [];

@@ -14,6 +14,10 @@
                     </li>
 
                     <li>
+                        <a href="tarefas">Checagem Fecha Mês</a>
+                    </li>
+
+                    <li>
                         <a href="napp">Checagem Napp</a>
                     </li>
 
@@ -557,7 +561,7 @@ export default {
            }
         }
     },
-    created(){
+    created(){ 
         this.serverIP = scrypt.serverIP
         this.myFunction();
         this.idUser = localStorage.getItem("idUser");
