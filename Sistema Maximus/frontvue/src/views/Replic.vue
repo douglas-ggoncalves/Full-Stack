@@ -116,7 +116,7 @@
                 </button>
               </div>
               
-              <div class="col-md-6 mt-2" v-if="roleUserLogged == 'M' || roleUserLogged == 'A' || roleUserLogged == 'S'">
+              <div class="col-md-6 mt-2" v-if="roleUserLogged == 'M' || roleUserLogged == 'A' || roleUserLogged == 'S' || roleUserLogged == 'R'">
                 <multiselect v-model="value" @select="eventSelect" @remove="eventSelect" :options="networks" :multiple="true" :selectLabel="'Selecionar esta rede'" :selectedLabel="'Rede selecionada'" :deselectLabel="'Remover rede'" :close-on-select="false" :clear-on-select="false" :preserve-search="true" placeholder="Filtrar redes" label="NOME_REDE" track-by="NOME_REDE" :preselect-first="false">
                   <template slot="selection" slot-scope="{ values, isOpen }"><span class="multiselect__single" v-if="values.length &amp;&amp; !isOpen">{{ values.length }} redes selecionadas</span>
                     
@@ -510,7 +510,7 @@ export default {
       networks: [],
       lojas: [],
       showData: false,
-      redeIdUserLogged: '',
+      redeIdUserLogged: [],
       roleUserLogged: '',
       serverIP: ''
     }
@@ -543,12 +543,13 @@ export default {
           }
         }*/
 
-        //console.log("valor da this.data " + JSON.stringify(this.data))
         this.redeIdUserLogged = localStorage.getItem("redeIdUser")
         this.roleUserLogged = localStorage.getItem("roleUser")
         if(this.redeIdUserLogged != 'null') {
-          this.value.push({"id": this.redeIdUserLogged});
-          this.initVerify();
+          this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0})
+          this.networks = this.networks.filter(network => this.redeIdUserLogged.includes(network.id));
+          this.value = this.networks;
+          this.value = this.value.filter(element => element.id != 0)
         } else{
           this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0})
           this.value = this.networks;
@@ -567,7 +568,7 @@ export default {
           id: idUser
         })
         .then(() => {
-            console.log("Informação salva com sucesso.");
+          
         });
       } catch(err) {
         alert("Ocorreu um erro na inserção da informação de checagem da replicação. " + err.response.data.err);

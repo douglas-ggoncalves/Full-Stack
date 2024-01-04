@@ -212,11 +212,12 @@ export default {
         .then(res => {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("roleUser", res.data.user.CARGO_USUARIO);
-          localStorage.setItem("redeIdUser", res.data.user.REDEID_USUARIO);
+          localStorage.setItem("redeIdUser", res.data.user.RedesAssociadas);
           localStorage.setItem("loginUser", res.data.user.LOGIN_USUARIO);
           localStorage.setItem("idUser", res.data.user.ID_USUARIO);
           this.$router.push({name: "Index"})
         }).catch(err => {
+          console.log("catch(err = " + err.response.data.err)
           this.errLogin = err.response.data.err
           this.err = `${err.response.data.err}`
           document.getElementById('inputLogin').classList.add("is-invalid")

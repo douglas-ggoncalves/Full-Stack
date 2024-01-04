@@ -10,7 +10,8 @@ module.exports = function(req, res, next) {
 
         try{
             var decoded = jwt.verify(token, secret);
-            if(decoded.role == 'M' || decoded.role == 'A' || decoded.role == 'S' || decoded.role == 'N') {
+
+            if(decoded.role == 'M' || decoded.role == 'A' || decoded.role == 'S' || decoded.role == 'N' || decoded.role == 'R') {
                 next();
             } else{
                 res.status(403);

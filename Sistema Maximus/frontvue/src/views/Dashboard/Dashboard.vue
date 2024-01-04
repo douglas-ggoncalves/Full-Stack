@@ -421,8 +421,8 @@ export default {
                 },
                 labels: []
             },
-            seriesDonut: [],
 
+            seriesDonut: [],
         }
     },
     created(){

@@ -171,5 +171,131 @@ create table POSTAGEM (ID_POST int IDENTITY(1,1) NOT NULL, TITULO nvarchar(255),
 		MsgCatalogo varchar(60),
 		foreign key (CNPJ) references EMPRESAS_NAPP (CNPJ)
 	)
+   	alter table usuario add IS_FUNCIONARIO [int] DEFAULT ((0));
+	alter table usuario add IMG_USUARIO varchar(max) default '' with values;
 
-	
+create table MEDICAMENTOS
+(
+    Substancia varchar(max),
+    CNPJ varchar(50),
+    Laboratorio varchar(255),
+    CodigoGGREM varchar(150),
+    Registro varchar(150),
+    EAN1 varchar(35),
+    EAN2 varchar(35),
+    EAN3 varchar(35),
+    Produto varchar(255),
+    Apresentacao varchar(255),
+    ClasseTerapeutica varchar(255),
+    TipoProdutoStatus varchar(255),
+    RegimePreco varchar(50),
+    PFSemImpostos decimal(20, 2),
+    PF0 decimal(20, 2),
+    PF12 decimal(20, 2),
+    PF12_ALC decimal(20, 2), ---
+    PF17 decimal(20, 2),
+    PF17_ALC decimal(20, 2),
+    PF17_5 decimal(20, 2),
+	PF17_5_ALC decimal(20, 2),
+    PF18 decimal(20, 2),
+    PF18_ALC decimal(20, 2),
+    PF19 decimal(20, 2),
+    PF19_ALC decimal(20, 2), --
+    PF19_5 decimal(20, 2), --
+    PF20 decimal(20, 2),
+    PF20_ALC decimal(20, 2), --
+    PF20_5 decimal(20, 2), --
+    PF21 decimal(20, 2),
+	PF21_ALC decimal(20, 2), --
+    PF22 decimal(20, 2),
+    PF22_ALC decimal(20, 2),
+    PMCSemImpostos decimal(20, 2),
+	PMC0 decimal(20, 2),
+    PMC12 decimal(20, 2),
+	PMC12_ALC decimal(20, 2), --
+    PMC17 decimal(20, 2),
+    PMC17_ALC decimal(20, 2),
+    PMC17_5 decimal(20, 2),
+    PMC17_5_ALC decimal(20, 2),
+    PMC18 decimal(20, 2),
+    PMC18_ALC decimal(20, 2),
+    PMC19 decimal(20, 2),
+    PMC19_ALC decimal(20, 2),
+	PMC19_5 decimal(20, 2),
+    PMC20 decimal(20, 2),
+    PMC20_ALC decimal(20, 2),
+    PMC20_5 decimal(20, 2), --
+    PMC21 decimal(20, 2),
+	PMC21_ALC decimal(20, 2), --
+    PMC22 decimal(20, 2),
+	PMC22_ALC decimal(20, 2), --
+    RestricaoHospitalar varchar(30),
+    CAP varchar(30),
+    CONFAZ87 varchar(30),
+    ICMS0 varchar(30),
+    AnaliseRecursal varchar(255),
+    ListaConcessaoCreditoTributario varchar(255),
+    Comercializacao2022 varchar(30),
+    Tarja varchar(50)
+);
+
+create table CMED_ATUALIZACAO(
+	DATA_ULTIMA_ATUALIZACAO datetime
+)
+insert into CMED_ATUALIZACAO (DATA_ULTIMA_ATUALIZACAO) values (cast('05-10-2023' as datetime))
+
+
+create table UF_ESTADOS(
+	UF varchar (5) null,
+	COD_UF int,
+	ALIQUOTA_UF decimal(18,2)
+)
+
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('RO', 11, 17.5)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('AC', 12, 19)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('AM', 13, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('RR', 14, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('PA', 15, 19)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('AP', 16, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('TO', 17, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('MA', 21, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('PI', 22, 21)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('CE', 23, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('RN', 24, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('PB', 25, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('PE', 26, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('AL', 27, 19)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('SE', 28, 22)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('BA', 29, 19)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('MG', 31, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('ES', 32, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('RJ', 33, 20)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('SP', 34, 18)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('PR', 41, 19)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('SC', 42, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('RS', 43, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('MS', 50, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('MT', 51, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('GO', 52, 17)
+insert into UF_ESTADOS (UF, COD_UF, ALIQUOTA_UF) values ('DF', 53, 18)
+
+
+create table SolicitacoesNapp (
+	CodEmpresa int,
+	IDSolicitacao int identity(1,1),
+	DataInicial DateTime,
+	DataFinal DateTime,
+	DataCriacao DateTime,
+	Status bit,
+	CNPJ varchar(16)
+)
+
+
+------------------------------------------------------------------------
+alter table USUARIO drop constraint FK__USUARIO__REDEID___15502E78;
+alter table USUARIO drop column REDEID_USUARIO;
+
+create table USUARIO_REDE(
+	USUARIO_ID int,
+	REDE_ID int
+)

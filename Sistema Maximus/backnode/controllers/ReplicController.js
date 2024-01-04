@@ -17,7 +17,7 @@ class ReplicController{
             `);
         } catch(error) {
             res.status(406);
-            res.send({err: "Ocorreu um erro na consulta do banco de dados  "+ error});
+            res.send({err: "Ocorreu um erro na consulta do banco de dados: " + error});
             return;
         }
         res.send({success: "Tudo OK", networks: networks, stores: stores})

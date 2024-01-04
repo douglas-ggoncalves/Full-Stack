@@ -30,7 +30,8 @@
     "vue-router": "^3.2.0",
     "vue-socket.io": "^3.0.10",
     "vue2-editor": "^2.10.3",
-    "vuetify": "^2.6.5"
+    "vuetify": "^2.7.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.0.0",

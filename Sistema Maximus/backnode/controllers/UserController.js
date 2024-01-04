@@ -15,7 +15,7 @@ let transporter = nodemailer.createTransport({
     secure: false,
     auth:{
         user: "douglasrnn62@gmail.com",
-        pass: "yotlerevcuyldqje"
+        pass: ""
     }
 })
 
@@ -28,7 +28,8 @@ class UserController{
         if(user != undefined) {
             var result = await bcrypt.compare(password, user.SENHA_USUARIO);
             if(result) {
-                var token = await jwt.sign({ idNetworkUser: user.REDEID_USUARIO, role: user.CARGO_USUARIO }, secret);
+                console.log("resulttttt ")
+                var token = await jwt.sign({ idNetworkUser: user.RedesAssociadas, role: user.CARGO_USUARIO }, secret);
                 res.status(200);
                 res.send({token: token, user: user})
             } else {
@@ -47,7 +48,8 @@ class UserController{
         var password = await req.body.password;
         var role = await req.body.role;
         var networkId = await req.body.networkId;
-
+        var isFuncNew = await req.body.isFuncNew;
+        
         try{
             if(login != undefined && password != undefined){
                 var loginExists = await User.findLogin(login);
@@ -63,7 +65,7 @@ class UserController{
                         res.send({err: "Já existe um usuário com este email"})
                         return
                     } else{
-                        var newUser = await User.newUser(login, email, password, role, networkId)
+                        var newUser = await User.newUser(login, email, password, role, networkId, isFuncNew)
                         if(newUser != undefined){
                             res.send({success: "Usuário criado com sucesso"})
                             return;
@@ -230,33 +232,62 @@ class UserController{
         var idUser = await req.body.idUser;
         var passwordUser = await req.body.passwordUser;
         var alterPassword = await req.body.alterPassword;
+        var editIsFunc = await req.body.editIsFunc;
 
         try{
             var loginExists = await User.findLogin(login);
 
             if(loginExists != undefined && loginExists.ID_USUARIO != idUser){ // login existe e não é o mesmo login do usuário que mandou requisição
-                    res.status(404)
-                    res.send({err: "Já existe um usuário com este login"})
-                    return
+                res.status(404);
+                res.send({err: "Já existe um usuário com este login"});
+                return;
             } else {
                 if(login != undefined && idUser != undefined){
                     var idExist = await User.findUserById(idUser);
                     
                     if(idExist != undefined){ // login existe
-                        var editUser = await User.editUser(login, role, network, idUser, passwordUser, alterPassword);
+                        var editUser = await User.editUser(login, role, network, idUser, passwordUser, alterPassword, editIsFunc);
                         if(editUser != undefined) {
                             res.status(200);
-                            res.send({success: "Usuário editado com sucesso"})
+                            res.send({success: "Usuário editado com sucesso"});
                             return;
                         } else{
-                            res.status(404)
-                            res.send({success: "Não foi possível editar o usuário"})
+                            res.status(404);
+                            res.send({success: "Não foi possível editar o usuário"});
                         }
                     } else{
-                        res.status(404)
-                        res.send({err: "Usuário não encontrado, não foi possível alterar o mesmo"})
+                        res.status(404);
+                        res.send({err: "Usuário não encontrado, não foi possível alterar o mesmo"});
                     }
                 }
+            }
+        } catch(err)  {
+            res.send({err: 'Ocorreu um erro ' + err});
+            res.status(406);
+            return;
+        }
+    }
+
+    async editPhoto(req, res) {
+        var idUser = await req.body.ID_USUARIO;
+        var base64 = await req.body.IMG_USUARIO;
+
+        try{
+            var idExist = await User.findUserById(idUser);
+            
+            if(idExist != undefined){ // login existe
+                var editUserPassword = await User.editUserPassword(idUser, base64);
+                if(editUserPassword != undefined) {
+                    res.status(200);
+                    res.send({success: "Imagem alterada com sucesso."});
+                    return;
+                } else{
+                    res.status(404);
+                    res.send({success: "Não foi possível editar a imagem."});
+                }
+            } else{
+                res.status(404);
+                res.send({err: "Usuário não encontrado, não foi possível alterar o mesmo."});
             }
         } catch(err)  {
             res.send({err: 'Ocorreu um erro ' + err});
@@ -309,9 +340,9 @@ class UserController{
     }
 
     async validate(req, res) {
-        var redeUser = req.body.redeUser
-        var roleUser = req.body.roleUser
-        var loginUser = req.body.loginUser
+        var redeUser = await req.body.redeUser
+        var roleUser = await req.body.roleUser
+        var loginUser = await req.body.loginUser
 
         if(roleUser == undefined){
             res.status(400);
@@ -330,7 +361,13 @@ class UserController{
         }
      
         var users = await User.findAllUser();
-        var oneUser = users.filter(user => user.LOGIN_USUARIO == loginUser && user.CARGO_USUARIO == roleUser && user.REDEID_USUARIO == redeUser)
+        var oneUser = users.filter(user => user.LOGIN_USUARIO == loginUser && user.CARGO_USUARIO == roleUser && user.RedesAssociadas == redeUser)
+        console.log("teste de erro: " + oneUser)
+        console.log("teste de redeUser: " + redeUser)
+        console.log("teste de RedesAssociadas: " + req.body.RedesAssociadas)
+
+
+        
         if(oneUser != ''){
             res.status(200);
             res.send("Ok");
@@ -362,7 +399,7 @@ class UserController{
         }
      
         var users = await User.findAllUser();
-        var oneUser = users.filter(user => user.LOGIN_USUARIO == loginUser && user.CARGO_USUARIO == roleUser && user.REDEID_USUARIO == redeUser)
+        var oneUser = users.filter(user => user.LOGIN_USUARIO == loginUser && user.CARGO_USUARIO == roleUser && user.RedesAssociadas == redeUser)
         if(oneUser != ''){
             res.status(200);
             res.send("Ok");

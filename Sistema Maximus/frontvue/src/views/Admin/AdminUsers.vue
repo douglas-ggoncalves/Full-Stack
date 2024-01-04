@@ -193,16 +193,29 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="col">
                             <div class="form-group">
-                                <Label for="selectedStore">Selecione uma rede</Label>
-                                <select id="selectedStore" class="form-control" v-model="selected">
-                                    <option disabled value="">Escolha uma rede</option>
-                                    <option v-for="option in networks" v-bind:value="option.id" :key="option.id">
-                                    {{ option.NOME_REDE }}
-                                    </option>
+                                <Label for="selectedNewEmployee">Selecione se é Funcionário</Label>
+                                <select id="selectedNewEmployee" class="form-control" v-model="isFuncNew">
+                                    <option disabled value="">Defina se é Funcionário</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="form-group">
+                                <v-combobox
+                                    class="mt-4"
+                                    v-model="selected"
+                                    item-text="NOME_REDE"
+                                    :items="networks"
+                                    label="Selecione uma ou mais Redes"
+                                    multiple
+                                    dense
+                                ></v-combobox>
                             </div>
                         </div>
 
@@ -242,7 +255,7 @@
                                 </div>
                             </div>
 
-                            <div class="col" v-if="roleUserLogged == 'M'"> <!-- 555 -->
+                            <div class="col" v-if="roleUserLogged == 'M'">
                                 <div class="form-group">
                                     <Label for="selectedRole">Selecione um cargo</Label>
                                     <select id="selectedRole" class="form-control" v-model="editRoleUser">
@@ -255,19 +268,32 @@
                             </div>
 
                             <div class="col" v-if="roleUserLogged == 'M'">
-                                <div class="form-group" v-if="roleUserLogged == 'M'">
-                                    <Label for="selectedStore">Selecione uma rede</Label>
-                                    <select id="selectedStore" class="form-control" v-model="editRoleNetwork">
-                                        <option disabled value="">Escolha uma rede</option>
-                                        <option v-for="option in networks" v-bind:value="option.id" :key="option.id">
-                                            {{ option.NOME_REDE }}
-                                        </option>
+                                <div class="form-group">
+                                    <Label for="selectedEmployee">Selecione se é Funcionário</Label>
+                                    <select id="selectedEmployee" class="form-control" v-model="editIsFunc">
+                                        <option disabled value="">Defina se é Funcionário</option>
+                                        <option value="Sim">Sim</option>
+                                        <option value="Não">Não</option>
                                     </select>
                                 </div>
                             </div>
 
+                            <div class="col" v-if="roleUserLogged == 'M'">
+                                <div class="form-group" v-if="roleUserLogged == 'M'">
+                                    <v-combobox
+                                        class="mt-4"
+                                        v-model="editRoleNetwork"
+                                        item-text="NOME_REDE"
+                                        :items="networks"
+                                        label="Selecione uma ou mais Redes"
+                                        multiple
+                                        dense
+                                    ></v-combobox>
+                                </div>
+                            </div>
+
                             <div class="col text-center mt-2">
-                                <button type="button" class="btn btn-success" @click="editStore()">
+                                <button type="button" class="btn btn-success" @click="editUser()">
                                     Editar Usuário
                                 </button>
                             </div>
@@ -303,17 +329,20 @@ export default {
             emailUser: '',
             passwordUser: '',
             abbreviatedRoleUser: '',
-            selected: '',
+            isFuncNew: '',
+            selected: [],
             networks: [],
             editLoginUser: '',
             editRoleUser:'',
-            editRoleNetwork:'',
+            editIsFunc:'',
+            editRoleNetwork:[],
             relativeUser:'',
             roleUserLogged: '',
             redeIdUserLogged: '',
             idUser: '',
             err: '',
             success: '',
+            editPasswordUser: '',
             roleUsers: false,
             networkUsers: true,
             actionUsers: true,
@@ -335,9 +364,14 @@ export default {
                 },
                 {
                     id: 4,
+                    role: 'Representante',
+                    abbreviatedRoleUser: 'R'
+                },
+                {
+                    id: 5,
                     role: 'Napp',
                     abbreviatedRoleUser: 'N'
-                }
+                },
             ]
         }
     },
@@ -395,7 +429,11 @@ export default {
             } 
             else if(this.roleUserLogged != 'M' && this.abbreviatedRoleUser == 'A'){
                 this.err = 'Você não tem permissão para criar usuários com este cargo'
-            } else{
+            } 
+            else if(this.isFuncNew.trim() == ''){
+                this.err = 'Defina se o usuário é funcionário'
+            } 
+            else{
                 if(this.passwordUser.trim() == ''){
                     this.err = 'O campo senha é obrigatório'
                 } else if(this.passwordUser.length < 4){
@@ -410,14 +448,16 @@ export default {
                                 password: this.passwordUser,
                                 email: this.emailUser,
                                 role: this.abbreviatedRoleUser,
-                                networkId: this.selected
+                                networkId: this.selected.map(network => network.id),
+                                isFuncNew: this.isFuncNew == "Sim" ? 1 : 0
                             })
                             .then(res => {
                                 this.loginUser = ''
                                 this.passwordUser = ''
                                 this.emailUser = ''
                                 this.abbreviatedRoleUser = ''
-                                this.networkId = ''
+                                this.isFuncNew = ''
+                                this.selected = []
                                 this.clients = ''
                                 this.hideNewNetwork();
                                 this.myFunction();
@@ -450,38 +490,69 @@ export default {
         },
         editClient(indexClient){
             var clientSelected = this.clients.filter(element => element.ID_USUARIO == indexClient)[0];
+
             this.editLoginUser = clientSelected.LOGIN_USUARIO
             this.editRoleUser = clientSelected.CARGO_USUARIO
-            this.editRoleNetwork = clientSelected.REDEID_USUARIO
+            this.editIsFunc = clientSelected.IS_FUNCIONARIO == 1 ? "Sim" : "Não";
+            if(clientSelected.RedesAssociadas != null && clientSelected.RedesAssociadas != ""){
+                var arrayDados = clientSelected.RedesAssociadas.split(", ")
+                var arrayAUX = [];
+
+                arrayDados.forEach(element => {
+                   var network =  this.networks.find(net => net.id == element)
+                    arrayAUX.push(network)
+                }); 
+                
+                this.editRoleNetwork = arrayAUX; // Exemplos de dados: [{ id: 1, NOME_REDE: 'Big Farma' }, { id: 2, NOME_REDE: 'Bom Preço' }]
+            }
+            else{
+                this.editRoleNetwork = [];
+            }
+
             this.idUser = clientSelected.ID_USUARIO
             this.editPasswordUser = ''
             this.relativeUser = this.idUser == localStorage.getItem("idUser") ? true : false
             this.$modal.show('modalEditUser');
         },
-        async editStore() {
+        async editUser() {
             if(this.editLoginUser.trim() == "" || this.editRoleUser.trim() == "") {
-                this.err = 'Login ou cargo do usuário precisam ser preenchidos'
+                this.err = 'Login ou cargo do usuário precisam ser preenchidos.'
             } else if(this.roleUserLogged != 'M' && this.editRoleUser == 'M'){
-                this.err = 'Você não tem permissão para adicionar usuários com este cargo'
+                this.err = 'Você não tem permissão para adicionar usuários com este cargo.'
+            } else if(this.editIsFunc.trim() == ''){
+                this.err = 'Defina se o usuário é funcionário ou não.'
             } else {
                 var confirmation = await confirm("Confirma a alteração de dados ?");
                 if(confirmation){
                     try {
+                        //var redes = [];
+                        //this.editRoleNetwork.forEach()
+
+                        var trocaSenha = await false;
                         if(this.relativeUser && this.editPasswordUser.trim() == ""){
                             this.err = 'Preencha o campo senha';
                             return;
                         }
+                        else{
+                            if(this.roleUserLogged == 'M' && this.editPasswordUser.trim() != ""){
+                                trocaSenha = await true;
+                            }
+                        }
+                        if(this.relativeUser)
+                            trocaSenha = await true;
+
                         await axios.patch(`${this.serverIP}/user`, {
                             editLoginUser: this.editLoginUser,
                             editRoleUser: this.editRoleUser,
-                            editRoleNetwork: this.editRoleNetwork,
+                            editRoleNetwork: this.editRoleNetwork.map(network => network.id),
                             idUser: this.idUser,
                             passwordUser: this.editPasswordUser,
-                            alterPassword: this.relativeUser
+                            alterPassword: trocaSenha,
+                            editIsFunc : this.editIsFunc == "Sim" ? 1 : 0
                         })
                         .then(res => {
                             this.clients = '';
-                            if(this.relativeUser){ // 555
+                            if(this.relativeUser){
                                 localStorage.removeItem("loginUser")
                                 localStorage.setItem("loginUser", this.editLoginUser);
 
@@ -491,9 +562,10 @@ export default {
                                 localStorage.removeItem("redeIdUser")
                                 localStorage.setItem("redeIdUser", this.editRoleNetwork);
                             }
+
                             this.editLoginUser = "";
                             this.editRoleUser = "";
-                            this.editRoleNetwork = "";
+                            this.editRoleNetwork = [];
                             this.editPasswordUser = "";
                             
                             this.myFunction();
@@ -561,7 +633,13 @@ export default {
            }
         }
     },
-    created(){ 
+    created(){
+        var roleUser = localStorage.getItem("roleUser");
+        if(roleUser == "R"){
+            alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
+            this.$router.push({name: "Index"})
+        }
+            
         this.serverIP = scrypt.serverIP
         this.myFunction();
         this.idUser = localStorage.getItem("idUser");

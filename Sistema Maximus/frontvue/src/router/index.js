@@ -13,6 +13,7 @@ import Implantation from '../views/Implantation/Implantation.vue'
 import Napp from '../views/Napp/Napp.vue'
 import Dashboard from '../views/Dashboard/Dashboard.vue'
 import Teste from '../views/Implantation/Teste.vue'
+import CMED from '../views/CMED/CMED.vue'
 
 
 import axios from 'axios';
@@ -154,6 +155,13 @@ const routes = [
     component: AdminUsers,
     beforeEnter: UserAuth
   },
+  {
+    path: '/CMED',
+    name: 'CMED',
+    component: CMED,
+    beforeEnter: UserAuth
+  },
+  
   {
     path: '/wiki',
     name: 'Wiki',

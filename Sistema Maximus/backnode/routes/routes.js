@@ -15,11 +15,13 @@ var Implantation = require("../controllers/ImplantationController")
 var DashboardController = require("../controllers/DashboardController")
 var Network = require ("../controllers/NetworkController")
 var NappController = require("../controllers/NappController")
+var CMEDController = require("../controllers/CMEDController")
 
 router.post('/login', UserController.login);
 router.get('/user', UserAuth, UserController.getUsers);
 router.post('/user', UserController.create);
 router.patch('/user', UserController.edit);
+router.patch('/userPhoto', UserController.editPhoto);
 router.post('/password', UserController.recoveryPassword);
 router.patch('/token', UserController.editPassword);
 router.post('/token', UserController.validateToken);
@@ -55,13 +57,20 @@ router.get('/dataReplic', UserMaximusAuth, DashboardController.getUsers);
 router.get('/dataCountReplic', UserMaximusAuth, DashboardController.getCountUsers);
 router.get('/napp', NappController.getData);
 router.get('/nappDetailed', NappController.getAllDataDetailed);
+router.post('/nappGetRequestData', NappController.requestsData);
+router.patch('/nappUpdateRequestData', NappController.requestsUpdateData);
 router.post('/nappStore', NappController.create);
 router.post('/nappData', NappController.createDataNapp);
+router.post('/nappRequestData', NappController.requestDataNapp);
 router.patch('/napp', NappController.editStore);
 router.post('/createWppConnect', WppConnectBot.wppConnect);
 router.post('/sendText', WppConnectBot.wppConnect);
 router.get('/task', UserAuth, TarefaAgendadaController.getData);
 router.post('/task', TarefaAgendadaController.searchComands);
-
+router.get('/cmedPreco/:codBarrasPrincipal/:codBarrasAUX', CMEDController.getPreco);
+router.get('/cmedPreco/:codUf', CMEDController.getListPreco);
+router.get('/cmedLista/:data', CMEDController.getDataUltimaAtualizacao);
+router.post('/CMED', CMEDController.postData);
+router.post('/setDataStore', NappController.setDataStore);
 
 module.exports = router;

@@ -794,7 +794,6 @@ export default {
             dialogFullScreen: false,
             snackbar: false,
             nameNetworks: [],
-            selectedFruits: [],
             snackbarText: '',
             snackbarColor: '',
             showPassword: true,
@@ -895,6 +894,11 @@ export default {
     created(){
         this.serverIP = scrypt.serverIP
         this.roleUserLogged = localStorage.getItem("roleUser")
+        
+        if(this.roleUserLogged == "R"){
+            alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
+            this.$router.push({name: "Index"})
+        }
 
         if(this.roleUserLogged != "N"){
             this.myFunction(false);

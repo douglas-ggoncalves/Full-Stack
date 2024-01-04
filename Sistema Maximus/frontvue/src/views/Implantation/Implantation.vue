@@ -77,11 +77,63 @@
 
                 </div>
                 <v-row justify="center">
+<v-sheet
+    height="400"
+    class="overflow-hidden"
+    style="position: relative;"
+  >
+    <v-container class="fill-height">
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <v-btn
+          color="pink"
+          dark
+          @click.stop="drawer = !drawer"
+        >
+          Toggle
+        </v-btn>
+      </v-row>
+    </v-container>
+
+    <v-navigation-drawer
+      v-model="drawer"
+      absolute
+      temporary
+    >
+      <v-list-item>
+        <v-list-item-avatar class="mr-0">
+           <v-icon>mdi-account-circle</v-icon>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title>Lista de Usuários</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list class="w-auto" dense>
+  <v-list-item v-for="user in USUARIO" :key="user.ID_USUARIO" style="max-width: 100%">
+    <v-list-item-icon>
+      <v-icon :color="user.ID_USUARIO == 5 ? 'green' : 'red'">mdi-circle</v-icon>
+    </v-list-item-icon>
+    <v-list-item-content>
+      <v-list-item-title>{{ user.LOGIN_USUARIO }}</v-list-item-title>
+    </v-list-item-content>
+  </v-list-item>
+</v-list>
+    </v-navigation-drawer>
+  </v-sheet>
+
+
+
                     <v-menu v-for="user in USUARIO" :key="user.ID_USUARIO" bottom min-width="200px" rounded offset-y>
                         <template v-slot:activator="{ on }">
                             <v-btn icon x-large v-on="on">
                                 <v-avatar color="brown" size="48" v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
-                                    <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO +  ".jpg"' :alt="user.LOGIN_USUARIO">
+                                    <img :src='"" + user.IMG_USUARIO' :alt="user.LOGIN_USUARIO">
                                 </v-avatar>
 
                                 <v-avatar size="48" v-else color="red">
@@ -93,7 +145,7 @@
                             <v-list-item-content class="justify-center">
                                 <div class="mx-auto text-center">
                                     <v-avatar color="brown"  v-if="user.IMG_USUARIO != '' &&  user.IMG_USUARIO != null">
-                                        <img :src='"../../assets/img/Funcionarios/" + user.IMG_USUARIO +  ".jpg"' :alt="user.LOGIN_USUARIO">
+                                        <img :src='"" + user.IMG_USUARIO' :alt="user.LOGIN_USUARIO">
                                     </v-avatar>
                                     <v-avatar size="48" v-else color="red">
                                         <span class="white--text text-h6">{{ user.LOGIN_USUARIO | reversedMessage(user.LOGIN_USUARIO) }}</span>
@@ -103,8 +155,9 @@
                                         {{ user.LOGIN_USUARIO }}
                                     </p>
                                     <v-divider class="my-3"></v-divider>
-                                    <v-btn depressed rounded text>
-                                        Editar Conta
+                                    <input type="file" ref="fileInput" id="fileInput" @change="onFileChange" style="display: none">
+                                    <v-btn depressed rounded text @click="alterPhoto(user)">
+                                        Trocar Foto de Perfil
                                     </v-btn>
                                     <v-divider class="my-3"></v-divider>
                                     <v-btn depressed rounded text>
@@ -574,6 +627,7 @@ import SocketioService from '../../../services/socketio.service.js';
 export default {
     data(){
         return {
+            drawer: null,
             dialog: false,
             dialogMsgSuccess: false,
             msgSuccess: '',
@@ -694,14 +748,17 @@ export default {
                 //{ ID_USUARIO: 5, LOGIN_USUARIO: 'Eduardo', IMG_USUARIO: 'Eduardo' },
                 //{ ID_USUARIO: 6, LOGIN_USUARIO: 'Maurício Xavier', IMG_USUARIO: '' },
                 //{ ID_USUARIO: 7, LOGIN_USUARIO: 'Rubens', IMG_USUARIO: 'Rubens' }
-            ]
+            ],
+            ID_USER_PHOTO: 0
         }
     },
     created(){
-        this.serverIP = scrypt.serverIP
-       // alert("Página/funções ainda em desenvolvimento.\n\nVocê será direcionado para a página inicial.");
-        //this.$router.push({name: "Index"})
-        this.myFunction(); // descomentar futuramente...
+        alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
+        this.$router.push({name: "Index"})
+
+        this.roleUserLogged = localStorage.getItem("roleUser")
+        this.serverIP = scrypt.serverIP;
+        this.myFunction();
     },
     methods: {
         addMembers(element){
@@ -750,6 +807,11 @@ export default {
                 }
             )
 
+            this.setArrayUsers();   
+        },
+        setArrayUsers(){
+            this.USUARIO = [];
+
             axios.get(`${this.serverIP}/user`, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token")
@@ -757,9 +819,9 @@ export default {
             }).then(res => {
                 for(var y=0; y < res.data.length; y++) {
                     var user = res.data[y];
-                   
+
                     if(user.IS_FUNCIONARIO == 1){
-                        Vue.set(this.USUARIO, y, { ID_USUARIO: user.ID_USUARIO, LOGIN_USUARIO: user.LOGIN_USUARIO, IMG_USUARIO: user.LOGIN_USUARIO })
+                        Vue.set(this.USUARIO, this.USUARIO.length, { ID_USUARIO: user.ID_USUARIO, LOGIN_USUARIO: user.LOGIN_USUARIO, IMG_USUARIO: user.IMG_USUARIO })
                     }
                 }
             }).catch(err => {
@@ -1196,6 +1258,45 @@ export default {
         },
         filteredUsers(itemCod) {
             return this.stage1.usersStageItem.filter(user => user.codItem == itemCod.codItem);
+        },
+        alterPhoto(user){
+            var userDif = user.ID_USUARIO == localStorage.getItem("idUser") ? true : false;
+
+            if(this.roleUserLogged != "M" && userDif){
+                this.callSnackBar("Usuário sem permissão para alterar imagem de outros usuários.", true);
+            }
+            else{
+                document.getElementById("fileInput").click();
+                this.ID_USER_PHOTO = user.ID_USUARIO;
+            }
+        },
+        async onFileChange(e) {
+            const file = await e.target.files[0];
+
+            if (file) {
+                // Verificando se o arquivo é uma imagem
+                if (file && file.type.startsWith("image/")) {
+                    const reader = await new FileReader();
+                    reader.onload = e  => {
+                        var base64 = e.target.result;
+
+                        axios.patch(`${this.serverIP}/userPhoto`, {
+                            ID_USUARIO: this.ID_USER_PHOTO,
+                            IMG_USUARIO: base64
+                        }).then(res => {
+                            this.setArrayUsers();
+                            this.callmsgSuccess(res.data.success);
+                        }).catch(err => {
+                            this.msgErr = err.response.data.err;
+                            this.dialogErr = true;
+                        })
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    this.callSnackBar("O arquivo selecionado não é uma imagem", true);
+                }
+            }
         }
     },
     filters: {

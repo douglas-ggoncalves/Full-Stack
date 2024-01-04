@@ -453,6 +453,10 @@ export default {
   created(){
     this.serverIP = scrypt.serverIP
     this.roleUserLogged = localStorage.getItem("roleUser")
+    if( this.roleUserLogged == "R"){
+      alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
+      this.$router.push({name: "Index"})
+    }
 
     if(this.roleUserLogged != "N"){
       this.myFunction();
@@ -560,6 +564,12 @@ export default {
     },
 
     async initVerify(){
+      this.roleUserLogged = localStorage.getItem("roleUser")
+      if(this.roleUserLogged == "N" || this.roleUserLogged == "R"){
+        this.err = 'Você não possui permissão para acessar esta função.'
+        return;
+      }
+
       if(this.value.length == 0){
         this.err = 'Informe uma rede para iniciar a verificação'
       } else{
