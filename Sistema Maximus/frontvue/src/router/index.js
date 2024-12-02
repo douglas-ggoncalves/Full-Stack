@@ -159,7 +159,7 @@ const routes = [
     path: '/CMED',
     name: 'CMED',
     component: CMED,
-    beforeEnter: UserAuth
+    //beforeEnter: UserAuth
   },
   
   {

@@ -202,6 +202,7 @@ create table MEDICAMENTOS
     PF19 decimal(20, 2),
     PF19_ALC decimal(20, 2), --
     PF19_5 decimal(20, 2), --
+    PF19_5_ALC decimal(20, 2), --
     PF20 decimal(20, 2),
     PF20_ALC decimal(20, 2), --
     PF20_5 decimal(20, 2), --
@@ -222,6 +223,7 @@ create table MEDICAMENTOS
     PMC19 decimal(20, 2),
     PMC19_ALC decimal(20, 2),
 	PMC19_5 decimal(20, 2),
+	PMC19_5_ALC decimal(20, 2),
     PMC20 decimal(20, 2),
     PMC20_ALC decimal(20, 2),
     PMC20_5 decimal(20, 2), --
@@ -299,3 +301,7 @@ create table USUARIO_REDE(
 	USUARIO_ID int,
 	REDE_ID int
 )
+
+
+------------------------------------------------------------------------
+alter table LOJA add INTEGRACAO_LOJA bit not null default(0) with values

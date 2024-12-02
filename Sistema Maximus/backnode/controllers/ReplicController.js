@@ -132,6 +132,7 @@ class ReplicController{
         var RAZAO_LOJA = req.body.RAZAO_LOJA;
         var CNPJ_LOJA = req.body.CNPJ_LOJA;
         var SISTEMA_LOJA = req.body.SISTEMA_LOJA;
+        var INTEGRACAO_LOJA = req.body.INTEGRACAO_LOJA;
         var ENDERECO_LOJA = req.body.ENDERECO_LOJA;
         var ACESSOREMOTO = req.body.ACESSOREMOTO;
         var SENHAACESSOREMOTO = req.body.SENHAACESSOREMOTO;
@@ -179,11 +180,19 @@ class ReplicController{
             return;
         } else{
             try{
+                var query = '';
+                if(INTEGRACAO_LOJA == 1){
+                    // Query responsável por não permitir que uma loja tenha mais de 1 integração.
+                    query = `update loja set INTEGRACAO_LOJA = 0 where REDEID = '${editSelected}';`;
+                }
+
                 await database.raw(`
+                    ${query}
+
                     update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
                     IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', 
                     SENHA_LOJA = '${SENHA_LOJA}', RAZAO_LOJA = '${RAZAO_LOJA}', CNPJ_LOJA = '${CNPJ_LOJA}',
-                    SISTEMA_LOJA = '${SISTEMA_LOJA}', ENDERECO_LOJA = '${ENDERECO_LOJA}', ACESSOREMOTO = '${ACESSOREMOTO}',
+                    SISTEMA_LOJA = '${SISTEMA_LOJA}', INTEGRACAO_LOJA = ${INTEGRACAO_LOJA}, ENDERECO_LOJA = '${ENDERECO_LOJA}', ACESSOREMOTO = '${ACESSOREMOTO}',
                     SENHAACESSOREMOTO = '${SENHAACESSOREMOTO}', REDEID = '${editSelected}'
                     where ID_LOJA = '${idStore}'
                 `); 
@@ -207,6 +216,7 @@ class ReplicController{
         var editLogin =  req.body.editLogin; 
         var ACESSOREMOTO =  req.body.ACESSOREMOTO; 
         var SENHAACESSOREMOTO =  req.body.SENHAACESSOREMOTO; 
+        var INTEGRACAO_LOJA = req.body.INTEGRACAO_LOJA; 
 
         if(idStore == undefined){
             res.status(406);
@@ -254,7 +264,7 @@ class ReplicController{
                 await database.raw(`
                     update loja set NUMERO_LOJA = '${editNumberStoreNewStore}', NOME_LOJA = '${editNameStore}', 
                     IP_LOJA = '${editIpStore}', PORTA_LOJA = '${editDoorIP}', LOGIN_LOJA = '${editLogin}', 
-                    ACESSOREMOTO = '${ACESSOREMOTO}', SENHAACESSOREMOTO = '${SENHAACESSOREMOTO}', REDEID = '${editSelected}'
+                    ACESSOREMOTO = '${ACESSOREMOTO}', SENHAACESSOREMOTO = '${SENHAACESSOREMOTO}', INTEGRACAO_LOJA = ${INTEGRACAO_LOJA}, REDEID = '${editSelected}'
                     where ID_LOJA = '${idStore}'
                 `); 
             } catch(error) {

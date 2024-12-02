@@ -165,15 +165,35 @@
                                                             <v-row class="mt-5">
                                                                 <span class="text-h5">Dados da Loja</span>
                                                             </v-row>
+
                                                             <v-row>
-                                                                <v-col cols="12" sm="6">
+                                                                <v-col cols="12" sm="4">
                                                                     <v-text-field min="0" max="30" label="Número da Loja" type="number" v-model="storeSelected.NUMERO_LOJA" ></v-text-field>
                                                                 </v-col>
 
-                                                                <v-col cols="12" sm="6">
+                                                                <v-col cols="12" sm="4">
                                                                     <v-text-field label="Nome da Loja" v-model="storeSelected.NOME_LOJA"></v-text-field>
                                                                 </v-col>
 
+                                                                <v-col cols="12" sm="4">
+                                                                    <v-tooltip top>
+                                                                        <template v-slot:activator="{ on, attrs }">
+                                                                            <v-select
+                                                                                v-on="on" 
+                                                                                v-bind="attrs" 
+                                                                                item-value="value" 
+                                                                                label="Loja Integração"
+                                                                                item-text="description" 
+                                                                                v-model="storeSelected.INTEGRACAO_LOJA" 
+                                                                                :items="[{ value: true, description: 'Sim' }, { value: false, description: 'Não' }]" 
+                                                                            ></v-select>
+                                                                        </template>
+                                                                        <span>Defina se esta é a loja de integração da rede.</span>
+                                                                    </v-tooltip>
+                                                                </v-col>
+                                                            </v-row>
+
+                                                            <v-row>
                                                                 <v-col cols="12" sm="6">
                                                                     <v-text-field label="IP da Loja" v-model="storeSelected.IP_LOJA" @keyup="numbersAndPoints()"></v-text-field>
                                                                 </v-col>
@@ -240,7 +260,6 @@
                                             :header-props="{'sortByText': 'Ordenar por'}" :footer-props="{'items-per-page-text':'Itens por página', 
                                             pageText: '{0}-{1} de {2}', 'items-per-page-all-text':'Todos'}" :headers="dataTableStores.headers" :items="storesFiltered" 
                                             :search="dataTableStores.search" :item-key="'ID_LOJA'">
-
                                                 <template v-slot:[`item.NOME_REDE`]="{ item }">
                                                     <span>
                                                         {{ item.NOME_REDE }}
@@ -250,6 +269,12 @@
                                                 <template v-slot:[`item.NUMERO_LOJA`]="{ item }">
                                                     <span>
                                                         {{ item.NUMERO_LOJA | convertName }}
+                                                    </span>
+                                                </template>
+                                                
+                                                <template v-slot:[`item.INTEGRACAO_LOJA`]="{ item }">
+                                                    <span>
+                                                        {{ (item.INTEGRACAO_LOJA ? 'Sim' : 'Não') }}
                                                     </span>
                                                 </template>
 
@@ -337,14 +362,27 @@
                         <v-card-text>
                             <v-container>
                                 <v-row>
-                                    <v-col cols="12" sm="6">
+                                    <v-col cols="12" sm="4">
                                         <v-text-field min="0" max="30" label="Número da Loja *" type="number" v-model="newStore.NUMERO_LOJA" ></v-text-field>
                                     </v-col>
 
-                                    <v-col cols="12" sm="6">
+                                    <v-col cols="12" sm="4">
                                         <v-text-field label="Nome da Loja *" v-model="newStore.NOME_LOJA"></v-text-field>
                                     </v-col>
 
+                                    <v-col cols="12" sm="4">
+                                        <v-tooltip top>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-select :items="['Sim', 'Não']" v-bind="attrs" v-on="on" v-model="newStore.INTEGRACAO_LOJA" label="Loja Integração"></v-select>
+                                            </template>
+                                            <span>Defina se esta é a loja de integração da rede.</span>
+                                        </v-tooltip>
+                                    </v-col>
+                                </v-row>
+
+                                <v-divider></v-divider>
+
+                                <v-row>
                                     <v-col cols="12" sm="6">
                                         <v-text-field label="IP da Loja" v-model="newStore.IP_LOJA" @keyup="numbersAndPoints2()"></v-text-field>
                                     </v-col>
@@ -525,14 +563,36 @@
                         <v-card-text>
                             <v-container>
                                 <v-row>
-                                    <v-col cols="12" sm="6">
+                                    <v-col cols="12" sm="4">
                                         <v-text-field min="0" max="30" label="Número da Loja" type="number" v-model="storeSelected.NUMERO_LOJA" ></v-text-field>
                                     </v-col>
 
-                                    <v-col cols="12" sm="6">
+                                    <v-col cols="12" sm="4">
                                         <v-text-field label="Nome da Loja" v-model="storeSelected.NOME_LOJA"></v-text-field>
                                     </v-col>
 
+                                    <v-col cols="12" sm="4">
+                                        <v-tooltip top>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-select 
+                                                    v-on="on" 
+                                                    v-bind="attrs" 
+                                                    item-value="value"
+                                                    item-text="description"
+                                                    label="Loja Integração"
+                                                    :items="[{ value: true, description: 'Sim' }, { value: false, description: 'Não' }]" 
+                                                    v-model="storeSelected.INTEGRACAO_LOJA" 
+                                                >
+                                                </v-select>
+                                            </template>
+                                            <span>Defina se esta é a loja de integração da rede.</span>
+                                        </v-tooltip>
+                                    </v-col>
+                                </v-row>
+                                
+                                <v-divider/>
+                                
+                                <v-row >
                                     <v-col cols="12" sm="6">
                                         <v-text-field label="IP da Loja" v-model="storeSelected.IP_LOJA" @keyup="numbersAndPoints()"></v-text-field>
                                     </v-col>
@@ -705,6 +765,12 @@
                                         <span>Copiar</span>
                                     </v-tooltip>
                                 </template>
+
+                                <template v-slot:[`item.INTEGRACAO_LOJA`]="{ item }">
+                                    <span>
+                                        {{ (item.INTEGRACAO_LOJA ? 'Sim' : 'Não') }}
+                                    </span>
+                                </template>
                                 
                                 <template v-slot:[`item.RADMIN_SENHAREDE`]="{ item }">
                                     <v-tooltip :color="'rgb(0, 0, 0)'" v-if="item.RADMIN_SENHAREDE" bottom>
@@ -820,6 +886,7 @@ export default {
                 headers: [
                     { text: 'Rede', align: 'center', value: 'NOME_REDE'}, // NOME_LOJA
                     { text: 'Loja', align: 'center', value: 'NOME_LOJA'}, // NOME_LOJA
+                    { text: 'Integração', align: 'center', value: 'INTEGRACAO_LOJA'},
                     { text: 'Nome Rede Radmin', align: 'center', value: 'RADMIN_NOMEREDE'},
                     { text: 'Senha Rede Radmin', align: 'center', value: 'RADMIN_SENHAREDE'},
                     { text: 'IP Radmin', align: 'center', value: 'IP_LOJA'},
@@ -854,6 +921,7 @@ export default {
             storeSelected:{
                 ID_LOJA: '',
                 NUMERO_LOJA: '',
+                INTEGRACAO_LOJA: 0,
                 NOME_LOJA: '',
                 IP_LOJA: '',
                 PORTA_LOJA: '',
@@ -869,6 +937,7 @@ export default {
             },
             newStore:{
                 NUMERO_LOJA: '',
+                INTEGRACAO_LOJA: 0,
                 NOME_LOJA: '',
                 IP_LOJA: '',
                 PORTA_LOJA: '',
@@ -938,7 +1007,7 @@ export default {
             }).then(res => {
                 for(var x=0; x < res.data.stores.length; x++){
                     var element = res.data.stores[x];
-                    Vue.set(this.stores, x, {ID_LOJA: element.ID_LOJA, NUMERO_LOJA: element.NUMERO_LOJA, NOME_LOJA: element.NOME_LOJA, IP_LOJA: element.IP_LOJA, PORTA_LOJA: element.PORTA_LOJA, LOGIN_LOJA: element.LOGIN_LOJA, SENHA_LOJA: element.SENHA_LOJA, REDEID: element.REDEID, RAZAO_LOJA: element.RAZAO_LOJA, CNPJ_LOJA: element.CNPJ_LOJA, SISTEMA_LOJA: element.SISTEMA_LOJA, ENDERECO_LOJA: element.ENDERECO_LOJA, ACESSOREMOTO: element.ACESSOREMOTO, SENHAACESSOREMOTO: element.SENHAACESSOREMOTO, id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA, UTILIZA_FECHA_MES: element.UTILIZA_FECHA_MES, ISATIVA: element.ISATIVA})
+                    Vue.set(this.stores, x, {ID_LOJA: element.ID_LOJA, NUMERO_LOJA: element.NUMERO_LOJA, NOME_LOJA: element.NOME_LOJA, IP_LOJA: element.IP_LOJA, PORTA_LOJA: element.PORTA_LOJA, LOGIN_LOJA: element.LOGIN_LOJA, SENHA_LOJA: element.SENHA_LOJA, REDEID: element.REDEID, RAZAO_LOJA: element.RAZAO_LOJA, CNPJ_LOJA: element.CNPJ_LOJA, SISTEMA_LOJA: element.SISTEMA_LOJA, INTEGRACAO_LOJA: element.INTEGRACAO_LOJA, ENDERECO_LOJA: element.ENDERECO_LOJA, ACESSOREMOTO: element.ACESSOREMOTO, SENHAACESSOREMOTO: element.SENHAACESSOREMOTO, id: element.id, NOME_REDE: element.NOME_REDE, RADMIN_NOMEREDE: element.RADMIN_NOMEREDE, RADMIN_SENHAREDE: element.RADMIN_SENHAREDE, REDE_REPLICA: element.REDE_REPLICA, UTILIZA_FECHA_MES: element.UTILIZA_FECHA_MES, ISATIVA: element.ISATIVA})
                 }
                 this.storesFiltered = this.stores.filter(element => element.id == this.networkSelected.id)
 
@@ -979,6 +1048,7 @@ export default {
             this.storeSelected.RAZAO_LOJA = item.RAZAO_LOJA 
             this.storeSelected.CNPJ_LOJA = this.maskToCNPJ(item.CNPJ_LOJA)
             this.storeSelected.SISTEMA_LOJA = item.SISTEMA_LOJA == 1 ? "Maximus Gestão" : item.SISTEMA_LOJA == 2 ? "Maximus Lite" : ""
+            this.storeSelected.INTEGRACAO_LOJA = item.INTEGRACAO_LOJA
             this.storeSelected.ENDERECO_LOJA = item.ENDERECO_LOJA
             this.storeSelected.ACESSOREMOTO = item.ACESSOREMOTO
             this.storeSelected.SENHAACESSOREMOTO = item.SENHAACESSOREMOTO
@@ -1003,6 +1073,7 @@ export default {
                     RAZAO_LOJA: this.newStore.RAZAO_LOJA == null || this.newStore.RAZAO_LOJA == undefined ? '' : this.newStore.RAZAO_LOJA,
                     CNPJ_LOJA: this.newStore.CNPJ_LOJA == null || this.newStore.CNPJ_LOJA == undefined ? '' : this.newStore.CNPJ_LOJA,
                     SISTEMA_LOJA: this.newStore.SISTEMA_LOJA == "Maximus Gestão" ? 1 : this.newStore.SISTEMA_LOJA == "Maximus Lite" ? 2 : 0,
+                    INTEGRACAO_LOJA: this.newStore.INTEGRACAO_LOJA ? 1 : 0,
                     ENDERECO_LOJA: this.newStore.ENDERECO_LOJA == null || this.newStore.ENDERECO_LOJA == undefined ? '' : this.newStore.ENDERECO_LOJA,
                     ACESSOREMOTO: this.newStore.ACESSOREMOTO == null || this.newStore.ACESSOREMOTO == undefined ? '' : this.newStore.ACESSOREMOTO,
                     SENHAACESSOREMOTO: this.newStore.SENHAACESSOREMOTO == null || this.newStore.SENHAACESSOREMOTO == undefined ? '' : this.newStore.SENHAACESSOREMOTO,
@@ -1020,7 +1091,7 @@ export default {
                 this.callErr("Número da Loja inválido");
             } else if(this.storeSelected.NOME_LOJA.trim() == ""){
                 this.callErr("Nome da Loja não pode ser vazio");
-            }  else if(this.storeSelected.REDEID.trim() == ""){
+                }  else if(this.storeSelected.REDEID.trim() == ""){
                 this.callErr("Rede da Loja não pode ser vazio");
             } else{
                 axios.patch(`${this.serverIP}/store`, {
@@ -1036,6 +1107,7 @@ export default {
                     RAZAO_LOJA: this.storeSelected.RAZAO_LOJA == null || undefined ? '' : this.storeSelected.RAZAO_LOJA,
                     CNPJ_LOJA: this.storeSelected.CNPJ_LOJA == null || undefined ? '' : this.storeSelected.CNPJ_LOJA,
                     SISTEMA_LOJA: this.storeSelected.SISTEMA_LOJA == "Maximus Gestão" ? 1 : this.storeSelected.SISTEMA_LOJA == "Maximus Lite" ? 2 : 0,
+                    INTEGRACAO_LOJA: this.storeSelected.INTEGRACAO_LOJA ? 1 : 0,
                     ENDERECO_LOJA: this.storeSelected.ENDERECO_LOJA == null || undefined ? '' : this.storeSelected.ENDERECO_LOJA,
                     ACESSOREMOTO: this.storeSelected.ACESSOREMOTO == null || undefined ? '' : this.storeSelected.ACESSOREMOTO,
                     SENHAACESSOREMOTO: this.storeSelected.SENHAACESSOREMOTO == null || undefined ? '' : this.storeSelected.SENHAACESSOREMOTO,
@@ -1051,6 +1123,7 @@ export default {
         modalNewStore(){
             this.newStore.NUMERO_LOJA = "";
             this.newStore.NOME_LOJA = "";
+            this.newStore.INTEGRACAO_LOJA = false;
             this.newStore.IP_LOJA = "";
             this.newStore.REDEID = "";
             this.newStore.PORTA_LOJA = "";
@@ -1078,6 +1151,7 @@ export default {
             this.storeSelected.ID_LOJA = item.ID_LOJA
             this.storeSelected.NUMERO_LOJA = item.NUMERO_LOJA 
             this.storeSelected.NOME_LOJA = item.NOME_LOJA
+            this.storeSelected.INTEGRACAO_LOJA = item.INTEGRACAO_LOJA
             this.storeSelected.IP_LOJA = item.IP_LOJA
             this.storeSelected.PORTA_LOJA = item.PORTA_LOJA
             this.storeSelected.LOGIN_LOJA = item.LOGIN_LOJA

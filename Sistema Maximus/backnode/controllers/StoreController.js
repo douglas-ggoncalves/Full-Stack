@@ -21,11 +21,12 @@ class StoreController{
         var RAZAO_LOJA = req.body.RAZAO_LOJA;
         var CNPJ_LOJA = req.body.CNPJ_LOJA.replace(".", "").replace(".", "").replace("-", "").replace("/", "");
         var SISTEMA_LOJA = req.body.SISTEMA_LOJA;
+        var INTEGRACAO_LOJA = req.body.INTEGRACAO_LOJA;
         var ENDERECO_LOJA = req.body.ENDERECO_LOJA;
         var ACESSOREMOTO = req.body.ACESSOREMOTO;
         var SENHAACESSOREMOTO = req.body.SENHAACESSOREMOTO;
 
-        var result = await Store.new(NUMERO_LOJA, NOME_LOJA, IP_LOJA, REDEID, PORTA_LOJA, LOGIN_LOJA, SENHA_LOJA, RAZAO_LOJA, CNPJ_LOJA, SISTEMA_LOJA, ENDERECO_LOJA, ACESSOREMOTO, SENHAACESSOREMOTO)  
+        var result = await Store.new(NUMERO_LOJA, NOME_LOJA, IP_LOJA, REDEID, PORTA_LOJA, LOGIN_LOJA, SENHA_LOJA, RAZAO_LOJA, CNPJ_LOJA, SISTEMA_LOJA, INTEGRACAO_LOJA, ENDERECO_LOJA, ACESSOREMOTO, SENHAACESSOREMOTO)  
         if(result != undefined){
             res.status(200);
             res.send({success: 'Loja cadastrada com sucesso'})

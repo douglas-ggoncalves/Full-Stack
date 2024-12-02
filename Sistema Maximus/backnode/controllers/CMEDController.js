@@ -83,9 +83,9 @@ class CMEDController{
         const columns = [
             "Substancia", "CNPJ", "Laboratorio", "CodigoGGREM", "Registro", "EAN1", "EAN2", "EAN3", "Produto", 
             "Apresentacao", "ClasseTerapeutica", "TipoProdutoStatus", "RegimePreco", "PFSemImpostos", 
-            "PF0", "PF12", "PF12_ALC", "PF17", "PF17_ALC", "PF17_5", "PF17_5_ALC", "PF18", "PF18_ALC", "PF19", "PF19_ALC", "PF19_5", 
+            "PF0", "PF12", "PF12_ALC", "PF17", "PF17_ALC", "PF17_5", "PF17_5_ALC", "PF18", "PF18_ALC", "PF19", "PF19_ALC", "PF19_5", "PF19_5_ALC", 
             "PF20", "PF20_ALC", "PF20_5", "PF21", "PF21_ALC", "PF22", "PF22_ALC", "PMCSemImpostos", "PMC0", "PMC12", "PMC12_ALC", "PMC17", "PMC17_ALC", "PMC17_5", "PMC17_5_ALC", 
-            "PMC18", "PMC18_ALC", "PMC19", "PMC19_ALC", "PMC19_5", "PMC20", "PMC20_ALC", "PMC20_5", "PMC21", "PMC21_ALC", "PMC22", "PMC22_ALC", "RestricaoHospitalar", "CAP", 
+            "PMC18", "PMC18_ALC", "PMC19", "PMC19_ALC", "PMC19_5", "PMC19_5_ALC", "PMC20", "PMC20_ALC", "PMC20_5", "PMC21", "PMC21_ALC", "PMC22", "PMC22_ALC", "RestricaoHospitalar", "CAP", 
             "CONFAZ87", "ICMS0", "AnaliseRecursal", "ListaConcessaoCreditoTributario", "Comercializacao2022", "Tarja"
         ];
 

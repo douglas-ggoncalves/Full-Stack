@@ -300,6 +300,18 @@
 
             <div class="col">
               <div class="form-group">
+                <Label for="integrationStore">Defina se esta é a loja de integração da rede.</Label>
+                <select id="integrationStore" class="form-control" v-model="integrationStore">
+                  <option disabled>Selecione uma Opção</option>
+                  <option v-for="option in [{ value: 1, description: 'Sim'}, { value: 0, description: 'Não' }]" v-bind:value="option.value" :key="option.value">
+                    {{ option.description }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
                 <Label for="storeIP">IP da loja</Label>
                 <input type="text" class="form-control" placeholder="Informe o IP da loja" v-model="ipStore" required>
               </div>
@@ -317,19 +329,19 @@
               </div>
             </div>
 
-            <div class="col">
+            <!-- <div class="col-5 d-flex">
               <div class="form-group">
                 <Label for="acessRustDesk">Acesso RustDesk</Label>
                 <input type="text" id="acessRustDesk" class="form-control" v-model="acessRustDesk" placeholder="Informe o Acesso do RustDesk">
               </div>
             </div>
             
-            <div class="col">
+            <div class="col-5 d-flex">
               <div class="form-group">
                 <Label for="passwordRustkDest">Senha RustDesk</Label>
                 <input type="password" id="passwordRustkDest" class="form-control" v-model="passwordRustkDest" placeholder="Informe a senha do RustDesk">
               </div>
-            </div>
+            </div> -->
 
             <div class="col">
               <div class="form-group">
@@ -386,6 +398,18 @@
               <div class="form-group">
                 <Label for="storeName">Nome da loja</Label>
                 <input type="text" class="form-control" placeholder="Informe o nome da loja" v-model="editNameStore" required>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <Label for="integrationStore">Defina se esta é a loja de integração da rede.</Label>
+                <select id="integrationStore" class="form-control" v-model="integrationSelected">
+                  <option disabled>Selecione uma Opção</option>
+                  <option v-for="option in [{ value: 1, description: 'Sim'}, { value: 0, description: 'Não' }]" v-bind:value="option.value" :key="option.value">
+                    {{ option.description }}
+                  </option>
+                </select>
               </div>
             </div>
             
@@ -448,14 +472,13 @@
   </div>
 </template>
 
-
 <script>
-import VModal from 'vue-js-modal'
+import Vue from 'vue';
 import axios from 'axios';
-import Vue from 'vue'
-import '../assets/style/style.css'
+import VModal from 'vue-js-modal';
+import '../assets/style/style.css';
 import scrypt from "../assets/js/scrypt";
-import Multiselect from 'vue-multiselect'
+import Multiselect from 'vue-multiselect';
 import SocketioService from '../../services/socketio.service.js';
 
 Vue.component('multiselect', Multiselect)
@@ -481,6 +504,7 @@ export default {
       value: [],
       numberStoreNewStore: '',
       nameStore: '',
+      integrationStore: '0',
       ipStore: '',
       network: '',
       loginRadmin: '',
@@ -501,6 +525,7 @@ export default {
       editPAssRush: '',
       editIpStore: '',
       editSelected: '',
+      integrationSelected: '',
       editDoorIP: '',
       editLogin: '',
       selectNetwork: '',
@@ -546,10 +571,11 @@ export default {
         this.redeIdUserLogged = localStorage.getItem("redeIdUser")
         this.roleUserLogged = localStorage.getItem("roleUser")
         if(this.redeIdUserLogged != 'null') {
-          this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0})
-          this.networks = this.networks.filter(network => this.redeIdUserLogged.includes(network.id));
-          this.value = this.networks;
-          this.value = this.value.filter(element => element.id != 0)
+          const userNetworkIds = this.redeIdUserLogged.split(',').map(id => parseInt(id.trim()));
+          
+          this.networks = this.networks.filter(network => userNetworkIds.includes(network.id));
+          this.networks.unshift({ NOME_REDE: 'Selecionar tudo', id: 0 });
+          this.value = this.networks.filter(element => element.id !== 0);
         } else{
           this.networks.unshift({NOME_REDE: 'Selecionar tudo', id: 0})
           this.value = this.networks;
@@ -705,11 +731,13 @@ export default {
               SISTEMA_LOJA: 0,
               ENDERECO_LOJA: '',
               ACESSOREMOTO: this.acessRustDesk,
-              SENHAACESSOREMOTO: this.passwordRustkDest
+              SENHAACESSOREMOTO: this.passwordRustkDest,
+              INTEGRACAO_LOJA: this.integrationStore
             })
             .then(res => {
               this.numberStoreNewStore = '',
               this.nameStore = '',
+              this.integrationStore = '0',
               this.ipStore = '',
               this.selected = '',
               this.acessRustDesk = '',
@@ -751,6 +779,7 @@ export default {
     },
     example(idElement){
       var myElement = this.data.filter(element => element.ID_LOJA == idElement)[0];
+      console.log(JSON.stringify(myElement))
       this.buttonIdClicked = myElement.ID_LOJA
       this.editNumberStoreNewStore = myElement.NUMERO_LOJA.toString()
       this.editNameStore = myElement.NOME_LOJA
@@ -758,6 +787,7 @@ export default {
       this.editPAssRush = myElement.SENHAACESSOREMOTO
       this.editIpStore = myElement.IP_LOJA
       this.editSelected = myElement.REDEID
+      this.integrationSelected = myElement.INTEGRACAO_LOJA ? 1 : 0
       this.editDoorIP = myElement.PORTA_LOJA
       this.editLogin = myElement.LOGIN_LOJA
       this.$modal.show('MyComponent');
@@ -806,6 +836,7 @@ export default {
               editNameStore: this.editNameStore,
               editIpStore: this.editIpStore,
               editSelected: this.editSelected,
+              INTEGRACAO_LOJA: this.integrationSelected,
               editDoorIP: this.editDoorIP,
               editLogin: this.editLogin,
               idStore: this.buttonIdClicked,

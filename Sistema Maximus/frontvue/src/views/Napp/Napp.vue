@@ -391,6 +391,8 @@ export default {
         }
     },
     created(){
+        this.serverIP = scrypt.serverIP
+
         var roleUser = localStorage.getItem("roleUser")
         if(roleUser == "R"){
             alert("Você não possui permissão para acessar esta página.\n\nVocê será direcionado para a página inicial.");
@@ -400,7 +402,7 @@ export default {
         this.myFunction();
         this.yearSelected = 2023
         
-        this.setarDados();
+        //this.setarDados();
     },
     methods: {
         setarDados(){
