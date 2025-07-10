@@ -35,6 +35,10 @@
                     <li>
                         <a href="replicacoes">Replicação</a>
                     </li>
+                    
+                    <li>
+                        <a href="versoes">Versões</a>
+                    </li>
 
                     <li>
                         <a href="wiki">Wiki</a>

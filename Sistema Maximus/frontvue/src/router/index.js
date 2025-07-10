@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Replic from '../views/Replic.vue'
+import SystemVersions from '../views/SystemVersions/SystemVersions.vue'
 import Tasks from '../views/Tasks.vue'
 import Index from '../views/Index.vue'
 import AdminUsers from '../views/Admin/AdminUsers.vue'
@@ -162,6 +163,12 @@ const routes = [
     //beforeEnter: UserAuth
   },
   
+  {
+    path: '/versoes',
+    name: 'SystemVersions',
+    component: SystemVersions,
+    beforeEnter: UserAuth
+  },
   {
     path: '/wiki',
     name: 'Wiki',

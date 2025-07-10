@@ -130,7 +130,7 @@ class ReplicController{
         var editLogin =  req.body.editLogin; 
         var SENHA_LOJA = req.body.SENHA_LOJA;
         var RAZAO_LOJA = req.body.RAZAO_LOJA;
-        var CNPJ_LOJA = req.body.CNPJ_LOJA;
+        var CNPJ_LOJA = req.body.CNPJ_LOJA.replace(".", "").replace(".", "").replace("-", "").replace("/", "");
         var SISTEMA_LOJA = req.body.SISTEMA_LOJA;
         var INTEGRACAO_LOJA = req.body.INTEGRACAO_LOJA;
         var ENDERECO_LOJA = req.body.ENDERECO_LOJA;

@@ -38,6 +38,10 @@
           </li>
 
           <li>
+            <a href="versoes">Versões</a>
+          </li>
+
+          <li>
             <a href="wiki">Wiki</a>
           </li>
           
@@ -294,7 +298,7 @@ export default {
       } else if(this.moduleSelect.ID_MODULE == undefined){
         this.err = 'Selecione um módulo'
       } else {
-        axios.patch(`${this.serverIP}/post`,{
+        axios.patch(`${this.serverIP}/post`, {
           idPost: this.idPost,
           title: this.title,
           desc: this.desc, 

@@ -16,6 +16,9 @@ var DashboardController = require("../controllers/DashboardController")
 var Network = require ("../controllers/NetworkController")
 var NappController = require("../controllers/NappController")
 var CMEDController = require("../controllers/CMEDController")
+var VersoesController = require("../controllers/VersoesController")
+var NotasVersoesController = require("../controllers/NotasVersoesController")
+var VersoesModulosController = require("../controllers/VersoesModulosController")
 
 router.post('/login', UserController.login);
 router.get('/user', UserAuth, UserController.getUsers);
@@ -72,5 +75,20 @@ router.get('/cmedPreco/:codUf', CMEDController.getListPreco);
 router.get('/cmedLista/:data', CMEDController.getDataUltimaAtualizacao);
 router.post('/CMED', CMEDController.postData);
 router.post('/setDataStore', NappController.setDataStore);
+router.get("/versoes", VersoesController.get)
+router.get("/versoes/:id", VersoesController.getByID)
+router.post("/versoes", VersoesController.create)
+router.put("/versoes/:id", VersoesController.putEdit)
+router.patch("/versoes/:id", VersoesController.edit)
+
+router.get("/notasVersoes", NotasVersoesController.get)
+router.post("/notasVersoes", NotasVersoesController.create)
+router.patch("/notasVersoes/:id", NotasVersoesController.edit)
+router.delete("/notasVersoes/:id", NotasVersoesController.delete)
+
+router.get("/versoesModulos", VersoesModulosController.get)
+router.post("/versoesModulos", VersoesModulosController.create)
+router.patch("/versoesModulos/:id", VersoesModulosController.edit)
+router.delete("/versoesModulos/:id", VersoesModulosController.delete)
 
 module.exports = router;

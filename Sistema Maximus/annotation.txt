@@ -305,3 +305,29 @@ create table USUARIO_REDE(
 
 ------------------------------------------------------------------------
 alter table LOJA add INTEGRACAO_LOJA bit not null default(0) with values
+
+
+
+------------------------------------------------------------------------
+create table Versoes (
+	ID int primary key identity(1, 1),
+	DataPublicacao datetime,
+	PdfBase64 varchar(max)
+)
+
+create table VersoesModulos (
+	ID int primary key identity(1,1) not null,
+	IdModulo int not null,
+	NumeroVersao varchar(20) not null,
+	DataVersao datetime null,
+	IdVersao int null
+	foreign key (IdVersao) references Versoes (ID)
+)
+
+create table NotasVersoes (
+	ID int identity(1,1) not null,
+	Titulo varchar(125) null,
+	Descricao nvarchar(max) null,
+	IdVersaoModulo int null,
+	foreign key (IdVersaoModulo) references VersoesModulos (ID)
+)

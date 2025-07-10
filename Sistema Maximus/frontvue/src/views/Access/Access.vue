@@ -36,6 +36,10 @@
                 </li>
 
                 <li>
+                    <a href="versoes">Versões</a>
+                </li>
+
+                <li>
                     <a href="wiki">Wiki</a>
                 </li>
 
@@ -891,7 +895,7 @@ export default {
                     { text: 'Senha Rede Radmin', align: 'center', value: 'RADMIN_SENHAREDE'},
                     { text: 'IP Radmin', align: 'center', value: 'IP_LOJA'},
                     { text: 'Acesso RustDesk', align: 'center', value: 'ACESSOREMOTO'},
-                    { text: 'Senha RustDesk', align: 'center', value: 'SENHAACESSOREMOTO'},
+                    // { text: 'Senha RustDesk', align: 'center', value: 'SENHAACESSOREMOTO'},
                     { text: 'Ações', align: 'center', value: 'action', sortable: false },
                 ],
                 items: [
