@@ -19,6 +19,7 @@ var CMEDController = require("../controllers/CMEDController")
 var VersoesController = require("../controllers/VersoesController")
 var NotasVersoesController = require("../controllers/NotasVersoesController")
 var VersoesModulosController = require("../controllers/VersoesModulosController")
+var APIWhatsAppController = require("../controllers/APIWhatsAppController");
 
 router.post('/login', UserController.login);
 router.get('/user', UserAuth, UserController.getUsers);
@@ -90,5 +91,6 @@ router.get("/versoesModulos", VersoesModulosController.get)
 router.post("/versoesModulos", VersoesModulosController.create)
 router.patch("/versoesModulos/:id", VersoesModulosController.edit)
 router.delete("/versoesModulos/:id", VersoesModulosController.delete)
+router.get('/api/whatsapp/status', APIWhatsAppController.checkStatus);
 
 module.exports = router;

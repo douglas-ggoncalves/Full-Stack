@@ -15,6 +15,8 @@ import Napp from '../views/Napp/Napp.vue'
 import Dashboard from '../views/Dashboard/Dashboard.vue'
 import Teste from '../views/Implantation/Teste.vue'
 import CMED from '../views/CMED/CMED.vue'
+import WhatsAppApiStatus from '../views/WhatsAppApiStatus.vue'
+import Crypto from '../views/Security/Crypto.vue'
 
 
 import axios from 'axios';
@@ -162,12 +164,23 @@ const routes = [
     component: CMED,
     //beforeEnter: UserAuth
   },
-  
   {
     path: '/versoes',
     name: 'SystemVersions',
     component: SystemVersions,
     beforeEnter: UserAuth
+  },
+  {
+    path: '/criptografia',
+    name: 'Crypto',
+    component: Crypto,
+    beforeEnter: UserAuth
+  },
+  {
+    path: '/whatsAppApi',
+    name: 'WhatsAppApiStatus',
+    component: WhatsAppApiStatus,
+    // beforeEnter: UserAuth
   },
   {
     path: '/wiki',

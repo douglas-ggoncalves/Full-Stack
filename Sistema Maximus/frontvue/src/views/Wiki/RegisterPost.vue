@@ -18,6 +18,10 @@
           </li>
 
           <li>
+            <a href="criptografia">Criptografia</a>
+          </li>
+          
+          <li>
             <a href="dashboard">Dashboard</a>
           </li>
 
@@ -32,7 +36,9 @@
           <li>
             <a href="versoes">Versões</a>
           </li>
-          
+          <li>
+            <a href="whatsAppApi">WhatsApp API Status</a>
+          </li>
           <li>
             <a href="wiki">Wiki</a>
           </li>
@@ -74,7 +80,7 @@
                   <b-button class="m-0" v-if="previewMode==true" @click="previewMode=false">Editar Arquivo</b-button>
                   <b-button v-if="!previewMode==true" @click="previewMode=true"><i class="fa-solid fa-eye"></i> Preview</b-button>
               </div>
-
+              
               <vue-editor v-if="!previewMode" v-model="desc" />
               <div id="divErrDesc" style="margin-top: 0.25rem; font-size: 0.875em; color: #dc3545;" v-if="errDesc">
                 {{ errDesc }}
@@ -290,7 +296,7 @@ export default {
     },
     clearErrDesc(){
       console.log("teste")
-      this.errDesc = '';
+      //this.errDesc = '';
     }
   }
 }

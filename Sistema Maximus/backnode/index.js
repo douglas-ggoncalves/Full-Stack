@@ -63,4 +63,3 @@ setInterval(function () {
 http.listen(4000, function(err){ // app.listen(4000, function(err){
     //console.log("logamos")
 })
-

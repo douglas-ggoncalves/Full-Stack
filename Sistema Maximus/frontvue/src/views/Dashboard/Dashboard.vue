@@ -21,6 +21,10 @@
                     </li>
 
                     <li>
+                        <a href="criptografia">Criptografia</a>
+                    </li>
+
+                    <li>
                         <a href="#">Dashboard</a>
                     </li>
 
@@ -40,6 +44,10 @@
                         <a href="versoes">Versões</a>
                     </li>
 
+                    <li>
+                        <a href="whatsAppApi">WhatsApp API Status</a>
+                    </li>
+                    
                     <li>
                         <a href="wiki">Wiki</a>
                     </li>

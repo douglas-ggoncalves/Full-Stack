@@ -331,3 +331,18 @@ create table NotasVersoes (
 	IdVersaoModulo int null,
 	foreign key (IdVersaoModulo) references VersoesModulos (ID)
 )
+
+
+
+------------------------------------------------------------------------
+alter table MEDICAMENTOS add PF20_5_ALC decimal(20, 2);
+alter table MEDICAMENTOS add PF22_5 decimal(20, 2);
+alter table MEDICAMENTOS add PF22_5_ALC decimal(20, 2);
+alter table MEDICAMENTOS add PF23 decimal(20, 2);
+alter table MEDICAMENTOS add PF23_ALC decimal(20, 2);
+alter table MEDICAMENTOS add PMC22_5 decimal(20, 2);
+alter table MEDICAMENTOS add PMC22_5_ALC decimal(20, 2);
+alter table MEDICAMENTOS add PMC23 decimal(20, 2);
+alter table MEDICAMENTOS add PMC23_ALC decimal(20, 2);
+alter table MEDICAMENTOS add PMC20_5_ALC decimal(20, 2);
+alter table MEDICAMENTOS add Comercializacao2024 varchar(30);
