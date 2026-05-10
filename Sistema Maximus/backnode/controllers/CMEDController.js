@@ -69,7 +69,7 @@ class CMEDController{
         var LISTA_CMED = req.body.LISTA_CMED;
 
         let deleteQuery = " delete MEDICAMENTOS ";
-        knex.raw(deleteQuery)
+        await knex.raw(deleteQuery)
             .then(() => {
                 console.log("Dados CMED deletados com sucesso.");
             })
@@ -137,12 +137,12 @@ LISTA_CMED.forEach((elementArray) => {
     });
 
     const insertQuery = `INSERT INTO MEDICAMENTOS (${columns.join(", ")}) VALUES (${treatedValues.join(", ")});`;
-
     knex.raw(insertQuery)
         .then(() => {
             // console.log("Dados inseridos com sucesso!");
         })
         .catch(error => {
+            console.log(insertQuery)
             console.error("Erro ao inserir dados:", error);
         });
 });
